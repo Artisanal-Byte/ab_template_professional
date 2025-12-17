@@ -19,7 +19,7 @@ env:
   BRANCH: staging
 
   APP_NAME: 'qms-neujin'
-  APP_URL: 'https://staging.qms.com'
+  APP_URL: 'https://qms.staging.artisanalbyte.com'
 
   LINUX_USER: git_deployer
   WEB_GROUP: webapps
@@ -51,10 +51,17 @@ jobs:
           echo "Dir : ${PROJECT_DIR}"
           echo "Branch: ${BRANCH}"
 
-      - name: Ensure GitHub known_hosts
+      - name: Setup SSH key from Actions Secret
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Add github.com to known_hosts
         run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          grep -q "github.com" ~/.ssh/known_hosts 2>/dev/null || ssh-keyscan github.com >> ~/.ssh/known_hosts
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
       - name: Ensure project directory exists
@@ -67,6 +74,10 @@ jobs:
           else
             echo "::notice ::${PROJECT_DIR} exists"
           fi
+
+      - name: Mark repo as safe for git (avoid dubious ownership)
+        run: |
+          git config --global --add safe.directory "${PROJECT_DIR}"
 
       - name: Repo bootstrap (if .git missing)
         run: |
@@ -91,38 +102,35 @@ jobs:
           echo "Previous SHA: ${PREV_SHA}"
           echo "Current  SHA: $(git rev-parse HEAD)"
 
-      - name: Ensure .env exists (do not overwrite)
+      # ✅ NEW: create .env from GitHub secret ONLY if missing
+      - name: Create .env from APP_ENV_STAGING secret (only if missing)
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
           if [ ! -f ".env" ]; then
-            if [ -f ".env.staging" ]; then
-              cp .env.staging .env
-              echo "::notice ::.env created from .env.staging"
-            elif [ -f ".env.example" ]; then
-              cp .env.example .env
-              echo "::warning ::.env created from .env.example (update it on server)"
-            else
-              echo "::error ::No .env / .env.staging / .env.example found" && exit 1
-            fi
+            echo "::notice ::Creating .env from APP_ENV_STAGING secret"
+            printf "%s" "${{ secrets.APP_ENV_STAGING }}" > .env
+            chmod 600 .env
           else
-            echo "::notice ::.env already exists, keeping it as-is"
+            echo "::notice ::.env already exists; not overwriting"
           fi
 
-      - name: Laravel bootstrap (idempotent)
+      - name: Laravel bootstrap + ensure APP_KEY (idempotent)
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
+
           [ -L public/storage ] || ${PHP_BIN} artisan storage:link || true
 
+          # Generate APP_KEY only if missing/empty
           if ! grep -q '^APP_KEY=' .env 2>/dev/null || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
-            ${PHP_BIN} artisan key:generate || true
+            ${PHP_BIN} artisan key:generate --force
           fi
 
           /usr/bin/chgrp -R "${WEB_GROUP}" storage bootstrap/cache || true
           /bin/chmod -R g+rwX storage bootstrap/cache || true
 
-      - name: Composer install (prod optimized)
+      - name: Composer install (optimized)
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
@@ -152,13 +160,6 @@ jobs:
           "${PHP_BIN}" artisan config:cache
           "${PHP_BIN}" artisan route:cache
           "${PHP_BIN}" artisan view:cache
-
-      - name: Horizon (optional)
-        if: env.USE_HORIZON == '1'
-        run: |
-          set -euo pipefail
-          cd "${PROJECT_DIR}"
-          "${PHP_BIN}" artisan horizon:terminate || true
 
       - name: Restart PHP-FPM (optional)
         if: env.RESTART_PHPFPM == '1'
