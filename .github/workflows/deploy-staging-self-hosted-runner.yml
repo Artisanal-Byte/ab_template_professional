@@ -15,23 +15,30 @@ on:
         default: true
 
 env:
+  # Repo + path
   PROJECT_DIR: /var/www/artisanal_byte/qms_neujin/qms_neujin_staging
   BRANCH: staging
+  REPO_SSH: git@github.com:Artisanal-Byte/neujin-qms.git
 
+  # App identity (optional)
   APP_NAME: 'qms-neujin'
   APP_URL: 'https://qms.staging.artisanalbyte.com'
 
+  # Accounts / perms
   LINUX_USER: git_deployer
   WEB_GROUP: webapps
 
+  # Binaries
   PHP_BIN: /usr/bin/php
   COMPOSER_BIN: /usr/local/bin/composer
   NPM_BIN: /usr/local/nvm/versions/node/v22.19.0/bin/npm
 
+  # Services
   USE_HORIZON: '0'
   RESTART_PHPFPM: '1'
   PHPFPM_SERVICE: php8.4-fpm
 
+  # Bookkeeping
   LAST_SHA_FILE: .last_deploy_sha
 
 jobs:
@@ -50,11 +57,13 @@ jobs:
           echo "Ref : ${GITHUB_REF} (${GITHUB_REF_NAME})"
           echo "Dir : ${PROJECT_DIR}"
           echo "Branch: ${BRANCH}"
+          echo "Repo SSH: ${REPO_SSH}"
 
-      - name: Setup SSH key from Actions Secret
+      # Uses your Actions Secret that contains a GitHub-authorized deploy key for this repo
+      - name: Setup GitHub Deploy Key (for git clone/fetch)
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.DEPLOY_KEY_NEUJIN_QMS }}
+          ssh-private-key: ${{ secrets.GITHUB_DEPLOY_KEY_NEUJIN_QMS }}
 
       - name: Add github.com to known_hosts
         run: |
@@ -79,30 +88,39 @@ jobs:
         run: |
           git config --global --add safe.directory "${PROJECT_DIR}"
 
-      - name: Repo bootstrap (if .git missing)
-        run: |
-          set -euo pipefail
-          if [ ! -d "${PROJECT_DIR}/.git" ]; then
-            cd "${PROJECT_DIR}"
-            git init
-            git remote add origin "git@github.com:Artisanal-Byte/neujin-qms.git"
-            git fetch --prune --tags origin
-            git checkout -B "${BRANCH}" "origin/${BRANCH}"
-          fi
-
-      - name: Fetch & hard reset to origin/${{ env.BRANCH }}
+      - name: Bootstrap repo (idempotent)
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
-          git remote set-url origin "git@github.com:Artisanal-Byte/neujin-qms.git"
+
+          if [ ! -d ".git" ]; then
+            git init
+          fi
+
+          if ! git remote get-url origin >/dev/null 2>&1; then
+            git remote add origin "${REPO_SSH}"
+          fi
+
+          # If origin exists but points somewhere else, fail fast
+          CUR_URL="$(git remote get-url origin || true)"
+          if [ -n "${CUR_URL}" ] && [ "${CUR_URL}" != "${REPO_SSH}" ]; then
+            echo "::error ::origin points to ${CUR_URL}, expected ${REPO_SSH}. Delete ${PROJECT_DIR}/.git once and rerun."
+            exit 1
+          fi
+
           git fetch --prune --tags origin
-          git checkout -B "${BRANCH}"
+          git checkout -B "${BRANCH}" "origin/${BRANCH}"
+
+      - name: Hard reset to origin/${{ env.BRANCH }}
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          git fetch --prune --tags origin
           PREV_SHA="$(git rev-parse HEAD || true)"
           git reset --hard "origin/${BRANCH}"
           echo "Previous SHA: ${PREV_SHA}"
           echo "Current  SHA: $(git rev-parse HEAD)"
 
-      # ✅ NEW: create .env from GitHub secret ONLY if missing
       - name: Create .env from APP_ENV_STAGING secret (only if missing)
         run: |
           set -euo pipefail
@@ -115,27 +133,28 @@ jobs:
             echo "::notice ::.env already exists; not overwriting"
           fi
 
-      - name: Laravel bootstrap + ensure APP_KEY (idempotent)
-        run: |
-          set -euo pipefail
-          cd "${PROJECT_DIR}"
-
-          [ -L public/storage ] || ${PHP_BIN} artisan storage:link || true
-
-          # Generate APP_KEY only if missing/empty
-          if ! grep -q '^APP_KEY=' .env 2>/dev/null || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
-            ${PHP_BIN} artisan key:generate --force
-          fi
-
-          /usr/bin/chgrp -R "${WEB_GROUP}" storage bootstrap/cache || true
-          /bin/chmod -R g+rwX storage bootstrap/cache || true
-
+      # IMPORTANT: composer must run before any php artisan command (vendor/autoload.php)
       - name: Composer install (optimized)
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
           export COMPOSER_ALLOW_SUPERUSER=1
           "${COMPOSER_BIN}" install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Laravel bootstrap + ensure APP_KEY (idempotent)
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+
+          # Generate APP_KEY only if missing/empty
+          if ! grep -q '^APP_KEY=' .env 2>/dev/null || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
+            "${PHP_BIN}" artisan key:generate --force
+          fi
+
+          # storage link & perms
+          [ -L public/storage ] || "${PHP_BIN}" artisan storage:link || true
+          /usr/bin/chgrp -R "${WEB_GROUP}" storage bootstrap/cache || true
+          /bin/chmod -R g+rwX storage bootstrap/cache || true
 
       - name: DB migrate (NO migrate:fresh)
         if: ${{ github.event_name == 'push' || inputs.run_migrations == true }}
@@ -152,7 +171,7 @@ jobs:
           "${NPM_BIN}" ci --no-audit --no-fund || "${NPM_BIN}" install --no-audit --no-fund
           "${NPM_BIN}" run build
 
-      - name: Laravel caches
+      - name: Laravel caches (clear → re-cache)
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
@@ -160,6 +179,13 @@ jobs:
           "${PHP_BIN}" artisan config:cache
           "${PHP_BIN}" artisan route:cache
           "${PHP_BIN}" artisan view:cache
+
+      - name: Horizon (optional)
+        if: env.USE_HORIZON == '1'
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          "${PHP_BIN}" artisan horizon:terminate || true
 
       - name: Restart PHP-FPM (optional)
         if: env.RESTART_PHPFPM == '1'
