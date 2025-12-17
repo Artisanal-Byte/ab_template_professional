@@ -51,11 +51,26 @@ jobs:
           echo "Dir : ${PROJECT_DIR}"
           echo "Branch: ${BRANCH}"
 
-      - name: Ensure GitHub known_hosts
+      # ✅ ADD THIS: load private key from Actions Secret
+      - name: Setup SSH key from Actions Secret
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      # ✅ Replace your old known_hosts step with this
+      - name: Add github.com to known_hosts
         run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          grep -q "github.com" ~/.ssh/known_hosts 2>/dev/null || ssh-keyscan github.com >> ~/.ssh/known_hosts
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+
+      # (Optional but very helpful) confirm key can reach github
+      - name: Verify GitHub SSH access
+        run: |
+          set -euo pipefail
+          ssh -T git@github.com || true
 
       - name: Ensure project directory exists
         run: |
