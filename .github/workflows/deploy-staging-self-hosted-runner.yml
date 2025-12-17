@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       run_migrations:
-        description: "Run php artisan migrate --force ?"
+        description: 'Run php artisan migrate --force ?'
         type: boolean
         default: true
       run_build:
-        description: "Run frontend build?"
+        description: 'Run frontend build?'
         type: boolean
         default: true
 
@@ -18,8 +18,8 @@ env:
   PROJECT_DIR: /var/www/artisanal_byte/qms_neujin/qms_neujin_staging
   BRANCH: staging
 
-  APP_NAME: "Vidzooka"
-  APP_URL: "https://staging.qms.com"
+  APP_NAME: 'qms-neujin'
+  APP_URL: 'https://staging.qms.com'
 
   LINUX_USER: git_deployer
   WEB_GROUP: webapps
@@ -28,8 +28,8 @@ env:
   COMPOSER_BIN: /usr/local/bin/composer
   NPM_BIN: /usr/local/nvm/versions/node/v22.19.0/bin/npm
 
-  USE_HORIZON: "0"
-  RESTART_PHPFPM: "1"
+  USE_HORIZON: '0'
+  RESTART_PHPFPM: '1'
   PHPFPM_SERVICE: php8.4-fpm
 
   LAST_SHA_FILE: .last_deploy_sha
@@ -40,7 +40,7 @@ jobs:
     environment: staging
 
     concurrency:
-      group: selfhosted-vidzooka-staging-${{ github.ref_name }}
+      group: selfhosted-neujin-qms-staging-${{ github.ref_name }}
       cancel-in-progress: true
 
     steps:
@@ -74,7 +74,7 @@ jobs:
           if [ ! -d "${PROJECT_DIR}/.git" ]; then
             cd "${PROJECT_DIR}"
             git init
-            git remote add origin "git@github.com:Artisanal-Byte/vidzooka.git"
+            git remote add origin "git@github.com:Artisanal-Byte/neujin-qms.git"
             git fetch --prune --tags origin
             git checkout -B "${BRANCH}" "origin/${BRANCH}"
           fi
@@ -83,7 +83,7 @@ jobs:
         run: |
           set -euo pipefail
           cd "${PROJECT_DIR}"
-          git remote set-url origin "git@github.com:Artisanal-Byte/vidzooka.git"
+          git remote set-url origin "git@github.com:Artisanal-Byte/neujin-qms.git"
           git fetch --prune --tags origin
           git checkout -B "${BRANCH}"
           PREV_SHA="$(git rev-parse HEAD || true)"
