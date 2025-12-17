@@ -1,0 +1,174 @@
+name: Deploy Production (Artifact + Releases)
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+    inputs:
+      run_migrations:
+        description: "Run php artisan migrate --force ?"
+        type: boolean
+        default: true
+      run_seed:
+        description: "Run php artisan db:seed --force ? (optional)"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: Build artifact
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.export-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, ctype, fileinfo, openssl, pdo, bcmath, json, tokenizer, xml
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Composer install (no-dev)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Frontend build
+        run: |
+          npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+          npm run build
+
+      - name: Create artifact
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          tar -czf "${GITHUB_SHA}.tar.gz" \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=tests \
+            .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-build
+          path: ${{ github.sha }}.tar.gz
+
+      - name: Export deployment matrix
+        id: export-matrix
+        run: |
+          JSON="$(cat ./production-server-config.json)"
+          echo "matrix<<EOF" >> $GITHUB_OUTPUT
+          echo "$JSON" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  deploy:
+    name: "${{ matrix.server.name }}: Deploy"
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        server: ${{ fromJson(needs.build.outputs.matrix) }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-build
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          source: ${{ github.sha }}.tar.gz
+          target: ${{ matrix.server.path }}/artifacts
+
+      - name: Extract & activate release (NO migrate:fresh)
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          BASE_PATH: ${{ matrix.server.path }}
+          RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
+          ACTIVE_PATH: ${{ matrix.server.path }}/current
+          STORAGE_PATH: ${{ matrix.server.path }}/storage
+          LARAVEL_ENV: ${{ secrets.PRODUCTION_ENV }}
+          RUN_MIGRATIONS: ${{ github.event_name == 'push' && '1' || (inputs.run_migrations && '1' || '0') }}
+          RUN_SEED: ${{ github.event_name == 'push' && '0' || (inputs.run_seed && '1' || '0') }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA,BASE_PATH,RELEASE_PATH,ACTIVE_PATH,STORAGE_PATH,LARAVEL_ENV,RUN_MIGRATIONS,RUN_SEED
+          script: |
+            set -e
+
+            sudo mkdir -p "${BASE_PATH}/artifacts" "${BASE_PATH}/releases" "${STORAGE_PATH}"
+            sudo mkdir -p "${STORAGE_PATH}/app" "${STORAGE_PATH}/public" "${STORAGE_PATH}/framework" "${STORAGE_PATH}/logs"
+            sudo mkdir -p "${STORAGE_PATH}/framework/cache" "${STORAGE_PATH}/framework/sessions" "${STORAGE_PATH}/framework/views"
+
+            # Write env (shared)
+            sudo printf "%s" "$LARAVEL_ENV" > "${BASE_PATH}/.env"
+
+            # Extract new release
+            sudo mkdir -p "${RELEASE_PATH}"
+            sudo tar xzf "${BASE_PATH}/artifacts/${GITHUB_SHA}.tar.gz" -C "${RELEASE_PATH}"
+
+            # Symlinks (shared .env + storage)
+            sudo ln -s -f "${BASE_PATH}/.env" "${RELEASE_PATH}/.env"
+            sudo rm -rf "${RELEASE_PATH}/storage"
+            sudo ln -s -n -f "${STORAGE_PATH}" "${RELEASE_PATH}/storage"
+
+            # Activate
+            sudo ln -s -n -f "${RELEASE_PATH}" "${ACTIVE_PATH}"
+
+            # Permissions (adjust if your server user differs)
+            sudo chown -R www-data:www-data "${STORAGE_PATH}"
+            sudo chown -R www-data:www-data "${ACTIVE_PATH}/bootstrap/cache" || true
+
+            cd "${ACTIVE_PATH}"
+
+            # Laravel ops
+            sudo php artisan optimize:clear || true
+
+            if [ "$RUN_MIGRATIONS" = "1" ]; then
+              sudo php artisan migrate --force
+            else
+              echo "Skipping migrations (manual mode)."
+            fi
+
+            if [ "$RUN_SEED" = "1" ]; then
+              sudo php artisan db:seed --force
+            fi
+
+            sudo php artisan config:cache
+            sudo php artisan route:cache
+            sudo php artisan view:cache
+            sudo php artisan storage:link || true
+            sudo php artisan queue:restart || true
+            sudo php artisan optimize || true
+
+            # Reload PHP-FPM (adjust version)
+            sudo service php8.4-fpm reload || sudo systemctl reload php8.4-fpm || true
+
+      - name: Cleanup old releases/artifacts (keep last 2)
+        uses: appleboy/ssh-action@master
+        env:
+          BASE_PATH: ${{ matrix.server.path }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          envs: BASE_PATH
+          script: |
+            set -e
+            cd "${BASE_PATH}/artifacts" && sudo ls -t | tail -n +3 | xargs -r sudo rm -rf
+            cd "${BASE_PATH}/releases" && sudo ls -t | tail -n +3 | xargs -r sudo rm -rf
