@@ -18,7 +18,7 @@ env:
   # Repo + path
   PROJECT_DIR: /var/www/artisanal_byte/qms_neujin/qms_neujin_staging
   BRANCH: staging
-  REPO_SSH: git@github.com:Artisanal-Byte/neujin-qms.git
+  REPO_SSH: git@github-neujin:Artisanal-Byte/neujin-qms.git
 
   # App identity (optional)
   APP_NAME: 'qms-neujin'
