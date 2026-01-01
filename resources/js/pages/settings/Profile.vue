@@ -7,9 +7,9 @@ import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 import DeleteUser from '@/components/DeleteUser.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import Button from '@/components/my-ui/Button.vue';
+import Input from '@/components/my-ui/Input.vue';
+import Label from '@/components/my-ui/Label.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { type BreadcrumbItem } from '@/types';
@@ -78,7 +78,7 @@ const user = page.props.auth.user;
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">
-                        <p class="-mt-4 text-sm text-muted-foreground">
+                        <p class="-mt-4 text-sm text-foreground/60">
                             Your email address is unverified.
                             <Link
                                 :href="send()"
@@ -113,7 +113,7 @@ const user = page.props.auth.user;
                         >
                             <p
                                 v-show="recentlySuccessful"
-                                class="text-sm text-neutral-600"
+                                class="text-sm text-foreground/60"
                             >
                                 Saved.
                             </p>

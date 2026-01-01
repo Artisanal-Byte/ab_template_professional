@@ -7,9 +7,9 @@ import { edit } from '@/routes/user-password';
 import { Form, Head } from '@inertiajs/vue3';
 
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import Button from '@/components/my-ui/Button.vue';
+import Input from '@/components/my-ui/Input.vue';
+import Label from '@/components/my-ui/Label.vue';
 import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbItems: BreadcrumbItem[] = [
@@ -101,7 +101,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                         >
                             <p
                                 v-show="recentlySuccessful"
-                                class="text-sm text-neutral-600"
+                                class="text-sm text-foreground/60"
                             >
                                 Saved.
                             </p>

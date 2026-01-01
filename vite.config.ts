@@ -11,7 +11,9 @@ export default defineConfig({
             ssr: 'resources/js/ssr.ts',
             refresh: true,
         }),
-        tailwindcss(),
+        tailwindcss({
+            config: './tailwind.config.ts',
+        }),
         wayfinder({
             formVariants: true,
         }),

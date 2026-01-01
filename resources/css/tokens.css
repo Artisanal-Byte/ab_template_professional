@@ -1,0 +1,69 @@
+:root {
+    /* Base Tokens */
+    --color-background-light: oklch(99.11% 0.008 234.38); /* Alice Blue */
+    --color-foreground-light: oklch(25.96% 0.021 265.87); /* Almost Black */
+    --color-card-light: oklch(100% 0 0); /* White */
+    --color-primary-light: oklch(25.96% 0.021 265.87); /* Almost Black */
+    --color-primary-foreground-light: oklch(99% 0.01 240);
+    --color-border-light: oklch(94.13% 0.012 249.26);
+    --color-neutral-light: oklch(82.23% 0.015 258.05);
+    --color-secondary-light: oklch(94.13% 0.012 249.26);
+    --color-accent-light: oklch(65.59% 0.175 281.56);
+    --color-info-light: oklch(70% 0.15 220);
+    --color-success-light: oklch(65% 0.15 150);
+    --color-warning-light: oklch(75% 0.2 90);
+    --color-error-light: oklch(60% 0.22 25);
+
+    --color-background-dark: oklch(25.96% 0.021 265.87); /* Almost Black */
+    --color-foreground-dark: oklch(96.88% 0.009 253.53);
+    --color-card-dark: oklch(30.63% 0.021 265.51);
+    --color-primary-dark: oklch(98.5% 0.01 240);
+    --color-primary-foreground-dark: oklch(25.96% 0.021 265.87);
+    --color-border-dark: oklch(38.64% 0.021 265.26);
+    --color-neutral-dark: oklch(43.19% 0.02 263.64);
+    --color-secondary-dark: oklch(38.64% 0.021 265.26);
+    --color-accent-dark: oklch(70.16% 0.171 281.72);
+    --color-info-dark: oklch(75% 0.18 220);
+    --color-success-dark: oklch(70% 0.18 150);
+    --color-warning-dark: oklch(80% 0.2 90);
+    --color-error-dark: oklch(65% 0.25 25);
+
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+
+    /* Semantic Token Mapping (Light Theme) */
+    --background: var(--color-background-light);
+    --foreground: var(--color-foreground-light);
+    --card: var(--color-card-light);
+    --card-foreground: var(--color-foreground-light);
+    --primary: var(--color-primary-light);
+    --primary-foreground: var(--color-primary-foreground-light);
+    --border: var(--color-border-light);
+    --neutral: var(--color-neutral-light);
+    --secondary: var(--color-secondary-light);
+    --accent: var(--color-accent-light);
+    --info: var(--color-info-light);
+    --success: var(--color-success-light);
+    --warning: var(--color-warning-light);
+    --error: var(--color-error-light);
+}
+
+.dark {
+    /* Semantic Token Mapping (Dark Theme) */
+    --background: var(--color-background-dark);
+    --foreground: var(--color-foreground-dark);
+    --card: var(--color-card-dark);
+    --card-foreground: var(--color-foreground-dark);
+    --primary: var(--color-primary-dark);
+    --primary-foreground: var(--color-primary-foreground-dark);
+    --border: var(--color-border-dark);
+    --neutral: var(--color-neutral-dark);
+    --secondary: var(--color-secondary-dark);
+    --accent: var(--color-accent-dark);
+    --info: var(--color-info-dark);
+    --success: var(--color-success-dark);
+    --warning: var(--color-warning-dark);
+    --error: var(--color-error-dark);
+}
