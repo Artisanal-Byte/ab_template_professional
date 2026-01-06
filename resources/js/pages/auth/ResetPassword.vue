@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
+import Button from '@/components/my-ui/Button.vue';
+import Input from '@/components/my-ui/Input.vue';
+import Label from '@/components/my-ui/Label.vue';
+import Spinner from '@/components/my-ui/Spinner.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { update } from '@/routes/password';
 import { Form, Head } from '@inertiajs/vue3';

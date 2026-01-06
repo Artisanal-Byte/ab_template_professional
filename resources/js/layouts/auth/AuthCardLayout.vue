@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import AppLogo from '@/components/AppLogo.vue';
+import Card from '@/components/my-ui/Card.vue';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/vue3';
 
@@ -18,31 +12,29 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10"
+        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-secondary/20 p-6 md:p-10"
     >
         <div class="flex w-full max-w-md flex-col gap-6">
             <Link
                 :href="home()"
                 class="flex items-center gap-2 self-center font-medium"
             >
-                <div class="flex h-9 w-9 items-center justify-center">
-                    <AppLogoIcon
-                        class="size-9 fill-current text-black dark:text-white"
-                    />
-                </div>
+                <AppLogo
+                    :show-text="false"
+                    size="lg"
+                    container-class="bg-transparent text-foreground"
+                />
             </Link>
 
             <div class="flex flex-col gap-6">
-                <Card class="rounded-xl">
-                    <CardHeader class="px-10 pt-8 pb-0 text-center">
-                        <CardTitle class="text-xl">{{ title }}</CardTitle>
-                        <CardDescription>
-                            {{ description }}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="px-10 py-8">
-                        <slot />
-                    </CardContent>
+                <Card
+                    class="rounded-xl"
+                    header-class="px-6 pt-6 pb-2 text-center"
+                    content-class="px-6 pb-6 pt-4"
+                >
+                    <template #title>{{ title }}</template>
+                    <template #description>{{ description }}</template>
+                    <slot />
                 </Card>
             </div>
         </div>

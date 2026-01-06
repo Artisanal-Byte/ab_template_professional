@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSlot,
-} from '@/components/ui/input-otp';
+import Button from '@/components/my-ui/Button.vue';
+import Input from '@/components/my-ui/Input.vue';
+import InputOTP from '@/components/my-ui/InputOTP.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/vue3';
@@ -71,25 +67,17 @@ const code = ref<string>('');
                             <InputOTP
                                 id="otp"
                                 v-model="code"
-                                :maxlength="6"
+                                :otp-length="6"
                                 :disabled="processing"
                                 autofocus
-                            >
-                                <InputOTPGroup>
-                                    <InputOTPSlot
-                                        v-for="index in 6"
-                                        :key="index"
-                                        :index="index - 1"
-                                    />
-                                </InputOTPGroup>
-                            </InputOTP>
+                            />
                         </div>
                         <InputError :message="errors.code" />
                     </div>
                     <Button type="submit" class="w-full" :disabled="processing"
                         >Continue</Button
                     >
-                    <div class="text-center text-sm text-muted-foreground">
+                    <div class="text-center text-sm text-foreground/60">
                         <span>or you can </span>
                         <button
                             type="button"
@@ -121,7 +109,7 @@ const code = ref<string>('');
                         >Continue</Button
                     >
 
-                    <div class="text-center text-sm text-muted-foreground">
+                    <div class="text-center text-sm text-foreground/60">
                         <span>or you can </span>
                         <button
                             type="button"

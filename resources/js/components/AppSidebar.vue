@@ -2,15 +2,6 @@
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
@@ -37,30 +28,36 @@ const footerNavItems: NavItem[] = [
         icon: BookOpen,
     },
 ];
+const props = defineProps({
+    collapsed: {
+        type: Boolean,
+        default: false,
+    },
+});
 </script>
 
 <template>
-    <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
-                            <AppLogo />
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarHeader>
+    <div
+        class="flex h-16 items-center gap-2 border-b border-border px-4"
+        :class="props.collapsed ? 'justify-center px-2' : ''"
+    >
+        <Link :href="dashboard()" class="flex items-center gap-2">
+            <AppLogo
+                v-if="props.collapsed"
+                :show-text="false"
+                size="sm"
+                container-class="bg-primary text-primary-foreground"
+            />
+            <AppLogo v-else />
+        </Link>
+    </div>
 
-        <SidebarContent>
-            <NavMain :items="mainNavItems" />
-        </SidebarContent>
+    <div class="flex-1 min-h-0 overflow-y-auto py-4">
+        <NavMain :items="mainNavItems" :collapsed="props.collapsed" />
+    </div>
 
-        <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
-            <NavUser />
-        </SidebarFooter>
-    </Sidebar>
-    <slot />
+    <div class="mt-auto space-y-4 border-t border-border py-4">
+        <NavFooter :items="footerNavItems" :collapsed="props.collapsed" />
+        <NavUser :collapsed="props.collapsed" />
+    </div>
 </template>

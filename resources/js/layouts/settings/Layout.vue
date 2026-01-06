@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import Button from '@/components/my-ui/Button.vue';
+import Separator from '@/components/my-ui/Separator.vue';
 import { toUrl, urlIsActive } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
@@ -46,16 +46,17 @@ const currentPath = typeof window !== undefined ? window.location.pathname : '';
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"
                         variant="ghost"
+                        :as="Link"
+                        :href="item.href"
                         :class="[
                             'w-full justify-start',
-                            { 'bg-muted': urlIsActive(item.href, currentPath) },
+                            {
+                                'bg-secondary/60 text-foreground': urlIsActive(item.href, currentPath),
+                            },
                         ]"
-                        as-child
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
-                        </Link>
+                        <component :is="item.icon" class="h-4 w-4" />
+                        {{ item.title }}
                     </Button>
                 </nav>
             </aside>

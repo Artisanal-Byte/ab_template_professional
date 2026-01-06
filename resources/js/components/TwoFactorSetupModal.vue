@@ -1,20 +1,10 @@
 <script setup lang="ts">
 import AlertError from '@/components/AlertError.vue';
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSlot,
-} from '@/components/ui/input-otp';
-import { Spinner } from '@/components/ui/spinner';
+import Button from '@/components/my-ui/Button.vue';
+import Dialog from '@/components/my-ui/Dialog.vue';
+import InputOTP from '@/components/my-ui/InputOTP.vue';
+import Spinner from '@/components/my-ui/Spinner.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { confirm } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
@@ -109,14 +99,14 @@ watch(
 </script>
 
 <template>
-    <Dialog :open="isOpen" @update:open="isOpen = $event">
-        <DialogContent class="sm:max-w-md">
-            <DialogHeader class="flex items-center justify-center">
+    <Dialog v-model:open="isOpen" :show-close="false" content-class="sm:max-w-md">
+        <div class="relative flex w-auto flex-col items-center justify-center space-y-5">
+            <div class="flex flex-col items-center justify-center text-center">
                 <div
                     class="mb-3 w-auto rounded-full border border-border bg-card p-0.5 shadow-sm"
                 >
                     <div
-                        class="relative overflow-hidden rounded-full border border-border bg-muted p-2.5"
+                        class="relative overflow-hidden rounded-full border border-border bg-secondary/40 p-2.5"
                     >
                         <div
                             class="absolute inset-0 grid grid-cols-5 opacity-50"
@@ -141,40 +131,36 @@ watch(
                         />
                     </div>
                 </div>
-                <DialogTitle>{{ modalConfig.title }}</DialogTitle>
-                <DialogDescription class="text-center">
+                <h3 class="text-lg font-semibold">{{ modalConfig.title }}</h3>
+                <p class="mt-1 text-sm text-foreground/70">
                     {{ modalConfig.description }}
-                </DialogDescription>
-            </DialogHeader>
-
-            <div
-                class="relative flex w-auto flex-col items-center justify-center space-y-5"
-            >
+                </p>
+            </div>
                 <template v-if="!showVerificationStep">
                     <AlertError v-if="errors?.length" :errors="errors" />
                     <template v-else>
                         <div
                             class="relative mx-auto flex max-w-md items-center overflow-hidden"
                         >
+                        <div
+                            class="relative mx-auto aspect-square w-64 overflow-hidden rounded-lg border border-border"
+                        >
                             <div
-                                class="relative mx-auto aspect-square w-64 overflow-hidden rounded-lg border border-border"
+                                v-if="!qrCodeSvg"
+                                class="absolute inset-0 z-10 flex aspect-square h-auto w-full animate-pulse items-center justify-center bg-background"
+                            >
+                                <Spinner class="size-6" />
+                            </div>
+                            <div
+                                v-else
+                                class="relative z-10 overflow-hidden border p-5"
                             >
                                 <div
-                                    v-if="!qrCodeSvg"
-                                    class="absolute inset-0 z-10 flex aspect-square h-auto w-full animate-pulse items-center justify-center bg-background"
-                                >
-                                    <Spinner class="size-6" />
-                                </div>
-                                <div
-                                    v-else
-                                    class="relative z-10 overflow-hidden border p-5"
-                                >
-                                    <div
-                                        v-html="qrCodeSvg"
-                                        class="aspect-square w-full justify-center rounded-lg bg-white p-2 [&_svg]:size-full"
-                                    />
-                                </div>
+                                    v-html="qrCodeSvg"
+                                    class="aspect-square w-full justify-center rounded-lg bg-white p-2 [&_svg]:size-full"
+                                />
                             </div>
+                        </div>
                         </div>
 
                         <div class="flex w-full items-center space-x-5">
@@ -202,7 +188,7 @@ watch(
                             >
                                 <div
                                     v-if="!manualSetupKey"
-                                    class="flex h-full w-full items-center justify-center bg-muted p-3"
+                                    class="flex h-full w-full items-center justify-center bg-secondary/40 p-3"
                                 >
                                     <Spinner />
                                 </div>
@@ -248,17 +234,9 @@ watch(
                                 <InputOTP
                                     id="otp"
                                     v-model="code"
-                                    :maxlength="6"
+                                    :otp-length="6"
                                     :disabled="processing"
-                                >
-                                    <InputOTPGroup>
-                                        <InputOTPSlot
-                                            v-for="index in 6"
-                                            :key="index"
-                                            :index="index - 1"
-                                        />
-                                    </InputOTPGroup>
-                                </InputOTP>
+                                />
                                 <InputError
                                     :message="
                                         errors?.confirmTwoFactorAuthentication
@@ -289,6 +267,6 @@ watch(
                     </Form>
                 </template>
             </div>
-        </DialogContent>
+        </div>
     </Dialog>
 </template>
