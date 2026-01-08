@@ -15,7 +15,10 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/design_system_and_components', [DesignSystemController::class, 'show'])
-    ->name('design.system');
+if (!app()->isProduction()) {
+    Route::get('/design_system_and_components', [DesignSystemController::class, 'show'])
+        ->middleware(['auth', 'verified'])
+        ->name('design.system');
+}
 
 require __DIR__.'/settings.php';

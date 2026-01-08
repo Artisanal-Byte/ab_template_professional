@@ -2,19 +2,19 @@
 import UserInfo from '@/components/UserInfo.vue';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
-import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
 import { LogOut, Settings } from 'lucide-vue-next';
-
-interface Props {
-    user: User;
-}
 
 const handleLogout = () => {
     router.flushAll();
 };
 
-defineProps<Props>();
+defineProps({
+    user: {
+        type: Object,
+        required: true,
+    },
+});
 </script>
 
 <template>
@@ -24,7 +24,7 @@ defineProps<Props>();
         </div>
         <div class="h-px bg-border"></div>
         <Link
-            class="flex w-full items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-secondary/50"
+            class="flex w-full items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-secondary-hover"
             :href="edit()"
             prefetch
             as="button"
@@ -34,7 +34,7 @@ defineProps<Props>();
         </Link>
         <div class="h-px bg-border"></div>
         <Link
-            class="flex w-full items-center gap-2 rounded-md px-2 py-1 text-sm text-error hover:bg-error/10"
+            class="flex w-full items-center gap-2 rounded-md px-2 py-1 text-sm text-error hover:bg-error-soft"
             :href="logout()"
             @click="handleLogout"
             as="button"
@@ -45,3 +45,4 @@ defineProps<Props>();
         </Link>
     </div>
 </template>
+

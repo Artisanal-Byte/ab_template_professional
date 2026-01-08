@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Input from '@/components/my-ui/Input.vue';
-import Label from '@/components/my-ui/Label.vue';
-import Spinner from '@/components/my-ui/Spinner.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
@@ -24,7 +24,7 @@ defineProps<{
 
         <div
             v-if="status"
-            class="mb-4 text-center text-sm font-medium text-green-600"
+            class="mb-4 text-center text-sm font-medium text-success"
         >
             {{ status }}
         </div>
@@ -56,10 +56,12 @@ defineProps<{
                 </div>
             </Form>
 
-            <div class="space-x-1 text-center text-sm text-foreground/60">
+            <div class="space-x-1 text-center text-sm text-foreground-faint">
                 <span>Or, return to</span>
                 <TextLink :href="login()">log in</TextLink>
             </div>
         </div>
     </AuthLayout>
 </template>
+
+

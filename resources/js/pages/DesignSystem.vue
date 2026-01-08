@@ -1,34 +1,45 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Alert from '@/components/my-ui/Alert.vue';
-import Avatar from '@/components/my-ui/Avatar.vue';
-import Badge from '@/components/my-ui/Badge.vue';
-import Breadcrumb from '@/components/my-ui/Breadcrumb.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Card from '@/components/my-ui/Card.vue';
-import Checkbox from '@/components/my-ui/Checkbox.vue';
-import Dialog from '@/components/my-ui/Dialog.vue';
-import DropdownMenu from '@/components/my-ui/DropdownMenu.vue';
-import Input from '@/components/my-ui/Input.vue';
-import InputOTP from '@/components/my-ui/InputOTP.vue';
-import Label from '@/components/my-ui/Label.vue';
-import MultiSelect from '@/components/my-ui/MultiSelect.vue';
-import RichTextEditor from '@/components/my-ui/RichTextEditor.vue';
-import SearchAndSelect from '@/components/my-ui/SearchAndSelect.vue';
-import Select from '@/components/my-ui/Select.vue';
-import Separator from '@/components/my-ui/Separator.vue';
-import Skeleton from '@/components/my-ui/Skeleton.vue';
-import Spinner from '@/components/my-ui/Spinner.vue';
+import Alert from '@/components/ui/Alert.vue';
+import Avatar from '@/components/ui/Avatar.vue';
+import Badge from '@/components/ui/Badge.vue';
+import Breadcrumb from '@/components/ui/Breadcrumb.vue';
+import Button from '@/components/ui/Button.vue';
+import Card from '@/components/ui/Card.vue';
+import Checkbox from '@/components/ui/Checkbox.vue';
+import DateTimePicker from '@/components/ui/DateTimePicker.vue';
+import Dialog from '@/components/ui/Dialog.vue';
+import DropdownMenu from '@/components/ui/DropdownMenu.vue';
+import Input from '@/components/ui/Input.vue';
+import InputOTP from '@/components/ui/InputOTP.vue';
+import Label from '@/components/ui/Label.vue';
+import MultiSelect from '@/components/ui/MultiSelect.vue';
+import NumberInput from '@/components/ui/NumberInput.vue';
+import RichTextEditor from '@/components/ui/RichTextEditor.vue';
+import SearchAndSelect from '@/components/ui/SearchAndSelect.vue';
+import Select from '@/components/ui/Select.vue';
+import Separator from '@/components/ui/Separator.vue';
+import Skeleton from '@/components/ui/Skeleton.vue';
+import Spinner from '@/components/ui/Spinner.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
-import Tooltip from '@/components/my-ui/Tooltip.vue';
+import Tooltip from '@/components/ui/Tooltip.vue';
+import { Form, Head } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { system as designSystem } from '@/routes/design';
+import type { BreadcrumbItem } from '@/types';
 
-// This page does not use the standard AppLayout.vue because it is intended for public viewing
-// without requiring authentication. It is a standalone page to showcase components.
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Design System',
+    href: designSystem().url,
+  },
+];
 
 const tabs = ref([
   { id: 'foundations', label: 'Foundations' },
   { id: 'buttons', label: 'Buttons' },
   { id: 'inputs', label: 'Inputs' },
+  { id: 'selects', label: 'Selects' },
   { id: 'feedback', label: 'Feedback' },
   { id: 'cards', label: 'Cards' },
   { id: 'navigation', label: 'Navigation' },
@@ -91,17 +102,23 @@ const mentionItems = [
 const selectedDepartment = ref('');
 const selectedTeams = ref(['qa']);
 const searchSelection = ref('');
+const selectNote = ref('');
 const editorContent = ref('<p>Draft your next quality update here.</p>');
+const numberValue = ref('');
+const dateValue = ref('');
+const timeValue = ref('');
+const dateTimeValue = ref('');
 </script>
 
 <template>
-  <div class="min-h-screen bg-background font-sans text-foreground">
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+  <Head title="Design System" />
+  <AppLayout :breadcrumbs="breadcrumbs">
+    <div class="flex flex-1 flex-col gap-6 p-4 lg:p-6">
       <header class="mb-8">
         <h1 class="text-4xl font-bold tracking-tight">
           Design System & Components
         </h1>
-        <p class="mt-2 text-lg text-foreground/70">
+        <p class="mt-2 text-lg text-foreground-subtle">
           A showcase of the visual elements and components that form the application's UI.
         </p>
       </header>
@@ -111,7 +128,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
           <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
             tab.id === activeTab
               ? 'border-primary text-primary'
-              : 'border-transparent text-foreground/60 hover:text-foreground hover:border-border',
+              : 'border-transparent text-foreground-faint hover:text-foreground hover:border-border',
             'whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium transition-all duration-150 ease-in-out'
           ]">
             {{ tab.label }}
@@ -125,7 +142,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
             <h2 class="mb-4 text-2xl font-semibold">Theme switcher</h2>
             <div class="flex flex-wrap items-center gap-4">
               <ThemeToggle />
-              <p class="text-sm text-foreground/70">
+              <p class="text-sm text-foreground-subtle">
                 Toggles between light, dark, and system appearance.
               </p>
             </div>
@@ -135,7 +152,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
             <div class="grid grid-cols-2 gap-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
               <div v-for="color in colors" :key="color.name" class="flex flex-col items-center space-y-3">
                 <div class="h-28 w-28 rounded-lg border border-border shadow-sm" :class="color.class"></div>
-                <span class="text-sm font-medium text-foreground/70">{{ color.name }}</span>
+                <span class="text-sm font-medium text-foreground-subtle">{{ color.name }}</span>
               </div>
             </div>
           </section>
@@ -144,7 +161,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
             <div class="grid grid-cols-2 gap-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
               <div v-for="color in statusColors" :key="color.name" class="flex flex-col items-center space-y-3">
                 <div class="h-28 w-28 rounded-lg border border-border shadow-sm" :class="color.class"></div>
-                <span class="text-sm font-medium text-foreground/70">{{ color.name }}</span>
+                <span class="text-sm font-medium text-foreground-subtle">{{ color.name }}</span>
               </div>
             </div>
           </section>
@@ -153,25 +170,25 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
             <div class="grid gap-2">
               <div class="text-4xl font-semibold tracking-tight">Display heading</div>
               <div class="text-2xl font-semibold">Section heading</div>
-              <div class="text-base text-foreground/80">
+              <div class="text-base text-foreground-muted">
                 Body text is built on the tokenized palette with light and dark theme support.
               </div>
-              <div class="text-sm text-foreground/60">Caption text for secondary details.</div>
+              <div class="text-sm text-foreground-faint">Caption text for secondary details.</div>
             </div>
           </section>
           <section id="radii">
             <h2 class="mb-4 text-2xl font-semibold">Radii</h2>
             <div class="flex flex-wrap items-end gap-6">
-              <div class="grid gap-2 text-sm text-foreground/70">
-                <div class="h-12 w-24 rounded-sm bg-secondary/40"></div>
+              <div class="grid gap-2 text-sm text-foreground-subtle">
+                <div class="h-12 w-24 rounded-sm bg-secondary-subtle"></div>
                 <span>sm</span>
               </div>
-              <div class="grid gap-2 text-sm text-foreground/70">
-                <div class="h-12 w-24 rounded-md bg-secondary/40"></div>
+              <div class="grid gap-2 text-sm text-foreground-subtle">
+                <div class="h-12 w-24 rounded-md bg-secondary-subtle"></div>
                 <span>md</span>
               </div>
-              <div class="grid gap-2 text-sm text-foreground/70">
-                <div class="h-12 w-24 rounded-lg bg-secondary/40"></div>
+              <div class="grid gap-2 text-sm text-foreground-subtle">
+                <div class="h-12 w-24 rounded-lg bg-secondary-subtle"></div>
                 <span>lg</span>
               </div>
             </div>
@@ -234,37 +251,28 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
             </div>
           </section>
           <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Selects</h2>
-            <div class="grid gap-4 md:grid-cols-2">
+            <h2 class="text-2xl font-semibold">Number & Date Inputs</h2>
+            <div class="grid max-w-md gap-4">
               <div class="grid gap-2">
-                <Label>Standard select</Label>
-                <Select
-                  v-model="selectedDepartment"
-                  :options="selectOptions"
-                  placeholder="Choose a workflow"
-                  width="full"
-                />
+                <Label for="ds-number">Quantity</Label>
+                <NumberInput id="ds-number" v-model="numberValue" placeholder="0.00" />
+                <p class="text-xs text-foreground-faint">Value: {{ numberValue || '—' }}</p>
               </div>
               <div class="grid gap-2">
-                <Label>Multi select</Label>
-                <MultiSelect
-                  v-model="selectedTeams"
-                  :options="selectOptions"
-                  placeholder="Choose departments"
-                  width="full"
-                />
+                <Label for="ds-date">Date</Label>
+                <DateTimePicker id="ds-date" v-model="dateValue" mode="date" />
+                <p class="text-xs text-foreground-faint">Value: {{ dateValue || '—' }}</p>
               </div>
-            </div>
-            <div class="grid gap-2">
-              <Label>Search and select</Label>
-              <SearchAndSelect
-                v-model="searchSelection"
-                :options="selectOptions"
-                :allow-create="true"
-                placeholder="Search workflows"
-                width="full"
-                @create="(value) => { searchSelection = value; }"
-              />
+              <div class="grid gap-2">
+                <Label for="ds-time">Time</Label>
+                <DateTimePicker id="ds-time" v-model="timeValue" mode="time" />
+                <p class="text-xs text-foreground-faint">Value: {{ timeValue || '—' }}</p>
+              </div>
+              <div class="grid gap-2">
+                <Label for="ds-datetime">Date & time</Label>
+                <DateTimePicker id="ds-datetime" v-model="dateTimeValue" mode="datetime" />
+                <p class="text-xs text-foreground-faint">Value: {{ dateTimeValue || '—' }}</p>
+              </div>
             </div>
           </section>
           <section class="grid gap-4">
@@ -321,15 +329,15 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
           <section class="grid gap-4">
             <h2 class="text-2xl font-semibold">Loading</h2>
             <div class="flex flex-wrap items-center gap-6">
-              <div class="flex items-center gap-2 text-sm text-foreground/70">
+              <div class="flex items-center gap-2 text-sm text-foreground-subtle">
                 <Spinner size="sm" />
                 <span>Small</span>
               </div>
-              <div class="flex items-center gap-2 text-sm text-foreground/70">
+              <div class="flex items-center gap-2 text-sm text-foreground-subtle">
                 <Spinner />
                 <span>Medium</span>
               </div>
-              <div class="flex items-center gap-2 text-sm text-foreground/70">
+              <div class="flex items-center gap-2 text-sm text-foreground-subtle">
                 <Spinner size="lg" />
                 <span>Large</span>
               </div>
@@ -366,7 +374,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
                 <template #description>
                   Invite contributors and assign roles.
                 </template>
-                <div class="grid gap-2 text-sm text-foreground/70">
+                <div class="grid gap-2 text-sm text-foreground-subtle">
                   <div class="flex items-center justify-between">
                     <span>Policy templates</span>
                     <span>12</span>
@@ -396,15 +404,15 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
           <section class="grid gap-4">
             <h2 class="text-2xl font-semibold">Avatars</h2>
             <div class="flex flex-wrap items-center gap-6">
-              <div class="flex items-center gap-3 text-sm text-foreground/70">
+              <div class="flex items-center gap-3 text-sm text-foreground-subtle">
                 <Avatar size="sm" fallback="SM" />
                 <span>Small</span>
               </div>
-              <div class="flex items-center gap-3 text-sm text-foreground/70">
+              <div class="flex items-center gap-3 text-sm text-foreground-subtle">
                 <Avatar fallback="MD" />
                 <span>Medium</span>
               </div>
-              <div class="flex items-center gap-3 text-sm text-foreground/70">
+              <div class="flex items-center gap-3 text-sm text-foreground-subtle">
                 <Avatar size="lg">
                   <template #image>
                     <img
@@ -468,14 +476,14 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
                   trigger-size="md"
                 >
                   <div class="grid gap-1">
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary/50">
+                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
                       Profile
                     </button>
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary/50">
+                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
                       Notifications
                     </button>
                     <div class="my-1 h-px bg-border"></div>
-                    <button class="w-full rounded-md px-2 py-1 text-left text-error hover:bg-error/10">
+                    <button class="w-full rounded-md px-2 py-1 text-left text-error hover:bg-error-soft">
                       Sign out
                     </button>
                   </div>
@@ -489,10 +497,10 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
                   trigger-size="xs"
                 >
                   <div class="grid gap-1">
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary/50">
+                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
                       Quick action
                     </button>
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary/50">
+                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
                       Export
                     </button>
                   </div>
@@ -529,6 +537,61 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
           </section>
         </div>
 
+        <div v-if="activeTab === 'selects'" class="grid gap-10 py-6">
+          <section class="grid gap-4">
+            <h2 class="text-2xl font-semibold">Selects (Form demo)</h2>
+            <Form class="app-form" @submit.prevent>
+              <div class="grid gap-4 md:grid-cols-2">
+                <div class="grid gap-2">
+                  <Label>Standard select</Label>
+                  <Select
+                    v-model="selectedDepartment"
+                    name="department"
+                    :options="selectOptions"
+                    placeholder="Choose a workflow"
+                    width="full"
+                  />
+                </div>
+                <div class="grid gap-2">
+                  <Label>Multi select</Label>
+                  <MultiSelect
+                    v-model="selectedTeams"
+                    name="teams"
+                    :options="selectOptions"
+                    placeholder="Choose departments"
+                    width="full"
+                  />
+                </div>
+              </div>
+              <div class="grid gap-2">
+                <Label>Search and select</Label>
+                <SearchAndSelect
+                  v-model="searchSelection"
+                  name="workflow"
+                  :options="selectOptions"
+                  :allow-create="true"
+                  placeholder="Search workflows"
+                  width="full"
+                  @create="(value) => { searchSelection = value; }"
+                />
+              </div>
+              <div class="grid gap-2">
+                <Label for="select-note">Notes</Label>
+                <Input id="select-note" v-model="selectNote" placeholder="Optional context..." />
+              </div>
+            </Form>
+          </section>
+          <section class="grid gap-2">
+            <h3 class="text-lg font-semibold">Selected values</h3>
+            <div class="rounded-lg border border-border bg-card p-4 text-sm text-foreground-muted">
+              <div>Department: {{ selectedDepartment || '—' }}</div>
+              <div>Teams: {{ selectedTeams.length ? selectedTeams.join(', ') : '—' }}</div>
+              <div>Search selection: {{ searchSelection || '—' }}</div>
+              <div>Notes: {{ selectNote || '—' }}</div>
+            </div>
+          </section>
+        </div>
+
         <div v-if="activeTab === 'editors'" class="grid gap-10 py-6">
           <section class="grid gap-4">
             <h2 class="text-2xl font-semibold">Rich text editor</h2>
@@ -537,9 +600,14 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
               placeholder="Write update notes, type @ to mention..."
               :mention-items="mentionItems"
             />
+            <div class="rounded-lg border border-border bg-card p-4 text-sm text-foreground-muted">
+              <div class="mb-2 text-xs uppercase tracking-wide text-foreground-disabled">HTML output</div>
+              <pre class="whitespace-pre-wrap break-words">{{ editorContent }}</pre>
+            </div>
           </section>
         </div>
       </main>
     </div>
-  </div>
+  </AppLayout>
 </template>
+

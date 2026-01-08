@@ -10,6 +10,14 @@ export interface BreadcrumbItem {
     href: string;
 }
 
+export interface SelectOption {
+    value?: string | number;
+    label?: string;
+    description?: string;
+    group?: string;
+    disabled?: boolean;
+}
+
 export interface NavItem {
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;

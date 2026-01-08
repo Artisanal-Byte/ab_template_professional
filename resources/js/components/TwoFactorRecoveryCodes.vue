@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AlertError from '@/components/AlertError.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Card from '@/components/my-ui/Card.vue';
+import Button from '@/components/ui/Button.vue';
+import Card from '@/components/ui/Card.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
@@ -87,13 +87,13 @@ onMounted(async () => {
                 <div v-else class="mt-3 space-y-3">
                     <div
                         ref="recoveryCodeSectionRef"
-                        class="grid gap-1 rounded-lg bg-secondary/40 p-4 font-mono text-sm"
+                        class="grid gap-1 rounded-lg bg-secondary-subtle p-4 font-mono text-sm"
                     >
                         <div v-if="!recoveryCodesList.length" class="space-y-2">
                             <div
                                 v-for="n in 8"
                                 :key="n"
-                                class="h-4 animate-pulse rounded bg-foreground/10"
+                                class="h-4 animate-pulse rounded bg-skeleton"
                             ></div>
                         </div>
                         <div
@@ -104,7 +104,7 @@ onMounted(async () => {
                             {{ code }}
                         </div>
                     </div>
-                    <p class="text-xs text-foreground/60 select-none">
+                    <p class="text-xs text-foreground-faint select-none">
                         Each recovery code can be used once to access your
                         account and will be removed after use. If you need more,
                         click
@@ -115,3 +115,4 @@ onMounted(async () => {
         </div>
     </Card>
 </template>
+

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Avatar from '@/components/my-ui/Avatar.vue';
+import Avatar from '@/components/ui/Avatar.vue';
 import { useInitials } from '@/composables/useInitials';
 
 const props = defineProps({
@@ -36,9 +36,10 @@ const { getInitials } = useInitials();
         <span class="truncate font-medium">{{ props.user.name }}</span>
         <span
             v-if="props.showEmail"
-            class="truncate text-xs text-foreground/60"
+            class="truncate text-xs text-foreground-faint"
         >
             {{ props.user.email }}
         </span>
     </div>
 </template>
+

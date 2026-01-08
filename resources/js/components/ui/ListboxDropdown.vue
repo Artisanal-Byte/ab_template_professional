@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import {
-    PopoverContent,
-    PopoverPortal,
-    PopoverRoot,
-    PopoverTrigger,
-} from 'reka-ui';
+import PopoverBase from '@/components/ui/PopoverBase.vue';
 import { Check } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
+import { getOptionValue } from '@/composables/useSelectDisplay';
+import type { SelectOption } from '@/types';
 
+// Slots:
+// - trigger: Trigger element.
+// - header: Optional header content (e.g., search input).
+// - footer: Optional footer content (e.g., create action).
+// - loading: Custom loading state.
+// - empty: Custom empty state.
+// - default: Option list content (internal rendering).
 const props = defineProps({
     options: {
         type: Array,
@@ -67,62 +71,34 @@ const open = defineModel('open', {
     default: undefined,
 });
 
-const contentRef = ref<HTMLElement | null>(null);
+const contentRef = ref<any>(null);
 const activeIndex = ref(0);
-
-const widthClasses = {
-    xs: 'w-32',
-    sm: 'w-40',
-    md: 'w-56',
-    lg: 'w-72',
-    xl: 'w-80',
-    full: 'w-full min-w-0',
-};
-
-const widthStyles = {
-    xs: '8rem',
-    sm: '10rem',
-    md: '14rem',
-    lg: '18rem',
-    xl: '20rem',
-    full: '100%',
-};
 
 const contentClasses = computed(() =>
     cn(
         'z-50 rounded-lg border border-border bg-card text-card-foreground shadow-lg',
-        widthClasses[props.width] || widthClasses.md,
+        'p-0',
         'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
         'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
         props.contentClass,
     ),
 );
 
-const contentStyle = computed(() => {
-    if (props.width === 'full') {
-        return {
-            width: 'var(--reka-popover-trigger-width)',
-            minWidth: 'var(--reka-popover-trigger-width)',
-        };
-    }
+const options = computed(() => props.options as SelectOption[]);
+const selectedValues = computed(
+    () => props.selectedValues as Array<string | number>,
+);
 
-    const width = widthStyles[props.width] || widthStyles.md;
-    return {
-        width,
-        minWidth: width,
-    };
-});
-
-const getOptionValue = (option: any) =>
-    option?.value ?? option?.label ?? '';
+const getOptionValueSafe = (option: SelectOption) =>
+    getOptionValue(option);
 
 const filteredOptions = computed(() => {
     if (!props.filterText) {
-        return props.options;
+        return options.value;
     }
 
     const term = props.filterText.toLowerCase();
-    return props.options.filter((option: any) => {
+    return options.value.filter((option) => {
         const label = String(option?.label ?? '').toLowerCase();
         const description = String(option?.description ?? '').toLowerCase();
         return label.includes(term) || description.includes(term);
@@ -130,8 +106,8 @@ const filteredOptions = computed(() => {
 });
 
 const groupedOptions = computed(() => {
-    const groups = new Map<string, any[]>();
-    filteredOptions.value.forEach((option: any) => {
+    const groups = new Map<string, SelectOption[]>();
+    filteredOptions.value.forEach((option) => {
         const group = option?.group || '';
         if (!groups.has(group)) {
             groups.set(group, []);
@@ -146,19 +122,19 @@ const groupedOptions = computed(() => {
 });
 
 const flatOptions = computed(() =>
-    filteredOptions.value.filter((option: any) => !option?.disabled),
+    filteredOptions.value.filter((option) => !option?.disabled),
 );
 
 const activeOption = computed(
     () => flatOptions.value[activeIndex.value] || null,
 );
 
-const isSelected = (option: any) => {
-    const value = getOptionValue(option);
-    return props.selectedValues.some((selected: any) => selected === value);
+const isSelected = (option: SelectOption) => {
+    const value = getOptionValueSafe(option);
+    return selectedValues.value.some((selected) => selected === value);
 };
 
-const handleSelect = (option: any) => {
+const handleSelect = (option: SelectOption) => {
     if (!option || option.disabled) {
         return;
     }
@@ -212,51 +188,53 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 watch(
-    () => [open.value, props.filterText],
-    async () => {
-        if (!open.value) {
+    () => open.value,
+    async (value) => {
+        if (!value) {
             activeIndex.value = 0;
             return;
         }
         await nextTick();
-        contentRef.value?.focus();
+        const target = contentRef.value?.$el ?? contentRef.value;
+        target?.focus?.();
     },
 );
 </script>
 
 <template>
-    <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
+    <PopoverBase
+        v-model:open="open"
+        :side="props.side"
+        :align="props.align"
+        :side-offset="props.sideOffset"
+        :width="props.width"
+        :content-class="contentClasses"
+    >
+        <template #trigger>
             <slot name="trigger" />
-        </PopoverTrigger>
-        <PopoverPortal>
-            <PopoverContent
-                ref="contentRef"
-                :side="props.side"
-                :align="props.align"
-                :side-offset="props.sideOffset"
-                :class="contentClasses"
-                :style="contentStyle"
-                tabindex="0"
-                @keydown="handleKeydown"
-            >
-                <div v-if="$slots.header" class="border-b border-border p-2">
-                    <slot name="header" />
-                </div>
+        </template>
+        <div
+            ref="contentRef"
+            tabindex="0"
+            @keydown="handleKeydown"
+        >
+            <div v-if="$slots.header" class="border-b border-border p-2">
+                <slot name="header" />
+            </div>
 
+            <div
+                class="p-2"
+                :style="{ maxHeight: props.maxHeight, overflowY: 'auto' }"
+            >
+                <div v-if="props.loading" class="py-4 text-center text-sm text-foreground-faint">
+                    <slot name="loading">Loading...</slot>
+                </div>
                 <div
-                    class="p-2"
-                    :style="{ maxHeight: props.maxHeight, overflowY: 'auto' }"
+                    v-else-if="!filteredOptions.length"
+                    class="py-4 text-center text-sm text-foreground-faint"
                 >
-                    <div v-if="props.loading" class="py-4 text-center text-sm text-foreground/60">
-                        <slot name="loading">Loading...</slot>
-                    </div>
-                    <div
-                        v-else-if="!filteredOptions.length"
-                        class="py-4 text-center text-sm text-foreground/60"
-                    >
-                        <slot name="empty">{{ props.noResultsText }}</slot>
-                    </div>
+                    <slot name="empty">{{ props.noResultsText }}</slot>
+                </div>
                     <div v-else class="grid gap-1">
                         <div
                             v-for="group in groupedOptions"
@@ -265,37 +243,37 @@ watch(
                         >
                             <div
                                 v-if="group.group"
-                                class="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-foreground/50"
+                                class="px-2 pt-2 text-xs font-semibold uppercase tracking-wide text-foreground-disabled"
                             >
                                 {{ group.group }}
                             </div>
                             <button
                                 v-for="option in group.options"
-                                :key="String(getOptionValue(option))"
+                                :key="String(getOptionValueSafe(option))"
                                 type="button"
                                 :disabled="option.disabled"
                                 class="flex w-full items-start gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors"
                                 :class="[
                                     option.disabled
                                         ? 'cursor-not-allowed opacity-50'
-                                        : 'hover:bg-secondary/50',
+                                        : 'hover:bg-secondary-hover',
                                     isSelected(option)
-                                        ? 'bg-secondary/60 text-foreground'
-                                        : 'text-foreground/80',
+                                        ? 'bg-secondary-active text-foreground'
+                                        : 'text-foreground-muted',
                                     activeOption === option
-                                        ? 'ring-1 ring-primary/30'
+                                        ? 'ring-1 ring-focus-ring'
                                         : '',
                                 ]"
                                 @click="handleSelect(option)"
                             >
-                                <span class="mt-0.5 text-foreground/60">
+                                <span class="mt-0.5 text-foreground-faint">
                                     <Check v-if="isSelected(option)" class="h-4 w-4" />
                                 </span>
                                 <span class="flex-1">
                                     <span class="block font-medium">{{ option.label }}</span>
                                     <span
                                         v-if="option.description"
-                                        class="block text-xs text-foreground/60"
+                                        class="block text-xs text-foreground-faint"
                                     >
                                         {{ option.description }}
                                     </span>
@@ -303,12 +281,12 @@ watch(
                             </button>
                         </div>
                     </div>
-                </div>
+            </div>
 
-                <div v-if="$slots.footer" class="border-t border-border p-2">
-                    <slot name="footer" />
-                </div>
-            </PopoverContent>
-        </PopoverPortal>
-    </PopoverRoot>
+            <div v-if="$slots.footer" class="border-t border-border p-2">
+                <slot name="footer" />
+            </div>
+        </div>
+    </PopoverBase>
 </template>
+

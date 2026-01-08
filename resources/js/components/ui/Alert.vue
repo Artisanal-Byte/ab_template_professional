@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue';
 import { cn } from '@/lib/utils';
+import { splitAttrs } from '@/lib/attrs';
 
+// Slots:
+// - title: Optional title content.
+// - description: Optional description content.
+// - default: Fallback description content.
 const props = defineProps({
     variant: {
         type: String,
@@ -14,28 +19,26 @@ const props = defineProps({
 });
 
 const slots = useSlots();
-const attrs = useAttrs();
+const attrs = useAttrs() as Record<string, unknown>;
+const attrsSplit = computed(() => splitAttrs(attrs));
 
-const variantClasses = {
-    neutral: 'border-border/60 bg-card text-card-foreground',
-    info: 'border-info/40 bg-info/10 text-foreground',
-    success: 'border-success/40 bg-success/10 text-foreground',
-    warning: 'border-warning/40 bg-warning/10 text-foreground',
-    error: 'border-error/40 bg-error/10 text-foreground',
+const variantClasses: Record<string, string> = {
+    neutral: 'border-border-subtle bg-card text-card-foreground',
+    info: 'border-info-border bg-info-soft text-foreground',
+    success: 'border-success-border bg-success-soft text-foreground',
+    warning: 'border-warning-border bg-warning-soft text-foreground',
+    error: 'border-error-border bg-error-soft text-foreground',
 };
 
 const alertClass = computed(() =>
     cn(
         'rounded-lg border px-4 py-3 text-sm',
         variantClasses[props.variant] || variantClasses.neutral,
-        attrs.class,
+        attrsSplit.value.className,
     ),
 );
 
-const boundAttrs = computed(() => {
-    const { class: _class, ...rest } = attrs;
-    return rest;
-});
+const boundAttrs = computed(() => attrsSplit.value.rest);
 
 const hasTitle = computed(() => Boolean(slots.title));
 const hasDescription = computed(
@@ -48,10 +51,11 @@ const hasDescription = computed(
         <div v-if="hasTitle" class="mb-1 text-sm font-semibold leading-none">
             <slot name="title" />
         </div>
-        <div v-if="hasDescription" class="text-sm text-foreground/75">
+        <div v-if="hasDescription" class="text-sm text-foreground-subtle">
             <slot name="description">
                 <slot />
             </slot>
         </div>
     </component>
 </template>
+

@@ -1,20 +1,29 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import * as icons from 'lucide-vue-next';
-import { computed } from 'vue';
 
-interface Props {
-    name: string;
-    class?: string;
-    size?: number | string;
-    color?: string;
-    strokeWidth?: number | string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    class: '',
-    size: 16,
-    strokeWidth: 2,
+const props = defineProps({
+    name: {
+        type: String,
+        required: true,
+    },
+    class: {
+        type: String,
+        default: '',
+    },
+    size: {
+        type: [Number, String],
+        default: 16,
+    },
+    color: {
+        type: String,
+        default: '',
+    },
+    strokeWidth: {
+        type: [Number, String],
+        default: 2,
+    },
 });
 
 const className = computed(() => cn('h-4 w-4', props.class));

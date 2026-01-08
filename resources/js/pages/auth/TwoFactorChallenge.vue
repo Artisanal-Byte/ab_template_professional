@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Input from '@/components/my-ui/Input.vue';
-import InputOTP from '@/components/my-ui/InputOTP.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import InputOTP from '@/components/ui/InputOTP.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/vue3';
@@ -77,7 +77,7 @@ const code = ref<string>('');
                     <Button type="submit" class="w-full" :disabled="processing"
                         >Continue</Button
                     >
-                    <div class="text-center text-sm text-foreground/60">
+                    <div class="text-center text-sm text-foreground-faint">
                         <span>or you can </span>
                         <button
                             type="button"
@@ -109,7 +109,7 @@ const code = ref<string>('');
                         >Continue</Button
                     >
 
-                    <div class="text-center text-sm text-foreground/60">
+                    <div class="text-center text-sm text-foreground-faint">
                         <span>or you can </span>
                         <button
                             type="button"
@@ -124,3 +124,4 @@ const code = ref<string>('');
         </div>
     </AuthLayout>
 </template>
+

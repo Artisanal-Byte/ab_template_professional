@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Badge from '@/components/my-ui/Badge.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Card from '@/components/my-ui/Card.vue';
-import Separator from '@/components/my-ui/Separator.vue';
+import Badge from '@/components/ui/Badge.vue';
+import Button from '@/components/ui/Button.vue';
+import Card from '@/components/ui/Card.vue';
+import Separator from '@/components/ui/Separator.vue';
 import { dashboard, login, register } from '@/routes';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -27,7 +27,7 @@ withDefaults(
                         NQ
                     </div>
                     <div>
-                        <p class="text-xs uppercase tracking-[0.3em] text-foreground/60">Neujin eQMS</p>
+                        <p class="text-xs uppercase tracking-[0.3em] text-foreground-faint">Neujin eQMS</p>
                         <p class="text-base font-semibold">Quality workspace</p>
                     </div>
                 </div>
@@ -56,7 +56,7 @@ withDefaults(
                     <h1 class="text-4xl font-semibold tracking-tight lg:text-5xl">
                         Quality systems you can trust, built to scale with your team.
                     </h1>
-                    <p class="text-lg text-foreground/70">
+                    <p class="text-lg text-foreground-subtle">
                         Replace fragmented compliance tools with a focused workspace for SOPs, training,
                         and approvals. Designed for clarity, speed, and confident audits.
                     </p>
@@ -69,13 +69,13 @@ withDefaults(
                 </section>
 
                 <section class="relative">
-                    <div class="absolute -top-6 right-4 hidden h-24 w-24 rounded-full bg-accent/20 blur-3xl lg:block"></div>
+                    <div class="absolute -top-6 right-4 hidden h-24 w-24 rounded-full bg-accent-soft blur-3xl lg:block"></div>
                     <Card class="relative">
                         <template #title>Quick start checklist</template>
                         <template #description>
                             Everything you need to launch a compliant workspace.
                         </template>
-                        <div class="grid gap-3 text-sm text-foreground/70">
+                        <div class="grid gap-3 text-sm text-foreground-subtle">
                             <div class="flex items-center justify-between">
                                 <span>Import your SOPs</span>
                                 <span>10 min</span>
@@ -102,3 +102,4 @@ withDefaults(
         </div>
     </div>
 </template>
+

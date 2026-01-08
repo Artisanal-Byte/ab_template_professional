@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import Button from '@/components/my-ui/Button.vue';
+import Button from '@/components/ui/Button.vue';
 import { useAppearance } from '@/composables/useAppearance';
 import { Menu, Moon, Sun } from 'lucide-vue-next';
+
+type BreadcrumbItemType = {
+    title: string;
+    href?: string;
+};
 
 const props = defineProps({
     breadcrumbs: {
@@ -18,6 +24,10 @@ const { appearance, updateAppearance } = useAppearance();
 const toggleTheme = () => {
     updateAppearance(appearance.value === 'dark' ? 'light' : 'dark');
 };
+
+const breadcrumbItems = computed(
+    () => props.breadcrumbs as BreadcrumbItemType[],
+);
 </script>
 
 <template>
@@ -43,8 +53,8 @@ const toggleTheme = () => {
             >
                 <Menu class="h-4 w-4" />
             </Button>
-            <template v-if="props.breadcrumbs && props.breadcrumbs.length > 0">
-                <Breadcrumbs :breadcrumbs="props.breadcrumbs" />
+            <template v-if="breadcrumbItems.length > 0">
+                <Breadcrumbs :breadcrumbs="breadcrumbItems" />
             </template>
         </div>
         <Button

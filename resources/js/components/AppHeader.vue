@@ -1,30 +1,31 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import Avatar from '@/components/my-ui/Avatar.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Dialog from '@/components/my-ui/Dialog.vue';
-import DropdownMenu from '@/components/my-ui/DropdownMenu.vue';
-import Tooltip from '@/components/my-ui/Tooltip.vue';
+import Avatar from '@/components/ui/Avatar.vue';
+import Button from '@/components/ui/Button.vue';
+import Dialog from '@/components/ui/Dialog.vue';
+import DropdownMenu from '@/components/ui/DropdownMenu.vue';
+import Tooltip from '@/components/ui/Tooltip.vue';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
+import { externalNavItems, mainNavItems } from '@/config/navConfig';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
+import { Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 
-interface Props {
-    breadcrumbs?: BreadcrumbItem[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
+const props = defineProps({
+    breadcrumbs: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const page = usePage();
 const auth = computed(() => page.props.auth);
+const breadcrumbs = computed(() => props.breadcrumbs as BreadcrumbItem[]);
 
 const isCurrentRoute = computed(
     () => (url: NonNullable<InertiaLinkProps['href']>) =>
@@ -38,31 +39,16 @@ const activeItemStyles = computed(
             : '',
 );
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+const mainItems: NavItem[] = mainNavItems();
+const rightItems: NavItem[] = externalNavItems();
 
-const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const isExternalLink = (item: NavItem) =>
+    typeof item.href === 'string' && item.href.startsWith('http');
 </script>
 
 <template>
     <div>
-        <div class="border-b border-border/80">
+        <div class="border-b border-border-muted">
             <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
                 <div class="lg:hidden">
@@ -92,10 +78,10 @@ const rightNavItems: NavItem[] = [
                         >
                             <nav class="-mx-3 space-y-1">
                                 <Link
-                                    v-for="item in mainNavItems"
+                                    v-for="item in mainItems"
                                     :key="item.title"
                                     :href="item.href"
-                                    class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground/80 hover:bg-secondary/40 hover:text-foreground"
+                                    class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-secondary-subtle hover:text-foreground"
                                     :class="activeItemStyles(item.href)"
                                 >
                                     <component
@@ -107,13 +93,14 @@ const rightNavItems: NavItem[] = [
                                 </Link>
                             </nav>
                             <div class="flex flex-col space-y-4">
-                                <a
-                                    v-for="item in rightNavItems"
+                                <component
+                                    :is="isExternalLink(item) ? 'a' : Link"
+                                    v-for="item in rightItems"
                                     :key="item.title"
-                                    :href="toUrl(item.href)"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="flex items-center space-x-2 text-sm font-medium text-foreground/70 hover:text-foreground"
+                                    :href="isExternalLink(item) ? toUrl(item.href) : item.href"
+                                    :target="isExternalLink(item) ? '_blank' : undefined"
+                                    :rel="isExternalLink(item) ? 'noopener noreferrer' : undefined"
+                                    class="flex items-center space-x-2 text-sm font-medium text-foreground-subtle hover:text-foreground"
                                 >
                                     <component
                                         v-if="item.icon"
@@ -121,7 +108,7 @@ const rightNavItems: NavItem[] = [
                                         class="h-5 w-5"
                                     />
                                     <span>{{ item.title }}</span>
-                                </a>
+                                </component>
                             </div>
                         </div>
                     </Dialog>
@@ -135,10 +122,10 @@ const rightNavItems: NavItem[] = [
                 <div class="hidden h-full lg:flex lg:flex-1">
                     <nav class="ml-10 flex h-full items-center space-x-2">
                         <Link
-                            v-for="item in mainNavItems"
+                            v-for="item in mainItems"
                             :key="item.title"
                             :href="item.href"
-                            class="flex h-full items-center border-b-2 border-transparent px-3 text-sm font-medium text-foreground/70 transition hover:text-foreground"
+                            class="flex h-full items-center border-b-2 border-transparent px-3 text-sm font-medium text-foreground-subtle transition hover:text-foreground"
                             :class="activeItemStyles(item.href)"
                         >
                             <component
@@ -163,7 +150,7 @@ const rightNavItems: NavItem[] = [
                     </Button>
 
                     <div class="hidden space-x-1 lg:flex">
-                        <template v-for="item in rightNavItems" :key="item.title">
+                        <template v-for="item in rightItems" :key="item.title">
                             <Tooltip :delay-duration="0">
                                 <template #trigger>
                                     <Button
@@ -172,19 +159,18 @@ const rightNavItems: NavItem[] = [
                                         as-child
                                         class="group h-9 w-9 cursor-pointer"
                                     >
-                                        <a
-                                            :href="toUrl(item.href)"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <component
+                                            :is="isExternalLink(item) ? 'a' : Link"
+                                            :href="isExternalLink(item) ? toUrl(item.href) : item.href"
+                                            :target="isExternalLink(item) ? '_blank' : undefined"
+                                            :rel="isExternalLink(item) ? 'noopener noreferrer' : undefined"
                                         >
-                                            <span class="sr-only">{{
-                                                item.title
-                                            }}</span>
+                                            <span class="sr-only">{{ item.title }}</span>
                                             <component
                                                 :is="item.icon"
                                                 class="size-5 opacity-80 group-hover:opacity-100"
                                             />
-                                        </a>
+                                        </component>
                                     </Button>
                                 </template>
                                 {{ item.title }}
@@ -215,14 +201,15 @@ const rightNavItems: NavItem[] = [
         </div>
 
         <div
-            v-if="props.breadcrumbs.length > 1"
-            class="flex w-full border-b border-border/70"
+            v-if="breadcrumbs.length > 1"
+            class="flex w-full border-b border-border-muted"
         >
             <div
-                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-foreground/60 md:max-w-7xl"
+                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-foreground-faint md:max-w-7xl"
             >
                 <Breadcrumbs :breadcrumbs="breadcrumbs" />
             </div>
         </div>
     </div>
 </template>
+

@@ -30,7 +30,7 @@ defineProps<{
                     </Link>
                     <div class="space-y-2 text-center">
                         <h1 class="text-xl font-medium">{{ title }}</h1>
-                        <p class="text-center text-sm text-foreground/60">
+                        <p class="text-center text-sm text-foreground-faint">
                             {{ description }}
                         </p>
                     </div>
@@ -40,3 +40,4 @@ defineProps<{
         </div>
     </div>
 </template>
+

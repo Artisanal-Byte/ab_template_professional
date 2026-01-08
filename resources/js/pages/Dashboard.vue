@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import Badge from '@/components/my-ui/Badge.vue';
-import Card from '@/components/my-ui/Card.vue';
-import Separator from '@/components/my-ui/Separator.vue';
+import Badge from '@/components/ui/Badge.vue';
+import Card from '@/components/ui/Card.vue';
+import Separator from '@/components/ui/Separator.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
@@ -26,7 +26,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <h1 class="text-2xl font-semibold tracking-tight">
                         Dashboard
                     </h1>
-                    <p class="text-sm text-foreground/60">
+                    <p class="text-sm text-foreground-faint">
                         Snapshot of compliance activity and recent work.
                     </p>
                 </div>
@@ -40,21 +40,21 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <Card>
                     <template #title>Pending approvals</template>
                     <template #description>Awaiting sign-off</template>
-                    <div class="relative aspect-video overflow-hidden rounded-md border border-border">
+                    <div class="relative aspect-video overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                         <PlaceholderPattern />
                     </div>
                 </Card>
                 <Card>
                     <template #title>Training status</template>
                     <template #description>Required sessions</template>
-                    <div class="relative aspect-video overflow-hidden rounded-md border border-border">
+                    <div class="relative aspect-video overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                         <PlaceholderPattern />
                     </div>
                 </Card>
                 <Card>
                     <template #title>Audit readiness</template>
                     <template #description>Key checkpoints</template>
-                    <div class="relative aspect-video overflow-hidden rounded-md border border-border">
+                    <div class="relative aspect-video overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                         <PlaceholderPattern />
                     </div>
                 </Card>
@@ -66,24 +66,24 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <template #description>
                         Latest updates across policies and workflows.
                     </template>
-                    <div class="grid gap-4 text-sm text-foreground/70">
+                    <div class="grid gap-4 text-sm text-foreground-subtle">
                         <div class="flex items-center justify-between">
                             <span>SOP-14 updated</span>
                             <span>2 hours ago</span>
                         </div>
-                        <Separator />
+                        <Separator class="bg-border-subtle" />
                         <div class="flex items-center justify-between">
                             <span>Training cycle published</span>
                             <span>Today</span>
                         </div>
-                        <Separator />
+                        <Separator class="bg-border-subtle" />
                         <div class="flex items-center justify-between">
                             <span>CAPA review assigned</span>
                             <span>Yesterday</span>
                         </div>
                     </div>
                     <div class="mt-6">
-                        <div class="relative min-h-[40vh] overflow-hidden rounded-md border border-border">
+                        <div class="relative min-h-[40vh] overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                             <PlaceholderPattern />
                         </div>
                     </div>
@@ -92,3 +92,4 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
     </AppLayout>
 </template>
+

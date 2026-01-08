@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import Breadcrumb from '@/components/my-ui/Breadcrumb.vue';
-import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import Breadcrumb from '@/components/ui/Breadcrumb.vue';
+import { Link } from '@inertiajs/vue3';
+import type { BreadcrumbItem } from '@/types';
 
-interface BreadcrumbItemType {
-    title: string;
-    href?: string;
-}
-
-const props = defineProps<{
-    breadcrumbs: BreadcrumbItemType[];
-}>();
+const props = defineProps({
+    breadcrumbs: {
+        type: Array,
+        default: () => [],
+    },
+});
 
 const items = computed(() =>
-    props.breadcrumbs.map((item, index) => ({
+    (props.breadcrumbs as BreadcrumbItem[]).map((item, index) => ({
         label: item.title,
         href: item.href,
         current: index === props.breadcrumbs.length - 1,

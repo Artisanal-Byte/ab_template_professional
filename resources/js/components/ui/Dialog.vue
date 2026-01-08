@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
+import { computed } from 'vue';
 import {
     DialogClose,
     DialogContent,
@@ -12,6 +12,12 @@ import {
 } from 'reka-ui';
 import { cn } from '@/lib/utils';
 
+// Slots:
+// - trigger: Trigger element.
+// - title: Dialog title.
+// - description: Dialog description.
+// - default: Dialog body content.
+// - footer: Dialog footer actions (receives { close }).
 const props = defineProps({
     modal: {
         type: Boolean,
@@ -35,8 +41,6 @@ const open = defineModel('open', {
     type: Boolean,
     default: undefined,
 });
-
-const slots = useSlots();
 
 const contentClasses = computed(() => {
     const baseClasses =
@@ -104,7 +108,7 @@ const defaultSlotClasses = computed(() =>
             >
                 <DialogOverlay
                     v-if="open"
-                    class="fixed inset-0 z-40 bg-black/40"
+                    class="fixed inset-0 z-40 bg-overlay"
                 />
             </Transition>
 
@@ -121,7 +125,7 @@ const defaultSlotClasses = computed(() =>
                         <DialogTitle v-if="$slots.title" class="text-lg font-semibold">
                             <slot name="title" />
                         </DialogTitle>
-                        <DialogDescription v-if="$slots.description" class="text-sm text-foreground/70">
+                        <DialogDescription v-if="$slots.description" class="text-sm text-foreground-subtle">
                             <slot name="description" />
                         </DialogDescription>
                     </div>
@@ -137,7 +141,7 @@ const defaultSlotClasses = computed(() =>
                     <DialogClose v-if="props.showClose" as-child>
                         <button
                             type="button"
-                            class="absolute right-4 top-4 rounded-md px-2 py-1 text-xs text-foreground/60 transition hover:text-foreground"
+                            class="absolute right-4 top-4 rounded-md px-2 py-1 text-xs text-foreground-faint transition hover:text-foreground"
                         >
                             Close
                         </button>
@@ -147,3 +151,4 @@ const defaultSlotClasses = computed(() =>
         </DialogPortal>
     </DialogRoot>
 </template>
+

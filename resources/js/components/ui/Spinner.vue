@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue';
 import { cn } from '@/lib/utils';
+import { splitAttrs } from '@/lib/attrs';
 
 const props = defineProps({
     size: {
@@ -9,9 +10,10 @@ const props = defineProps({
     },
 });
 
-const attrs = useAttrs();
+const attrs = useAttrs() as Record<string, unknown>;
+const attrsSplit = computed(() => splitAttrs(attrs));
 
-const sizeClasses = {
+const sizeClasses: Record<string, string> = {
     sm: 'h-4 w-4',
     md: 'h-5 w-5',
     lg: 'h-6 w-6',
@@ -19,16 +21,13 @@ const sizeClasses = {
 
 const spinnerClass = computed(() =>
     cn(
-        'animate-spin text-foreground/70',
+        'animate-spin text-foreground-subtle',
         sizeClasses[props.size] || sizeClasses.md,
-        attrs.class,
+        attrsSplit.value.className,
     ),
 );
 
-const boundAttrs = computed(() => {
-    const { class: _class, ...rest } = attrs;
-    return rest;
-});
+const boundAttrs = computed(() => attrsSplit.value.rest);
 </script>
 
 <template>
@@ -55,3 +54,4 @@ const boundAttrs = computed(() => {
         />
     </svg>
 </template>
+

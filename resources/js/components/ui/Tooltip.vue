@@ -10,6 +10,9 @@ import {
 } from 'reka-ui';
 import { cn } from '@/lib/utils';
 
+// Slots:
+// - trigger: Trigger element.
+// - default: Tooltip content.
 const props = defineProps({
     delayDuration: {
         type: Number,
@@ -37,6 +40,13 @@ const props = defineProps({
     },
 });
 
+const sideValue = computed(
+    () => props.side as 'top' | 'bottom' | 'left' | 'right',
+);
+const alignValue = computed(
+    () => props.align as 'start' | 'center' | 'end',
+);
+
 const contentClasses = computed(() =>
     cn(
         'z-50 w-fit rounded-md bg-foreground px-3 py-1.5 text-xs text-background shadow-sm',
@@ -57,8 +67,8 @@ const contentClasses = computed(() =>
             </TooltipTrigger>
             <TooltipPortal>
                 <TooltipContent
-                    :side="props.side"
-                    :align="props.align"
+                    :side="sideValue"
+                    :align="alignValue"
                     :side-offset="props.sideOffset"
                     :class="contentClasses"
                 >

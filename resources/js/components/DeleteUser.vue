@@ -6,10 +6,10 @@ import { ref, useTemplateRef } from 'vue';
 // Components
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import InputError from '@/components/InputError.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Dialog from '@/components/my-ui/Dialog.vue';
-import Input from '@/components/my-ui/Input.vue';
-import Label from '@/components/my-ui/Label.vue';
+import Button from '@/components/ui/Button.vue';
+import Dialog from '@/components/ui/Dialog.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
 const passwordInput = useTemplateRef('passwordInput');
 const isOpen = ref(false);
 </script>
@@ -21,9 +21,9 @@ const isOpen = ref(false);
             description="Delete your account and all of its resources"
         />
         <div
-            class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
+            class="space-y-4 rounded-lg border border-error-border bg-error-soft p-4"
         >
-            <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
+            <div class="relative space-y-0.5 text-error">
                 <p class="font-medium">Warning</p>
                 <p class="text-sm">
                     Please proceed with caution, this cannot be undone.
@@ -95,3 +95,4 @@ const isOpen = ref(false);
         </div>
     </div>
 </template>
+

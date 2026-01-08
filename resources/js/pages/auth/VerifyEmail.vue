@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TextLink from '@/components/TextLink.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Spinner from '@/components/my-ui/Spinner.vue';
+import Button from '@/components/ui/Button.vue';
+import Spinner from '@/components/ui/Spinner.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
@@ -21,7 +21,7 @@ defineProps<{
 
         <div
             v-if="status === 'verification-link-sent'"
-            class="mb-4 text-center text-sm font-medium text-green-600"
+            class="mb-4 text-center text-sm font-medium text-success"
         >
             A new verification link has been sent to the email address you
             provided during registration.
@@ -47,3 +47,4 @@ defineProps<{
         </Form>
     </AuthLayout>
 </template>
+
