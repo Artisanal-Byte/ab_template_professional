@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import Button from '@/components/my-ui/Button.vue';
+import Button from '@/components/ui/Button.vue';
+import PopoverBase from '@/components/ui/PopoverBase.vue';
 import {
     DropdownMenuContent,
     DropdownMenuPortal,
@@ -9,6 +10,9 @@ import {
 } from 'reka-ui';
 import { cn } from '@/lib/utils';
 
+// Slots:
+// - trigger-content: Content inside the trigger button.
+// - default: Dropdown menu content.
 const props = defineProps({
     side: {
         type: String,
@@ -65,16 +69,7 @@ const open = defineModel('open', {
     default: undefined,
 });
 
-const widthClasses = {
-    xs: 'w-32',
-    sm: 'w-40',
-    md: 'w-56',
-    lg: 'w-72',
-    xl: 'w-80',
-    full: 'w-full min-w-0',
-};
-
-const triggerWidthClasses = {
+const triggerWidthClasses: Record<string, string> = {
     xs: 'w-32',
     sm: 'w-40',
     md: 'w-56',
@@ -91,46 +86,27 @@ const triggerClasses = computed(() =>
 );
 
 
-const widthStyles = {
-    xs: '8rem',
-    sm: '10rem',
-    md: '14rem',
-    lg: '18rem',
-    xl: '20rem',
-    full: '100%',
-};
-
 const menuWidthValue = computed(() => props.menuWidth || props.width);
 
-const contentClasses = computed(() =>
-    cn(
-        'z-50 rounded-lg border border-border bg-card p-2 text-sm text-card-foreground shadow-lg',
-        widthClasses[menuWidthValue.value] || widthClasses.md,
-        'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-        'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-        props.contentClass,
-    ),
-);
-
-const contentStyle = computed(() => {
-    if (menuWidthValue.value === 'full') {
-        return {
-            width: 'var(--reka-dropdown-menu-trigger-width)',
-            minWidth: 'var(--reka-dropdown-menu-trigger-width)',
-        };
-    }
-
-    const width = widthStyles[menuWidthValue.value] || widthStyles.md;
-    return {
-        width,
-        minWidth: width,
-    };
-});
+const contentClasses = computed(() => props.contentClass);
 </script>
 
 <template>
-    <DropdownMenuRoot v-model:open="open">
-        <DropdownMenuTrigger as-child>
+    <PopoverBase
+        v-model:open="open"
+        :root-component="DropdownMenuRoot"
+        :trigger-component="DropdownMenuTrigger"
+        :content-component="DropdownMenuContent"
+        :portal-component="DropdownMenuPortal"
+        :side="props.side"
+        :align="props.align"
+        :side-offset="props.sideOffset"
+        :width="menuWidthValue"
+        :content-class="contentClasses"
+        :match-trigger-width="menuWidthValue === 'full'"
+        trigger-width-var="--reka-dropdown-menu-trigger-width"
+    >
+        <template #trigger>
             <Button
                 :class="triggerClasses"
                 :variant="props.triggerVariant"
@@ -141,17 +117,7 @@ const contentStyle = computed(() => {
                 <span v-if="props.triggerLabel">{{ props.triggerLabel }}</span>
                 <slot name="trigger-content" />
             </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuPortal>
-            <DropdownMenuContent
-                :side="props.side"
-                :align="props.align"
-                :side-offset="props.sideOffset"
-                :class="contentClasses"
-                :style="contentStyle"
-            >
-                <slot />
-            </DropdownMenuContent>
-        </DropdownMenuPortal>
-    </DropdownMenuRoot>
+        </template>
+        <slot />
+    </PopoverBase>
 </template>

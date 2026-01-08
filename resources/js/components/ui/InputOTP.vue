@@ -2,6 +2,7 @@
 import { computed, useAttrs } from 'vue';
 import { OTPInput } from 'vue-input-otp';
 import { cn } from '@/lib/utils';
+import { splitAttrs } from '@/lib/attrs';
 
 defineOptions({
     inheritAttrs: false,
@@ -27,25 +28,23 @@ const model = defineModel({
     default: '',
 });
 
-const attrs = useAttrs();
+const attrs = useAttrs() as Record<string, unknown>;
+const attrsSplit = computed(() => splitAttrs(attrs));
 
 const containerClass = computed(() =>
-    cn('flex items-center gap-2', attrs.class),
+    cn('flex items-center gap-2', attrsSplit.value.className),
 );
 
 const resolvedLength = computed(() =>
     props.otpLength || props.length || 6,
 );
 
-const boundAttrs = computed(() => {
-    const { class: _class, ...rest } = attrs;
-    return rest;
-});
+const boundAttrs = computed(() => attrsSplit.value.rest);
 
 const slotClass =
-    'relative flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background text-sm text-foreground shadow-sm transition-all focus-within:ring-2 focus-within:ring-primary/30';
+    'relative flex h-10 w-10 items-center justify-center rounded-md border border-border bg-background text-sm text-foreground shadow-sm transition-all focus-within:ring-2 focus-within:ring-focus-ring';
 const activeClass =
-    'ring-2 ring-primary/30 border-primary';
+    'ring-2 ring-focus-ring border-primary';
 const caretClass = 'absolute inset-0 flex items-center justify-center';
 </script>
 
@@ -74,7 +73,7 @@ const caretClass = 'absolute inset-0 flex items-center justify-center';
                     </div>
                     <div
                         v-if="props.separatorAt && index + 1 === props.separatorAt"
-                        class="text-foreground/40"
+                        class="text-foreground-disabled"
                         role="separator"
                     >
                         -
@@ -84,3 +83,4 @@ const caretClass = 'absolute inset-0 flex items-center justify-center';
         </template>
     </OTPInput>
 </template>
+

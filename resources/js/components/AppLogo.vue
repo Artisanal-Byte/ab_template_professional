@@ -29,13 +29,13 @@ const props = defineProps({
     },
 });
 
-const containerSizes = {
+const containerSizes: Record<string, string> = {
     sm: 'h-8 w-8',
     md: 'h-9 w-9',
     lg: 'h-10 w-10',
 };
 
-const iconSizes = {
+const iconSizes: Record<string, string> = {
     sm: 'h-4 w-4',
     md: 'h-5 w-5',
     lg: 'h-6 w-6',

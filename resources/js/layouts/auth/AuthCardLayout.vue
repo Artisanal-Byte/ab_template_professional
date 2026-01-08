@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
-import Card from '@/components/my-ui/Card.vue';
+import Card from '@/components/ui/Card.vue';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/vue3';
 
@@ -12,7 +12,7 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-secondary/20 p-6 md:p-10"
+        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-secondary-soft p-6 md:p-10"
     >
         <div class="flex w-full max-w-md flex-col gap-6">
             <Link
@@ -40,3 +40,4 @@ defineProps<{
         </div>
     </div>
 </template>
+

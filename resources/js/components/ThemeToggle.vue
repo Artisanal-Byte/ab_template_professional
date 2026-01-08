@@ -8,11 +8,11 @@ const options = [
     { value: 'light', label: 'Light', Icon: Sun },
     { value: 'dark', label: 'Dark', Icon: Moon },
     { value: 'system', label: 'System', Icon: Monitor },
-];
+] as const;
 </script>
 
 <template>
-    <div class="inline-flex items-center gap-1 rounded-lg border border-border bg-secondary/40 p-1">
+    <div class="inline-flex items-center gap-1 rounded-lg border border-border bg-secondary-subtle p-1">
         <button
             v-for="{ value, label, Icon } in options"
             :key="value"
@@ -23,7 +23,7 @@ const options = [
                 'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors',
                 appearance === value
                     ? 'bg-background text-foreground shadow-sm'
-                    : 'text-foreground/60 hover:bg-secondary/60 hover:text-foreground',
+                    : 'text-foreground-faint hover:bg-secondary-active hover:text-foreground',
             ]"
         >
             <component :is="Icon" class="h-4 w-4" />
@@ -31,3 +31,4 @@ const options = [
         </button>
     </div>
 </template>
+

@@ -18,9 +18,9 @@ defineProps<{
         class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0"
     >
         <div
-            class="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r"
+            class="relative hidden h-full flex-col bg-muted p-10 text-background lg:flex dark:border-r"
         >
-            <div class="absolute inset-0 bg-zinc-900" />
+            <div class="absolute inset-0 bg-foreground" />
             <Link
                 :href="home()"
                 class="relative z-20 flex items-center text-lg font-medium"
@@ -28,15 +28,15 @@ defineProps<{
                 <AppLogo
                     :show-text="false"
                     size="md"
-                    container-class="bg-transparent text-white"
-                    icon-class="text-white"
+                    container-class="bg-transparent text-background"
+                    icon-class="text-background"
                 />
                 {{ name }}
             </Link>
             <div v-if="quote" class="relative z-20 mt-auto">
                 <blockquote class="space-y-2">
                     <p class="text-lg">&ldquo;{{ quote.message }}&rdquo;</p>
-                    <footer class="text-sm text-neutral-300">
+                    <footer class="text-sm text-background-muted">
                         {{ quote.author }}
                     </footer>
                 </blockquote>
@@ -50,7 +50,7 @@ defineProps<{
                     <h1 class="text-xl font-medium tracking-tight" v-if="title">
                         {{ title }}
                     </h1>
-                    <p class="text-sm text-foreground/60" v-if="description">
+                    <p class="text-sm text-foreground-faint" v-if="description">
                         {{ description }}
                     </p>
                 </div>
@@ -59,3 +59,4 @@ defineProps<{
         </div>
     </div>
 </template>
+

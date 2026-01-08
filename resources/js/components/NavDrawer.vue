@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import Dialog from '@/components/my-ui/Dialog.vue';
+import Dialog from '@/components/ui/Dialog.vue';
 import { cn } from '@/lib/utils';
 
+// Slots:
+// - default: Drawer content (receives { collapsed }).
 const props = defineProps({
     desktopWidth: {
         type: String,

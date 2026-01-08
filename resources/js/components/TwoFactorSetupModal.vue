@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AlertError from '@/components/AlertError.vue';
 import InputError from '@/components/InputError.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Dialog from '@/components/my-ui/Dialog.vue';
-import InputOTP from '@/components/my-ui/InputOTP.vue';
-import Spinner from '@/components/my-ui/Spinner.vue';
+import Button from '@/components/ui/Button.vue';
+import Dialog from '@/components/ui/Dialog.vue';
+import InputOTP from '@/components/ui/InputOTP.vue';
+import Spinner from '@/components/ui/Spinner.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { confirm } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
@@ -12,12 +12,16 @@ import { useClipboard } from '@vueuse/core';
 import { Check, Copy, ScanLine } from 'lucide-vue-next';
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 
-interface Props {
-    requiresConfirmation: boolean;
-    twoFactorEnabled: boolean;
-}
-
-const props = defineProps<Props>();
+const props = defineProps({
+    requiresConfirmation: {
+        type: Boolean,
+        default: false,
+    },
+    twoFactorEnabled: {
+        type: Boolean,
+        default: false,
+    },
+});
 const isOpen = defineModel<boolean>('isOpen');
 
 const { copy, copied } = useClipboard();
@@ -106,7 +110,7 @@ watch(
                     class="mb-3 w-auto rounded-full border border-border bg-card p-0.5 shadow-sm"
                 >
                     <div
-                        class="relative overflow-hidden rounded-full border border-border bg-secondary/40 p-2.5"
+                        class="relative overflow-hidden rounded-full border border-border bg-secondary-subtle p-2.5"
                     >
                         <div
                             class="absolute inset-0 grid grid-cols-5 opacity-50"
@@ -132,7 +136,7 @@ watch(
                     </div>
                 </div>
                 <h3 class="text-lg font-semibold">{{ modalConfig.title }}</h3>
-                <p class="mt-1 text-sm text-foreground/70">
+                <p class="mt-1 text-sm text-foreground-subtle">
                     {{ modalConfig.description }}
                 </p>
             </div>
@@ -157,7 +161,7 @@ watch(
                             >
                                 <div
                                     v-html="qrCodeSvg"
-                                    class="aspect-square w-full justify-center rounded-lg bg-white p-2 [&_svg]:size-full"
+                                    class="aspect-square w-full justify-center rounded-lg bg-background p-2 [&_svg]:size-full"
                                 />
                             </div>
                         </div>
@@ -188,7 +192,7 @@ watch(
                             >
                                 <div
                                     v-if="!manualSetupKey"
-                                    class="flex h-full w-full items-center justify-center bg-secondary/40 p-3"
+                                    class="flex h-full w-full items-center justify-center bg-secondary-subtle p-3"
                                 >
                                     <Spinner />
                                 </div>
@@ -205,7 +209,7 @@ watch(
                                     >
                                         <Check
                                             v-if="copied"
-                                            class="w-4 text-green-500"
+                                            class="w-4 text-success"
                                         />
                                         <Copy v-else class="w-4" />
                                     </button>
@@ -239,8 +243,7 @@ watch(
                                 />
                                 <InputError
                                     :message="
-                                        errors?.confirmTwoFactorAuthentication
-                                            ?.code
+                                        errors?.['confirmTwoFactorAuthentication.code']
                                     "
                                 />
                             </div>
@@ -267,6 +270,6 @@ watch(
                     </Form>
                 </template>
             </div>
-        </div>
     </Dialog>
 </template>
+

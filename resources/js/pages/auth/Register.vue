@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
-import Button from '@/components/my-ui/Button.vue';
-import Input from '@/components/my-ui/Input.vue';
-import Label from '@/components/my-ui/Label.vue';
-import Spinner from '@/components/my-ui/Spinner.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
@@ -94,7 +94,7 @@ import { Form, Head } from '@inertiajs/vue3';
                 </Button>
             </div>
 
-            <div class="text-center text-sm text-foreground/60">
+            <div class="text-center text-sm text-foreground-faint">
                 Already have an account?
                 <TextLink
                     :href="login()"
@@ -106,3 +106,4 @@ import { Form, Head } from '@inertiajs/vue3';
         </Form>
     </AuthBase>
 </template>
+

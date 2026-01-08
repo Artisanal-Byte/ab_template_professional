@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DropdownMenu from '@/components/my-ui/DropdownMenu.vue';
+import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import UserInfo from '@/components/UserInfo.vue';
 import { usePage } from '@inertiajs/vue3';
 import { ChevronsUpDown } from 'lucide-vue-next';
@@ -33,7 +33,7 @@ const user = page.props.auth.user;
                     <UserInfo :user="user" :compact="props.collapsed" />
                     <ChevronsUpDown
                         v-if="!props.collapsed"
-                        class="ml-auto h-4 w-4 text-foreground/60"
+                        class="ml-auto h-4 w-4 text-foreground-faint"
                     />
                 </div>
             </template>
@@ -41,3 +41,4 @@ const user = page.props.auth.user;
         </DropdownMenu>
     </div>
 </template>
+

@@ -2,8 +2,8 @@
 import HeadingSmall from '@/components/HeadingSmall.vue';
 import TwoFactorRecoveryCodes from '@/components/TwoFactorRecoveryCodes.vue';
 import TwoFactorSetupModal from '@/components/TwoFactorSetupModal.vue';
-import Badge from '@/components/my-ui/Badge.vue';
-import Button from '@/components/my-ui/Button.vue';
+import Badge from '@/components/ui/Badge.vue';
+import Button from '@/components/ui/Button.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -54,7 +54,7 @@ onUnmounted(() => {
                 >
                     <Badge variant="error">Disabled</Badge>
 
-                    <p class="text-foreground/60">
+                    <p class="text-foreground-faint">
                         When you enable two-factor authentication, you will be
                         prompted for a secure pin during login. This pin can be
                         retrieved from a TOTP-supported application on your
@@ -87,7 +87,7 @@ onUnmounted(() => {
                 >
                     <Badge variant="success">Enabled</Badge>
 
-                    <p class="text-foreground/60">
+                    <p class="text-foreground-faint">
                         With two-factor authentication enabled, you will be
                         prompted for a secure, random pin during login, which
                         you can retrieve from the TOTP-supported application on
@@ -119,3 +119,4 @@ onUnmounted(() => {
         </SettingsLayout>
     </AppLayout>
 </template>
+

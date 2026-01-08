@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from '@/components/my-ui/Button.vue';
+import Button from '@/components/ui/Button.vue';
 import { dashboard, login, register } from '@/routes';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -19,7 +19,7 @@ withDefaults(
         class="flex min-h-screen flex-col items-center bg-background p-6 text-foreground lg:justify-center lg:p-8"
     >
         <header
-            class="mb-6 w-full max-w-[335px] text-sm text-foreground/70 not-has-[nav]:hidden lg:max-w-4xl"
+            class="mb-6 w-full max-w-[335px] text-sm text-foreground-subtle not-has-[nav]:hidden lg:max-w-4xl"
         >
             <nav class="flex items-center justify-end gap-4">
                 <Button v-if="$page.props.auth.user" :as="Link" :href="dashboard()" size="sm">
@@ -45,7 +45,7 @@ withDefaults(
                     class="flex-1 p-6 pb-12 text-[13px] leading-[20px] lg:p-20"
                 >
                     <h1 class="mb-1 font-medium">Let's get started</h1>
-                    <p class="mb-2 text-foreground/70">
+                    <p class="mb-2 text-foreground-subtle">
                         Laravel has an incredibly rich ecosystem. <br />We
                         suggest starting with the following.
                     </p>
@@ -143,7 +143,7 @@ withDefaults(
                     </ul>
                 </div>
                 <div
-                    class="relative -mb-px aspect-335/376 w-full shrink-0 overflow-hidden bg-secondary/40 lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:border-l lg:border-border"
+                    class="relative -mb-px aspect-335/376 w-full shrink-0 overflow-hidden bg-secondary-subtle lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:border-l lg:border-border"
                 >
                     <svg
                         class="w-full max-w-none translate-y-0 text-accent opacity-100 transition-all duration-750 starting:translate-y-6 starting:opacity-0"
@@ -828,3 +828,4 @@ withDefaults(
         <div class="hidden h-14.5 lg:block"></div>
     </div>
 </template>
+

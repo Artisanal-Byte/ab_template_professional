@@ -1,19 +1,21 @@
 <script setup lang="ts">
-interface Props {
-    variant?: 'header' | 'sidebar';
-}
+import { computed } from 'vue';
+const props = defineProps({
+    variant: {
+        type: String,
+        default: 'sidebar',
+    },
+});
 
-defineProps<Props>();
+const wrapperClass = computed(() =>
+    props.variant === 'header'
+        ? 'flex min-h-screen w-full flex-col'
+        : 'flex min-h-screen w-full',
+);
 </script>
 
 <template>
-    <div
-        v-if="variant === 'header'"
-        class="flex min-h-screen w-full flex-col"
-    >
-        <slot />
-    </div>
-    <div v-else class="flex min-h-screen w-full">
+    <div :class="wrapperClass">
         <slot />
     </div>
 </template>
