@@ -1,0 +1,194 @@
+name: Deploy Staging (Self-hosted runner)
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+    inputs:
+      run_migrations:
+        description: 'Run php artisan migrate --force ?'
+        type: boolean
+        default: true
+      run_build:
+        description: 'Run frontend build?'
+        type: boolean
+        default: true
+
+env:
+  # Repo + path
+  PROJECT_DIR: /var/www/artisanal_byte/qms_neujin/qms_neujin_staging
+  BRANCH: staging
+  REPO_SSH: git@github-neujin:Artisanal-Byte/neujin-qms.git
+
+  # App identity (optional)
+  APP_NAME: 'qms-neujin'
+  APP_URL: 'https://qms.staging.artisanalbyte.com'
+
+  # Accounts / perms
+  LINUX_USER: git_deployer
+  WEB_GROUP: webapps
+
+  # Binaries
+  PHP_BIN: /usr/bin/php
+  COMPOSER_BIN: /usr/local/bin/composer
+  NPM_BIN: /usr/local/nvm/versions/node/v22.19.0/bin/npm
+
+  # Services
+  USE_HORIZON: '0'
+  RESTART_PHPFPM: '1'
+  PHPFPM_SERVICE: php8.4-fpm
+
+  # Bookkeeping
+  LAST_SHA_FILE: .last_deploy_sha
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64]
+    environment: staging
+
+    concurrency:
+      group: selfhosted-neujin-qms-staging-${{ github.ref_name }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Show context
+        run: |
+          echo "Repo: ${GITHUB_REPOSITORY}"
+          echo "Ref : ${GITHUB_REF} (${GITHUB_REF_NAME})"
+          echo "Dir : ${PROJECT_DIR}"
+          echo "Branch: ${BRANCH}"
+          echo "Repo SSH: ${REPO_SSH}"
+
+      - name: Add github.com to known_hosts
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Ensure project directory exists
+        run: |
+          set -euo pipefail
+          if [ ! -d "${PROJECT_DIR}" ]; then
+            echo "::notice ::Creating ${PROJECT_DIR}..."
+            sudo -n /bin/mkdir -p "${PROJECT_DIR}"
+            sudo -n /usr/bin/chown -R "${LINUX_USER}:${WEB_GROUP}" "${PROJECT_DIR}"
+          else
+            echo "::notice ::${PROJECT_DIR} exists"
+          fi
+
+      - name: Mark repo as safe for git (avoid dubious ownership)
+        run: |
+          git config --global --add safe.directory "${PROJECT_DIR}"
+
+      - name: Bootstrap repo (idempotent)
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+
+          if [ ! -d ".git" ]; then
+            git init
+          fi
+
+          if ! git remote get-url origin >/dev/null 2>&1; then
+            git remote add origin "${REPO_SSH}"
+          fi
+
+          # If origin exists but points somewhere else, fail fast
+          CUR_URL="$(git remote get-url origin || true)"
+          if [ -n "${CUR_URL}" ] && [ "${CUR_URL}" != "${REPO_SSH}" ]; then
+            echo "::error ::origin points to ${CUR_URL}, expected ${REPO_SSH}. Delete ${PROJECT_DIR}/.git once and rerun."
+            exit 1
+          fi
+
+          git fetch --prune --tags origin
+          git checkout -B "${BRANCH}" "origin/${BRANCH}"
+
+      - name: Hard reset to origin/${{ env.BRANCH }}
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          git fetch --prune --tags origin
+          PREV_SHA="$(git rev-parse HEAD || true)"
+          git reset --hard "origin/${BRANCH}"
+          echo "Previous SHA: ${PREV_SHA}"
+          echo "Current  SHA: $(git rev-parse HEAD)"
+
+      - name: Create .env from APP_ENV_STAGING secret (only if missing)
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          if [ ! -f ".env" ]; then
+            echo "::notice ::Creating .env from APP_ENV_STAGING secret"
+            printf "%s" "${{ secrets.APP_ENV_STAGING }}" > .env
+            chmod 600 .env
+          else
+            echo "::notice ::.env already exists; not overwriting"
+          fi
+
+      # IMPORTANT: composer must run before any php artisan command (vendor/autoload.php)
+      - name: Composer install (optimized)
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          export COMPOSER_ALLOW_SUPERUSER=1
+          "${COMPOSER_BIN}" install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Laravel bootstrap + ensure APP_KEY (idempotent)
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+
+          # Generate APP_KEY only if missing/empty
+          if ! grep -q '^APP_KEY=' .env 2>/dev/null || [ -z "$(grep '^APP_KEY=' .env | cut -d= -f2-)" ]; then
+            "${PHP_BIN}" artisan key:generate --force
+          fi
+
+          # storage link & perms
+          [ -L public/storage ] || "${PHP_BIN}" artisan storage:link || true
+          /usr/bin/chgrp -R "${WEB_GROUP}" storage bootstrap/cache || true
+          /bin/chmod -R g+rwX storage bootstrap/cache || true
+
+      - name: DB migrate (NO migrate:fresh)
+        if: ${{ github.event_name == 'push' || inputs.run_migrations == true }}
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          "${PHP_BIN}" artisan migrate --force
+
+      - name: Node install + build (optional)
+        if: ${{ github.event_name == 'push' || inputs.run_build == true }}
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          "${NPM_BIN}" ci --no-audit --no-fund || "${NPM_BIN}" install --no-audit --no-fund
+          "${NPM_BIN}" run build
+
+      - name: Laravel caches (clear → re-cache)
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          "${PHP_BIN}" artisan optimize:clear
+          "${PHP_BIN}" artisan config:cache
+          "${PHP_BIN}" artisan route:cache
+          "${PHP_BIN}" artisan view:cache
+
+      - name: Horizon (optional)
+        if: env.USE_HORIZON == '1'
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          "${PHP_BIN}" artisan horizon:terminate || true
+
+      - name: Restart PHP-FPM (optional)
+        if: env.RESTART_PHPFPM == '1'
+        run: |
+          set -euo pipefail
+          sudo -n /bin/systemctl restart "${PHPFPM_SERVICE}" || echo "::warning ::sudo/systemctl not available; skipping"
+
+      - name: Record last deployed SHA
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_DIR}"
+          git rev-parse HEAD > "${LAST_SHA_FILE}"
