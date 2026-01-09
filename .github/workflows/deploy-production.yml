@@ -1,0 +1,211 @@
+name: Deploy Production (Artifact + Releases)
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+    inputs:
+      run_migrations:
+        description: 'Run php artisan migrate --force ?'
+        type: boolean
+        default: true
+      run_seed:
+        description: 'Run php artisan db:seed --force ? (optional)'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: Build artifact
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.export-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, ctype, fileinfo, openssl, pdo, bcmath, json, tokenizer, xml
+          tools: composer:v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Composer install (no-dev)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Frontend build
+        run: |
+          npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+          npm run build
+
+      # ✅ Stable artifact creation (prevents: "tar: .: file changed as we read it")
+      - name: Create artifact (stable snapshot)
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/appbuild
+
+          rsync -a --delete \
+            --exclude=.git \
+            --exclude=node_modules \
+            --exclude=tests \
+            --exclude=.phpunit.cache \
+            --exclude=.phpunit.result.cache \
+            --exclude=storage \
+            --exclude=public/storage \
+            --exclude=.env \
+            --exclude=.env.* \
+            ./ /tmp/appbuild/
+
+          tar -czf "${GITHUB_SHA}.tar.gz" -C /tmp/appbuild .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-build
+          path: ${{ github.sha }}.tar.gz
+          retention-days: 3
+
+      - name: Export deployment matrix
+        id: export-matrix
+        run: |
+          set -euo pipefail
+          JSON="$(cat ./production-server-config.json)"
+          echo "matrix<<EOF" >> $GITHUB_OUTPUT
+          echo "$JSON" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  deploy:
+    name: '${{ matrix.server.name }}: Deploy'
+    runs-on: ubuntu-latest
+    needs: build
+
+    strategy:
+      matrix:
+        server: ${{ fromJson(needs.build.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-build
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          source: ${{ github.sha }}.tar.gz
+          target: ${{ matrix.server.path }}/artifacts
+
+      - name: Extract & activate release (NO migrate:fresh)
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          BASE_PATH: ${{ matrix.server.path }}
+          RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
+          ACTIVE_PATH: ${{ matrix.server.path }}/current
+          STORAGE_PATH: ${{ matrix.server.path }}/storage
+
+          # ✅ Use your secret name here (choose one)
+          # If your secret is APP_ENV_PRODUCTION, change the next line accordingly.
+          LARAVEL_ENV: ${{ secrets.APP_ENV_PRODUCTION }}
+
+          # push => migrations ON by default, seed OFF
+          RUN_MIGRATIONS: ${{ github.event_name == 'push' && '1' || (inputs.run_migrations && '1' || '0') }}
+          RUN_SEED: ${{ github.event_name == 'push' && '0' || (inputs.run_seed && '1' || '0') }}
+
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          envs: GITHUB_SHA,BASE_PATH,RELEASE_PATH,ACTIVE_PATH,STORAGE_PATH,LARAVEL_ENV,RUN_MIGRATIONS,RUN_SEED
+          script: |
+            set -euo pipefail
+
+            # --- dirs ---
+            sudo mkdir -p "${BASE_PATH}/artifacts" "${BASE_PATH}/releases"
+            sudo mkdir -p "${STORAGE_PATH}/app" "${STORAGE_PATH}/public" "${STORAGE_PATH}/framework" "${STORAGE_PATH}/logs"
+            sudo mkdir -p "${STORAGE_PATH}/framework/cache" "${STORAGE_PATH}/framework/sessions" "${STORAGE_PATH}/framework/views"
+
+            # --- shared .env ---
+            sudo printf "%s" "$LARAVEL_ENV" > "${BASE_PATH}/.env"
+            sudo chmod 600 "${BASE_PATH}/.env"
+
+            # --- extract release ---
+            sudo mkdir -p "${RELEASE_PATH}"
+            sudo tar xzf "${BASE_PATH}/artifacts/${GITHUB_SHA}.tar.gz" -C "${RELEASE_PATH}"
+
+            # --- symlinks: shared .env + shared storage ---
+            sudo ln -s -f "${BASE_PATH}/.env" "${RELEASE_PATH}/.env"
+            sudo rm -rf "${RELEASE_PATH}/storage"
+            sudo ln -s -n -f "${STORAGE_PATH}" "${RELEASE_PATH}/storage"
+
+            # --- activate release ---
+            sudo ln -s -n -f "${RELEASE_PATH}" "${ACTIVE_PATH}"
+
+            # --- ownership (adjust if needed) ---
+            sudo chown -R www-data:www-data "${STORAGE_PATH}" || true
+            sudo chown -R www-data:www-data "${ACTIVE_PATH}/bootstrap/cache" || true
+
+            cd "${ACTIVE_PATH}"
+
+            # --- ensure APP_KEY (only if empty) ---
+            if ! grep -q '^APP_KEY=' "${BASE_PATH}/.env" 2>/dev/null || [ -z "$(grep '^APP_KEY=' "${BASE_PATH}/.env" | cut -d= -f2-)" ]; then
+              sudo php artisan key:generate --force
+            fi
+
+            # --- clear old caches safely ---
+            sudo php artisan optimize:clear || true
+
+            # --- migrations ---
+            if [ "$RUN_MIGRATIONS" = "1" ]; then
+              sudo php artisan migrate --force
+            else
+              echo "Skipping migrations (manual mode)."
+            fi
+
+            # --- optional seed ---
+            if [ "$RUN_SEED" = "1" ]; then
+              sudo php artisan db:seed --force
+            fi
+
+            # --- recache ---
+            sudo php artisan config:cache
+            sudo php artisan route:cache
+            sudo php artisan view:cache
+
+            # --- storage link (public/storage -> storage/app/public) ---
+            sudo php artisan storage:link || true
+
+            # --- queues ---
+            sudo php artisan queue:restart || true
+
+            # --- reload php-fpm (adjust version if needed) ---
+            sudo service php8.4-fpm reload || sudo systemctl reload php8.4-fpm || true
+
+      - name: Cleanup old releases/artifacts (keep last 2)
+        uses: appleboy/ssh-action@master
+        env:
+          BASE_PATH: ${{ matrix.server.path }}
+        with:
+          host: ${{ matrix.server.ip }}
+          username: ${{ matrix.server.username }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ matrix.server.port }}
+          envs: BASE_PATH
+          script: |
+            set -euo pipefail
+            cd "${BASE_PATH}/artifacts" && sudo ls -t | tail -n +3 | xargs -r sudo rm -rf
+            cd "${BASE_PATH}/releases" && sudo ls -t -1 | tail -n +3 | xargs -r sudo rm -rf
