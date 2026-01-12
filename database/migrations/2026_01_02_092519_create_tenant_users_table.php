@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,11 +12,8 @@ return new class extends Migration
             $table->bigIncrements('id');
 
             $table->uuid('tenant_id');
-
-            // Tenant contact info (NOT app login users)
-            $table->string('name', 150);
-            $table->string('email', 190)->nullable();
-            $table->string('role_label', 80)->nullable(); // e.g., QA Manager, Approver
+            $table->unsignedBigInteger('user_id');
+            $table->string('membership_role', 30)->default('employee'); // owner|employee
             $table->string('status', 20)->default('active'); // active|disabled
 
             $table->timestampsTz();
@@ -27,26 +23,20 @@ return new class extends Migration
                 ->on('tenants')
                 ->onDelete('cascade');
 
-            $table->index('tenant_id');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->unique(['tenant_id', 'user_id']);
+            $table->index(['tenant_id', 'status']);
+            $table->index(['user_id', 'status']);
             $table->index('status');
         });
-
-        /**
-         * Ensure (tenant_id, email) is unique ONLY when email is not null.
-         * PostgreSQL allows multiple NULLs in UNIQUE, but this partial index is cleaner and explicit.
-         */
-        DB::statement(
-            'CREATE UNIQUE INDEX tenant_users_tenant_id_email_unique_not_null
-             ON tenant_users (tenant_id, email)
-             WHERE email IS NOT NULL;'
-        );
     }
 
     public function down(): void
     {
-        // Index will drop automatically when table drops, but this is safe:
-        DB::statement('DROP INDEX IF EXISTS tenant_users_tenant_id_email_unique_not_null;');
-
         Schema::dropIfExists('tenant_users');
     }
 };

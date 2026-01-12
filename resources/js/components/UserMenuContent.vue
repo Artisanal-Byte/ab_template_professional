@@ -15,6 +15,7 @@ defineProps({
         required: true,
     },
 });
+
 </script>
 
 <template>
@@ -45,4 +46,3 @@ defineProps({
         </Link>
     </div>
 </template>
-

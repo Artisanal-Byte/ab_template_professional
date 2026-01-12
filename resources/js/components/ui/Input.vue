@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue';
+import { computed, useAttrs, watch } from 'vue';
 import { splitAttrs } from '@/lib/attrs';
 import { inputBase } from '@/lib/uiClass';
 import FieldError from '@/components/ui/FieldError.vue';
@@ -12,6 +12,10 @@ const props = defineProps({
     size: {
         type: String,
         default: 'md',
+    },
+    defaultValue: {
+        type: [String, Number],
+        default: undefined,
     },
     error: {
         type: [String, Array, Object],
@@ -31,6 +35,16 @@ const inputClass = computed(() =>
 );
 
 const boundAttrs = computed(() => attrsSplit.value.rest);
+
+watch(
+    () => props.defaultValue,
+    (value) => {
+        if ((model.value === '' || model.value === null || model.value === undefined) && value !== undefined && value !== null) {
+            model.value = value;
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>

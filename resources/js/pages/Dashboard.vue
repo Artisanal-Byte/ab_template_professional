@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import Badge from '@/components/ui/Badge.vue';
 import Card from '@/components/ui/Card.vue';
 import Separator from '@/components/ui/Separator.vue';
-import { dashboard } from '@/routes';
+import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
@@ -11,7 +11,7 @@ import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url,
+        href: tenantDashboard().url,
     },
 ];
 </script>
@@ -92,4 +92,3 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
     </AppLayout>
 </template>
-

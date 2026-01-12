@@ -3,17 +3,9 @@ import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Separator from '@/components/ui/Separator.vue';
-import { dashboard, login, register } from '@/routes';
+import { login } from '@/routes';
+import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { Head, Link } from '@inertiajs/vue3';
-
-withDefaults(
-    defineProps<{
-        canRegister: boolean;
-    }>(),
-    {
-        canRegister: true,
-    },
-);
 </script>
 
 <template>
@@ -32,15 +24,12 @@ withDefaults(
                     </div>
                 </div>
                 <nav class="flex flex-wrap items-center gap-3">
-                    <Button v-if="$page.props.auth.user" :as="Link" :href="dashboard()">
+                    <Button v-if="$page.props.auth.user" :as="Link" :href="tenantDashboard()">
                         Dashboard
                     </Button>
                     <template v-else>
                         <Button :as="Link" :href="login()" variant="ghost">
                             Log in
-                        </Button>
-                        <Button v-if="canRegister" :as="Link" :href="register()">
-                            Register
                         </Button>
                     </template>
                 </nav>
@@ -62,9 +51,6 @@ withDefaults(
                     </p>
                     <div class="flex flex-wrap gap-3">
                         <Button :as="Link" :href="login()">Get started</Button>
-                        <Button :as="Link" :href="register()" variant="outline">
-                            Request access
-                        </Button>
                     </div>
                 </section>
 
@@ -93,7 +79,7 @@ withDefaults(
                         </div>
                         <template #footer>
                             <div class="flex w-full justify-end">
-                                <Button size="sm" :as="Link" :href="dashboard()">Open workspace</Button>
+                                <Button size="sm" :as="Link" :href="tenantDashboard()">Open workspace</Button>
                             </div>
                         </template>
                     </Card>
@@ -102,4 +88,3 @@ withDefaults(
         </div>
     </div>
 </template>
-

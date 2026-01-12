@@ -9,18 +9,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Needed for gen_random_uuid()
-        DB::statement('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
-
         Schema::create('tenants', function (Blueprint $table) {
-            // UUID PK with default gen_random_uuid()
-            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            if (DB::getDriverName() === 'pgsql') {
+                DB::statement('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
+                $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            } else {
+                $table->uuid('id')->primary();
+            }
 
             $table->string('name', 200);
             $table->string('slug', 120)->unique();
 
             // Tenant DB routing
             $table->string('db_name', 80)->unique();
+            $table->string('db_username', 80)->nullable();
+            $table->text('db_password')->nullable();
             $table->string('db_host', 255)->nullable();
             $table->unsignedInteger('db_port')->nullable();
 
