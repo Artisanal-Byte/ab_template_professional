@@ -6,21 +6,40 @@ import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import NavDrawer from '@/components/NavDrawer.vue';
 import { ref, watch } from 'vue';
 
+const DEFAULT_NAV_DRAWER_KEY = 'nav-drawer-desktop';
+
 const props = defineProps({
     breadcrumbs: {
         type: Array,
         default: () => [],
     },
+    persistNavState: {
+        type: Boolean,
+        default: true,
+    },
+    initialDesktopOpen: {
+        type: Boolean,
+        default: true,
+    },
+    initialMobileOpen: {
+        type: Boolean,
+        default: false,
+    },
+    navDrawerKey: {
+        type: String,
+        default: DEFAULT_NAV_DRAWER_KEY,
+    },
 });
 
-const NAV_DRAWER_KEY = 'nav-drawer-desktop';
-const isDesktopNavOpen = ref(true);
-const isMobileNavOpen = ref(false);
+const isDesktopNavOpen = ref(props.initialDesktopOpen);
+const isMobileNavOpen = ref(props.initialMobileOpen);
 
 if (typeof window !== 'undefined') {
-    const stored = window.localStorage.getItem(NAV_DRAWER_KEY);
-    if (stored === 'collapsed') {
-        isDesktopNavOpen.value = false;
+    if (props.persistNavState && props.navDrawerKey) {
+        const stored = window.localStorage.getItem(props.navDrawerKey);
+        if (stored === 'collapsed') {
+            isDesktopNavOpen.value = false;
+        }
     }
 }
 
@@ -30,8 +49,11 @@ watch(
         if (typeof window === 'undefined') {
             return;
         }
+        if (!props.persistNavState || !props.navDrawerKey) {
+            return;
+        }
         window.localStorage.setItem(
-            NAV_DRAWER_KEY,
+            props.navDrawerKey,
             value ? 'open' : 'collapsed',
         );
     },

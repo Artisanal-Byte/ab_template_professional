@@ -48,8 +48,8 @@ const hasContent = computed(() => Boolean(slots.default));
 
 const contentClass = computed(() =>
     cn(
-        'p-6',
-        hasHeader.value ? 'pt-0' : '',
+        'py-4 px-6',
+        // hasHeader.value ? 'pt-0' : '',
         hasFooter.value ? 'pb-0' : '',
         props.contentClass,
     ),
@@ -58,7 +58,7 @@ const contentClass = computed(() =>
 
 <template>
     <component :is="props.as" v-bind="boundAttrs" :class="cardClass">
-        <div v-if="hasHeader" :class="cn('flex flex-col gap-1.5 p-6', props.headerClass)">
+        <div v-if="hasHeader" :class="cn('flex flex-col gap-1.5 px-6 p-4 border-b border-border', props.headerClass)">
             <slot name="header">
                 <div v-if="$slots.title" class="text-lg font-semibold leading-none tracking-tight">
                     <slot name="title" />
