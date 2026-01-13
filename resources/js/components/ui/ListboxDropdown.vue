@@ -30,13 +30,10 @@ const props = defineProps({
         type: String,
         default: 'md',
     },
-    align: {
-        type: String,
-        default: 'start',
-    },
     side: {
         type: String,
         default: 'bottom',
+        validator: (value: string) => ['top', 'bottom'].includes(value),
     },
     sideOffset: {
         type: Number,
@@ -49,6 +46,10 @@ const props = defineProps({
     maxHeight: {
         type: String,
         default: '18rem',
+    },
+    matchTriggerWidth: {
+        type: Boolean,
+        default: true,
     },
     loading: {
         type: Boolean,
@@ -205,10 +206,10 @@ watch(
     <PopoverBase
         v-model:open="open"
         :side="props.side"
-        :align="props.align"
         :side-offset="props.sideOffset"
         :width="props.width"
         :content-class="contentClasses"
+        :match-trigger-width="props.matchTriggerWidth"
     >
         <template #trigger>
             <slot name="trigger" />
@@ -270,10 +271,12 @@ watch(
                                     <Check v-if="isSelected(option)" class="h-4 w-4" />
                                 </span>
                                 <span class="flex-1">
-                                    <span class="block font-medium">{{ option.label }}</span>
+                                    <span class="block break-words font-medium">
+                                        {{ option.label }}
+                                    </span>
                                     <span
                                         v-if="option.description"
-                                        class="block text-xs text-foreground-faint"
+                                        class="block break-words text-xs text-foreground-faint"
                                     >
                                         {{ option.description }}
                                     </span>
@@ -289,4 +292,3 @@ watch(
         </div>
     </PopoverBase>
 </template>
-

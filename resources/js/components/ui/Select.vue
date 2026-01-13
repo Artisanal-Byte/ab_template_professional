@@ -27,13 +27,10 @@ const props = defineProps({
         type: String,
         default: 'md',
     },
-    align: {
-        type: String,
-        default: 'start',
-    },
     side: {
         type: String,
         default: 'bottom',
+        validator: (value: string) => ['top', 'bottom'].includes(value),
     },
     sideOffset: {
         type: Number,
@@ -60,6 +57,20 @@ const model = defineModel({
 
 const open = ref(false);
 
+const widthClasses: Record<string, string> = {
+    xs: 'w-32',
+    sm: 'w-40',
+    md: 'w-56',
+    lg: 'w-72',
+    xl: 'w-80',
+    full: 'w-full min-w-0',
+};
+
+const wrapperClass = computed(() => {
+    const widthClass = widthClasses[props.width] || widthClasses.md;
+    return `grid gap-1 ${widthClass}`;
+});
+
 const options = computed(() => props.options as SelectOption[]);
 
 const selectedOption = computed(() =>
@@ -75,13 +86,12 @@ const handleSelect = (option: SelectOption) => {
 </script>
 
 <template>
-    <div class="grid gap-1">
+    <div :class="wrapperClass">
         <ListboxDropdown
             v-model:open="open"
             :options="props.options"
             :selected-values="[model]"
             :width="props.width"
-            :align="props.align"
             :side="props.side"
             :side-offset="props.sideOffset"
             :loading="props.loading"

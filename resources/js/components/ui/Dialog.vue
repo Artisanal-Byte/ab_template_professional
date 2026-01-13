@@ -31,6 +31,10 @@ const props = defineProps({
         type: String,
         default: '',
     },
+    bodyClass: {
+        type: String,
+        default: '',
+    },
     showClose: {
         type: Boolean,
         default: true,
@@ -87,7 +91,10 @@ const contentTransition = computed(() => {
 });
 
 const defaultSlotClasses = computed(() =>
-    props.transition === 'slide-left' ? 'flex h-full flex-col' : '',
+    cn(
+        props.transition === 'slide-left' ? 'flex h-full flex-col' : '',
+        props.bodyClass,
+    ),
 );
 
 </script>
@@ -151,4 +158,3 @@ const defaultSlotClasses = computed(() =>
         </DialogPortal>
     </DialogRoot>
 </template>
-
