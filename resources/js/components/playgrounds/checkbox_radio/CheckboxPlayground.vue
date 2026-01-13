@@ -6,7 +6,7 @@ import Card from '@/components/ui/Card.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
-import DrawerSection from '@/components/playgrounds/checkbox_radio/DrawerSection.vue';
+import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
 
 const checkedOptions = [
   { label: 'Unchecked', value: 'false' },

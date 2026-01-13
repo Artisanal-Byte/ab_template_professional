@@ -1,46 +1,47 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import DateTimePicker from '@/components/ui/DateTimePicker.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import Select from '@/components/ui/Select.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
 import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
+import { createSelectOptions } from '@/components/playgrounds/selects/options';
 
-const modes = [
-  { label: 'Date', value: 'date' },
-  { label: 'Time', value: 'time' },
-  { label: 'Date & Time', value: 'datetime' },
+const widthOptions = [
+  { label: 'XS', value: 'xs' },
+  { label: 'SM', value: 'sm' },
+  { label: 'MD', value: 'md' },
+  { label: 'LG', value: 'lg' },
+  { label: 'XL', value: 'xl' },
+  { label: 'Full', value: 'full' },
 ];
 
-const sizes = [
-  { label: 'Small', value: 'sm' },
-  { label: 'Medium', value: 'md' },
-  { label: 'Large', value: 'lg' },
+const sideOptions = [
+  { label: 'Bottom', value: 'bottom' },
+  { label: 'Top', value: 'top' },
 ];
 
-const dateFormats = [
-  { label: 'DD-MM-YYYY', value: 'DD-MM-YYYY' },
-  { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
-  { label: 'DD-MM-YY', value: 'DD-MM-YY' },
-];
-
-const timeFormats = [
-  { label: '24h (HH:mm)', value: 'HH:mm' },
-  { label: '12h (hh:mm A)', value: 'hh:mm A' },
-];
-
-const timeSteps = [
-  { label: '5 min', value: '5' },
-  { label: '10 min', value: '10' },
-  { label: '15 min', value: '15' },
-  { label: '30 min', value: '30' },
+const sideOffsets = [
+  { label: '4px', value: '4' },
+  { label: '6px', value: '6' },
+  { label: '10px', value: '10' },
 ];
 
 const disabledOptions = [
   { label: 'False', value: 'false' },
   { label: 'True', value: 'true' },
+];
+
+const loadingOptions = [
+  { label: 'False', value: 'false' },
+  { label: 'True', value: 'true' },
+];
+
+const optionsState = [
+  { label: 'With options', value: 'default' },
+  { label: 'Empty', value: 'empty' },
 ];
 
 const errorOptions = [
@@ -50,97 +51,123 @@ const errorOptions = [
   { label: 'Object', value: 'object' },
 ];
 
-const mode = ref('date');
-const size = ref('md');
-const dateFormat = ref('DD-MM-YYYY');
-const timeFormat = ref('HH:mm');
-const timeStep = ref('15');
+const optionMode = ref('default');
+const width = ref('md');
+const side = ref('bottom');
+const sideOffset = ref('6');
 const disabled = ref('false');
+const loading = ref('false');
 const errorType = ref('none');
-const labelText = ref('Date');
-const placeholder = ref('');
+const labelText = ref('Standard select');
+const placeholder = ref('Select an option');
+const noResultsText = ref('No results');
 const inputName = ref('');
-const inputId = ref('date-time-playground');
-const value = ref('');
+const selectedValue = ref('clinical');
+const options = ref(createSelectOptions());
 
 const isDisabled = computed(() => disabled.value === 'true');
-const hasDate = computed(() => mode.value !== 'time');
-const hasTime = computed(() => mode.value !== 'date');
+const isLoading = computed(() => loading.value === 'true');
 const showLabel = computed(() => labelText.value.trim().length > 0);
-const resolvedId = computed(() => inputId.value || 'date-time-playground');
+
+const previewOptions = computed(() =>
+  optionMode.value === 'empty' ? [] : options.value,
+);
 
 const errorValue = computed(() => {
   switch (errorType.value) {
     case 'string':
-      return 'Pick a valid date.';
+      return 'Choose an option.';
     case 'list':
       return ['First error message', 'Second error message'];
     case 'object':
-      return { field: ['First error message', 'Second error message'] };
+      return { select: ['First error message', 'Second error message'] };
     default:
       return '';
   }
 });
 
 const previewProps = computed(() => ({
-  mode: mode.value,
-  size: size.value,
-  format: dateFormat.value,
-  timeFormat: timeFormat.value,
-  timeStep: Number(timeStep.value),
-  placeholder: placeholder.value || undefined,
+  width: width.value,
+  side: side.value,
+  sideOffset: Number(sideOffset.value),
+  loading: isLoading.value,
+  noResultsText: noResultsText.value,
   error: errorValue.value,
 }));
 
 const tokens = [
-  { token: '--border', role: 'Input border' },
-  { token: '--background', role: 'Input background' },
-  { token: '--foreground', role: 'Input text' },
+  { token: '--border', role: 'Trigger border' },
+  { token: '--background', role: 'Trigger background' },
+  { token: '--foreground', role: 'Trigger text' },
   { token: '--foreground-faint', role: 'Placeholder text' },
+  { token: '--card', role: 'Menu background' },
+  { token: '--card-foreground', role: 'Menu text' },
+  { token: '--secondary-hover', role: 'Option hover' },
+  { token: '--secondary-active', role: 'Option selected' },
   { token: '--focus-ring', role: 'Focus ring' },
-  { token: '--card', role: 'Popover background' },
-  { token: '--card-foreground', role: 'Popover text' },
-  { token: '--secondary-soft', role: 'Picker surfaces' },
-  { token: '--primary', role: 'Active states' },
   { token: '--error', role: 'Error text' },
 ];
 
 const componentProps = [
   {
-    name: 'mode',
-    type: 'string',
-    values: ['date', 'time', 'datetime'],
-    defaultValue: 'date',
+    name: 'v-model',
+    type: 'string | number',
+    values: ['selected value'],
+    defaultValue: 'empty',
   },
   {
-    name: 'format',
-    type: 'string',
-    values: ['DD-MM-YYYY', 'YYYY-MM-DD', 'DD-MM-YY'],
-    defaultValue: 'DD-MM-YYYY',
+    name: 'options',
+    type: 'array',
+    values: ['{ label, value, group }'],
+    defaultValue: '[]',
   },
   {
-    name: 'timeFormat',
+    name: 'name',
     type: 'string',
-    values: ['HH:mm', 'hh:mm A'],
-    defaultValue: 'HH:mm',
-  },
-  {
-    name: 'timeStep',
-    type: 'number',
-    values: ['5', '10', '15', '30'],
-    defaultValue: '15',
-  },
-  {
-    name: 'size',
-    type: 'string',
-    values: ['sm', 'md', 'lg'],
-    defaultValue: 'md',
+    values: ['hidden input name'],
+    defaultValue: 'empty',
   },
   {
     name: 'placeholder',
     type: 'string',
-    values: ['custom placeholder'],
-    defaultValue: 'auto',
+    values: ['Select an option'],
+    defaultValue: 'Select an option',
+  },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    values: ['true', 'false'],
+    defaultValue: 'false',
+  },
+  {
+    name: 'width',
+    type: 'string',
+    values: ['xs', 'sm', 'md', 'lg', 'xl', 'full'],
+    defaultValue: 'md',
+  },
+  {
+    name: 'side',
+    type: 'string',
+    values: ['bottom', 'top'],
+    defaultValue: 'bottom',
+  },
+  {
+    name: 'sideOffset',
+    type: 'number',
+    values: ['4', '6', '10'],
+    defaultValue: '6',
+  },
+  {
+    name: 'loading',
+    type: 'boolean',
+    values: ['true', 'false'],
+    defaultValue: 'false',
+  },
+  {
+    name: 'noResultsText',
+    type: 'string',
+    values: ['No results'],
+    defaultValue: 'No results',
   },
   {
     name: 'error',
@@ -151,7 +178,7 @@ const componentProps = [
 ];
 
 const buildImports = () => {
-  const lines = ["import DateTimePicker from '@/components/ui/DateTimePicker.vue';"];
+  const lines = ["import Select from '@/components/ui/Select.vue';"];
   if (showLabel.value) {
     lines.push("import Label from '@/components/ui/Label.vue';");
   }
@@ -161,41 +188,39 @@ const buildImports = () => {
 const errorSnippet = computed(() => {
   switch (errorType.value) {
     case 'string':
-      return 'error="Pick a valid date."';
+      return 'error="Choose an option."';
     case 'list':
       return ':error="[\'First error message\', \'Second error message\']"';
     case 'object':
-      return ':error="{ field: [\'First error message\', \'Second error message\'] }"';
+      return ':error="{ select: [\'First error message\', \'Second error message\'] }"';
     default:
       return '';
   }
 });
 
-const buildPickerAttrs = () => {
-  const attrs = ['v-model="dateValue"'];
-  if (resolvedId.value) {
-    attrs.push(`id="${resolvedId.value}"`);
-  }
+const buildSelectAttrs = () => {
+  const attrs = ['v-model="selectedOption"'];
+  attrs.push(optionMode.value === 'empty' ? ':options="[]"' : ':options="selectOptions"');
   if (inputName.value) {
     attrs.push(`name="${inputName.value}"`);
   }
-  if (mode.value !== 'date') {
-    attrs.push(`mode="${mode.value}"`);
-  }
-  if (hasDate.value && dateFormat.value !== 'DD-MM-YYYY') {
-    attrs.push(`format="${dateFormat.value}"`);
-  }
-  if (hasTime.value && timeFormat.value !== 'HH:mm') {
-    attrs.push(`time-format="${timeFormat.value}"`);
-  }
-  if (hasTime.value && timeStep.value !== '15') {
-    attrs.push(`:time-step="${timeStep.value}"`);
-  }
-  if (size.value !== 'md') {
-    attrs.push(`size="${size.value}"`);
-  }
-  if (placeholder.value) {
+  if (placeholder.value && placeholder.value !== 'Select an option') {
     attrs.push(`placeholder="${placeholder.value}"`);
+  }
+  if (width.value !== 'md') {
+    attrs.push(`width="${width.value}"`);
+  }
+  if (side.value !== 'bottom') {
+    attrs.push(`side="${side.value}"`);
+  }
+  if (sideOffset.value !== '6') {
+    attrs.push(`:side-offset="${sideOffset.value}"`);
+  }
+  if (isLoading.value) {
+    attrs.push('loading');
+  }
+  if (noResultsText.value && noResultsText.value !== 'No results') {
+    attrs.push(`no-results-text="${noResultsText.value}"`);
   }
   if (isDisabled.value) {
     attrs.push('disabled');
@@ -209,14 +234,13 @@ const buildPickerAttrs = () => {
 const importText = computed(() => buildImports().join('\n'));
 
 const usageLine = computed(() => {
-  const attrs = buildPickerAttrs();
+  const attrs = buildSelectAttrs();
   const attrText = attrs.length ? ` ${attrs.join(' ')}` : '';
-  const inputLine = `<DateTimePicker${attrText} />`;
+  const selectLine = `<Select${attrText} />`;
   if (!showLabel.value) {
-    return inputLine;
+    return selectLine;
   }
-  const labelLine = `<Label for="${resolvedId.value}">${labelText.value}</Label>`;
-  return `${labelLine}\n${inputLine}`;
+  return `<Label>${labelText.value}</Label>\n${selectLine}`;
 });
 
 const copyImportLabel = ref('Copy');
@@ -251,95 +275,52 @@ const detailsOpen = ref(false);
 <template>
   <section class="grid gap-6">
     <div class="grid gap-2">
-      <h2 class="text-2xl font-semibold">Date & time playground</h2>
+      <h2 class="text-2xl font-semibold">Standard select</h2>
       <p class="text-sm text-foreground-subtle">
-        Configure date/time modes, formats, and copy the generated snippet.
+        Configure single-select behavior and copy the generated snippet.
       </p>
     </div>
 
-    <div class="grid gap-6">
-      <div class="grid gap-4 md:grid-cols-5">
-        <RadioPillGroup
-          v-model="mode"
-          name="dt-mode"
-          label="Mode"
-          :options="modes"
+    <div class="grid gap-2">
+      <Card content-class="grid gap-2">
+        <template #title>Preview</template>
+        <Label v-if="showLabel">{{ labelText }}</Label>
+        <Select
+          v-model="selectedValue"
+          :options="previewOptions"
+          :placeholder="placeholder"
+          :name="inputName"
+          :disabled="isDisabled"
+          v-bind="previewProps"
         />
-        <RadioPillGroup
-          v-model="size"
-          name="dt-size"
-          label="Size"
-          :options="sizes"
-        />
-        <RadioPillGroup
-          v-model="dateFormat"
-          name="dt-date-format"
-          label="Date format"
-          :options="dateFormats"
-          :disabled="!hasDate"
-        />
-        <RadioPillGroup
-          v-model="timeFormat"
-          name="dt-time-format"
-          label="Time format"
-          :options="timeFormats"
-          :disabled="!hasTime"
-        />
-        <RadioPillGroup
-          v-model="timeStep"
-          name="dt-time-step"
-          label="Time step"
-          :options="timeSteps"
-          :disabled="!hasTime"
-        />
-      </div>
+      </Card>
+    </div>
 
+    <div class="grid gap-6">
       <div class="grid gap-4 md:grid-cols-4">
-        <RadioPillGroup
-          v-model="disabled"
-          name="dt-disabled"
-          label="Disabled"
-          :options="disabledOptions"
-        />
-        <RadioPillGroup
-          v-model="errorType"
-          name="dt-error"
-          label="Error"
-          :options="errorOptions"
-        />
+        <RadioPillGroup v-model="width" name="select-width" label="Width" :options="widthOptions" />
+        <RadioPillGroup v-model="side" name="select-side" label="Side" :options="sideOptions" />
+        <RadioPillGroup v-model="sideOffset" name="select-offset" label="Offset" :options="sideOffsets" />
+        <RadioPillGroup v-model="optionMode" name="select-options" label="Options" :options="optionsState" />
+        <RadioPillGroup v-model="disabled" name="select-disabled" label="Disabled" :options="disabledOptions" />
+        <RadioPillGroup v-model="loading" name="select-loading" label="Loading" :options="loadingOptions" />
+        <RadioPillGroup v-model="errorType" name="select-error" label="Error" :options="errorOptions"  class="col-span-2" />
         <div class="flex flex-col gap-3">
           <Label>Label text</Label>
-          <Input v-model="labelText" placeholder="Label" />
+          <Input v-model="labelText" placeholder="Standard select" />
         </div>
         <div class="flex flex-col gap-3">
           <Label>Placeholder</Label>
-          <Input v-model="placeholder" placeholder="Optional placeholder" />
+          <Input v-model="placeholder" placeholder="Select an option" />
         </div>
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
         <div class="flex flex-col gap-3">
-          <Label>Input ID</Label>
-          <Input v-model="inputId" placeholder="date-time-playground" />
+          <Label>No results text</Label>
+          <Input v-model="noResultsText" placeholder="No results" />
         </div>
         <div class="flex flex-col gap-3">
           <Label>Name</Label>
           <Input v-model="inputName" placeholder="Optional name" />
         </div>
-      </div>
-
-      <div class="grid gap-2">
-        <Card content-class="grid gap-2">
-          <template #title>Preview</template>
-          <Label v-if="showLabel" :for="resolvedId">{{ labelText }}</Label>
-          <DateTimePicker
-            v-model="value"
-            :id="resolvedId"
-            :name="inputName || undefined"
-            :disabled="isDisabled"
-            v-bind="previewProps"
-          />
-        </Card>
       </div>
 
       <div class="grid gap-2">
@@ -352,9 +333,7 @@ const detailsOpen = ref(false);
                 {{ copyImportLabel }}
               </Button>
             </div>
-            <code
-              class="whitespace-pre-wrap rounded-md border border-border-subtle bg-secondary-soft p-3 text-sm text-foreground"
-            >
+            <code class="whitespace-pre-wrap rounded-md border border-border-subtle bg-secondary-soft p-3 text-sm text-foreground">
           {{ importText }}
         </code>
           </div>

@@ -9,7 +9,7 @@ import Label from '@/components/ui/Label.vue';
 import SearchAndSelect from '@/components/ui/SearchAndSelect.vue';
 import Icon from '@/components/Icon.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
-import DrawerSection from '@/components/playgrounds/buttons/DrawerSection.vue';
+import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
 
 const variants = [
   { label: 'Primary', value: 'primary' },

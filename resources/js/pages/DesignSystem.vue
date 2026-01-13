@@ -11,16 +11,13 @@ import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import Input from '@/components/ui/Input.vue';
 import InputOTP from '@/components/ui/InputOTP.vue';
 import Label from '@/components/ui/Label.vue';
-import MultiSelect from '@/components/ui/MultiSelect.vue';
 import RichTextEditor from '@/components/ui/RichTextEditor.vue';
-import SearchAndSelect from '@/components/ui/SearchAndSelect.vue';
-import Select from '@/components/ui/Select.vue';
 import Separator from '@/components/ui/Separator.vue';
 import Skeleton from '@/components/ui/Skeleton.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import Tooltip from '@/components/ui/Tooltip.vue';
-import { Form, Head } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { system as designSystem } from '@/routes/design';
 import type { BreadcrumbItem } from '@/types';
@@ -30,6 +27,7 @@ import InputPlayground from '@/components/playgrounds/inputs/Playground.vue';
 import DateTimePlayground from '@/components/playgrounds/date_time/Playground.vue';
 import CheckboxPlayground from '@/components/playgrounds/checkbox_radio/CheckboxPlayground.vue';
 import RadioPlayground from '@/components/playgrounds/checkbox_radio/RadioPlayground.vue';
+import SelectPlayground from '@/components/playgrounds/selects/Playground.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -91,25 +89,12 @@ const breadcrumbSettings = [
   { label: 'Appearance', current: true },
 ];
 
-const selectOptions = [
-  { label: 'Clinical Operations', value: 'clinical', group: 'Departments' },
-  { label: 'Quality Assurance', value: 'qa', group: 'Departments' },
-  { label: 'Regulatory', value: 'regulatory', group: 'Departments' },
-  { label: 'Change Control', value: 'change', group: 'Workflows' },
-  { label: 'Deviation', value: 'deviation', group: 'Workflows' },
-  { label: 'CAPA', value: 'capa', group: 'Workflows' },
-];
-
 const mentionItems = [
   { id: '1', label: 'Avery Grant' },
   { id: '2', label: 'Jules Park' },
   { id: '3', label: 'Morgan Lee' },
 ];
 
-const selectedDepartment = ref('');
-const selectedTeams = ref(['qa']);
-const searchSelection = ref('');
-const selectNote = ref('');
 const editorContent = ref('<p>Draft your next quality update here.</p>');
 </script>
 
@@ -157,15 +142,6 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
 
         <main>
         <div v-if="activeTab === 'foundations'" class="grid gap-12">
-          <section id="theme">
-            <h2 class="mb-4 text-2xl font-semibold">Theme switcher</h2>
-            <div class="flex flex-wrap items-center gap-4">
-              <ThemeToggle />
-              <p class="text-sm text-foreground-subtle">
-                Toggles between light, dark, and system appearance.
-              </p>
-            </div>
-          </section>
           <section id="colors">
             <h2 class="mb-4 text-2xl font-semibold">Theme Colors</h2>
             <div class="grid grid-cols-2 gap-6 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7">
@@ -482,58 +458,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
         </div>
 
         <div v-if="activeTab === 'selects'" class="grid gap-10 py-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Selects (Form demo)</h2>
-            <Form class="app-form" @submit.prevent>
-              <div class="grid gap-4 md:grid-cols-2">
-                <div class="grid gap-2">
-                  <Label>Standard select</Label>
-                  <Select
-                    v-model="selectedDepartment"
-                    name="department"
-                    :options="selectOptions"
-                    placeholder="Choose a workflow"
-                    width="full"
-                  />
-                </div>
-                <div class="grid gap-2">
-                  <Label>Multi select</Label>
-                  <MultiSelect
-                    v-model="selectedTeams"
-                    name="teams"
-                    :options="selectOptions"
-                    placeholder="Choose departments"
-                    width="full"
-                  />
-                </div>
-              </div>
-              <div class="grid gap-2">
-                <Label>Search and select</Label>
-                <SearchAndSelect
-                  v-model="searchSelection"
-                  name="workflow"
-                  :options="selectOptions"
-                  :allow-create="true"
-                  placeholder="Search workflows"
-                  width="full"
-                  @create="(value) => { searchSelection = value; }"
-                />
-              </div>
-              <div class="grid gap-2">
-                <Label for="select-note">Notes</Label>
-                <Input id="select-note" v-model="selectNote" placeholder="Optional context..." />
-              </div>
-            </Form>
-          </section>
-          <section class="grid gap-2">
-            <h3 class="text-lg font-semibold">Selected values</h3>
-            <div class="rounded-lg border border-border bg-card p-4 text-sm text-foreground-muted">
-              <div>Department: {{ selectedDepartment || '—' }}</div>
-              <div>Teams: {{ selectedTeams.length ? selectedTeams.join(', ') : '—' }}</div>
-              <div>Search selection: {{ searchSelection || '—' }}</div>
-              <div>Notes: {{ selectNote || '—' }}</div>
-            </div>
-          </section>
+          <SelectPlayground />
         </div>
 
         <div v-if="activeTab === 'editors'" class="grid gap-10 py-6">

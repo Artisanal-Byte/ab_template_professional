@@ -7,7 +7,7 @@ import Card from '@/components/ui/Card.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
-import DrawerSection from '@/components/playgrounds/badges/DrawerSection.vue';
+import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
 
 const variants = [
   { label: 'Neutral', value: 'neutral' },
