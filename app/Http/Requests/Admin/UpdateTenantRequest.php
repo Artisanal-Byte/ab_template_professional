@@ -21,7 +21,7 @@ class UpdateTenantRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:200'],
             'slug' => [
-                'nullable',
+                'required',
                 'string',
                 'max:120',
                 'regex:/^[a-z0-9_]+$/',

@@ -22,7 +22,7 @@ class StoreTenantRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:200'],
-            'slug' => ['nullable', 'string', 'max:120', 'regex:/^[a-z0-9_]+$/', Rule::unique('tenants', 'slug')],
+            'slug' => ['required', 'string', 'max:120', 'regex:/^[a-z0-9_]+$/', Rule::unique('tenants', 'slug')],
             'owner_name' => ['required', 'string', 'max:255'],
             'owner_email' => [
                 'required',
@@ -31,7 +31,7 @@ class StoreTenantRequest extends FormRequest
                 'email',
                 'max:255',
             ],
-            'owner_password' => ['nullable', 'string', Password::defaults()],
+            'owner_password' => ['required', 'string', Password::defaults()],
         ];
     }
 

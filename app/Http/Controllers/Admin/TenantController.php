@@ -133,17 +133,10 @@ class TenantController extends Controller
     {
         Gate::authorize('manage-tenants');
 
-        $ownerMembership = $tenant->memberships()
-            ->where('membership_role', 'owner')
-            ->with('user')
-            ->first();
-
-        $ownerUser = $ownerMembership?->user;
-
         $slug = $request->string('slug')->toString();
         $slug = $slug !== '' ? Str::lower($slug) : $tenant->slug;
 
-        DB::transaction(function () use ($request, $tenant, $slug, $ownerUser): void {
+        DB::transaction(function () use ($request, $tenant, $slug): void {
             $tenant->update([
                 'name' => $request->string('name')->toString(),
                 'slug' => $slug,
@@ -151,6 +144,46 @@ class TenantController extends Controller
 
             $ownerEmail = $request->string('owner_email')->toString();
             $ownerPassword = $request->string('owner_password')->toString();
+            $ownerMembership = $tenant->memberships()
+                ->where('membership_role', 'owner')
+                ->with('user')
+                ->first();
+            $currentOwner = $ownerMembership?->user;
+            $ownerUser = $currentOwner;
+
+            if ($currentOwner) {
+                if ($currentOwner->email !== $ownerEmail) {
+                    $existingOwner = User::query()->where('email', $ownerEmail)->first();
+
+                    if ($existingOwner && $existingOwner->id !== $currentOwner->id) {
+                        if ($existingOwner->tenantMemberships()->where('tenant_id', '!=', $tenant->id)->exists()) {
+                            throw ValidationException::withMessages([
+                                'owner_email' => 'This user is already assigned to another organization.',
+                            ]);
+                        }
+
+                        $ownerUser = $existingOwner;
+                    } elseif ($currentOwner->tenantMemberships()->where('tenant_id', '!=', $tenant->id)->exists()) {
+                        if (! $request->filled('owner_password')) {
+                            throw ValidationException::withMessages([
+                                'owner_password' => 'Password is required when assigning a new owner.',
+                            ]);
+                        }
+
+                        $ownerUser = User::create([
+                            'uuid' => (string) Str::uuid(),
+                            'name' => $tenant->name.' Owner',
+                            'email' => $ownerEmail,
+                            'password' => Hash::make($ownerPassword),
+                            'status' => 'active',
+                        ]);
+                    } else {
+                        $currentOwner->update([
+                            'email' => $ownerEmail,
+                        ]);
+                    }
+                }
+            }
 
             if (! $ownerUser) {
                 $ownerUser = User::query()->where('email', $ownerEmail)->first();
@@ -168,31 +201,50 @@ class TenantController extends Controller
                     'password' => Hash::make($ownerPassword),
                     'status' => 'active',
                 ]);
+            }
 
-                if (! $ownerUser->hasRole('organization_owner')) {
-                    $ownerUser->assignRole('organization_owner');
-                }
-
-                if ($ownerUser->tenantMemberships()->where('tenant_id', '!=', $tenant->id)->exists()) {
-                    throw ValidationException::withMessages([
-                        'owner_email' => 'This user is already assigned to another organization.',
-                    ]);
-                }
-
-                TenantUser::updateOrCreate([
-                    'tenant_id' => $tenant->id,
-                    'user_id' => $ownerUser->id,
-                ], [
-                    'membership_role' => 'owner',
-                    'status' => 'active',
+            if ($ownerUser->tenantMemberships()->where('tenant_id', '!=', $tenant->id)->exists()) {
+                throw ValidationException::withMessages([
+                    'owner_email' => 'This user is already assigned to another organization.',
                 ]);
+            }
+
+            if (! $ownerUser->hasRole('organization_owner')) {
+                $ownerUser->assignRole('organization_owner');
             }
 
             $this->assignTenantOwnerRole($tenant, $ownerUser);
 
-            $ownerUser->update([
-                'email' => $ownerEmail,
-            ]);
+            $existingMembership = TenantUser::query()
+                ->where('tenant_id', $tenant->id)
+                ->where('user_id', $ownerUser->id)
+                ->first();
+
+            if ($existingMembership) {
+                $existingMembership->update([
+                    'membership_role' => 'owner',
+                    'status' => 'active',
+                ]);
+                if ($ownerMembership && $ownerMembership->id !== $existingMembership->id) {
+                    $ownerMembership->update([
+                        'membership_role' => 'employee',
+                        'status' => 'active',
+                    ]);
+                }
+            } elseif ($ownerMembership) {
+                $ownerMembership->update([
+                    'user_id' => $ownerUser->id,
+                    'membership_role' => 'owner',
+                    'status' => 'active',
+                ]);
+            } else {
+                TenantUser::create([
+                    'tenant_id' => $tenant->id,
+                    'user_id' => $ownerUser->id,
+                    'membership_role' => 'owner',
+                    'status' => 'active',
+                ]);
+            }
 
             if ($request->filled('owner_password')) {
                 $ownerUser->update([

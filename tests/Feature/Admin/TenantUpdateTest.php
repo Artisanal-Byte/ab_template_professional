@@ -60,6 +60,72 @@ it('updates tenant details', function () {
         ->and(Hash::check('new-password', $owner->password))->toBeTrue();
 });
 
+it('keeps other tenant owners intact when switching to a new owner email', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $sharedOwner = User::factory()->create([
+        'email' => 'shared@old.com',
+    ]);
+
+    $tenantA = Tenant::factory()->create([
+        'name' => 'Tenant A',
+        'slug' => 'tenant_a',
+    ]);
+
+    $tenantB = Tenant::factory()->create([
+        'name' => 'Tenant B',
+        'slug' => 'tenant_b',
+    ]);
+
+    $tenantA->memberships()->create([
+        'tenant_id' => $tenantA->id,
+        'user_id' => $sharedOwner->id,
+        'membership_role' => 'owner',
+        'status' => 'active',
+    ]);
+
+    $tenantB->memberships()->create([
+        'tenant_id' => $tenantB->id,
+        'user_id' => $sharedOwner->id,
+        'membership_role' => 'owner',
+        'status' => 'active',
+    ]);
+
+    $this->actingAs($admin);
+
+    $response = $this->patch(route('admin.tenants.update', $tenantA), [
+        'name' => 'Tenant A',
+        'slug' => 'tenant_a',
+        'owner_email' => 'new-owner@acme.test',
+        'owner_password' => 'new-password',
+    ]);
+
+    $response->assertRedirect(route('admin.tenants.index'));
+
+    $tenantAOwner = $tenantA->memberships()
+        ->where('membership_role', 'owner')
+        ->with('user')
+        ->first();
+
+    $tenantBOwner = $tenantB->memberships()
+        ->where('membership_role', 'owner')
+        ->with('user')
+        ->first();
+
+    $sharedOwner->refresh();
+
+    expect($tenantAOwner?->user?->email)->toBe('new-owner@acme.test')
+        ->and($tenantBOwner?->user?->email)->toBe('shared@old.com')
+        ->and($sharedOwner->email)->toBe('shared@old.com');
+
+    $newOwner = User::query()->where('email', 'new-owner@acme.test')->first();
+
+    expect($newOwner)->not->toBeNull()
+        ->and($newOwner?->hasRole('organization_owner'))->toBeTrue()
+        ->and(Hash::check('new-password', $newOwner?->password ?? ''))->toBeTrue();
+});
+
 it('assigns an owner when missing using the provided email and password', function () {
     $admin = User::factory()->create();
     $admin->assignRole('admin');
