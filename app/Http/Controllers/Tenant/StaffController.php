@@ -12,6 +12,7 @@ use App\Support\CurrentTenant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -77,6 +78,7 @@ class StaffController extends Controller
         }
 
         $user = $user ?: User::create([
+            'uuid' => (string) Str::uuid(),
             'name' => $request->string('name')->toString(),
             'email' => $request->string('email')->toString(),
             'password' => Hash::make($request->string('password')->toString()),
@@ -90,6 +92,13 @@ class StaffController extends Controller
             'membership_role' => $request->string('membership_role')->toString(),
             'status' => 'active',
         ]);
+
+        $role = Role::query()
+            ->where('id', $request->integer('role_id'))
+            ->where('tenant_id', $tenant?->id)
+            ->firstOrFail();
+
+        $user->assignRole($role);
 
         return redirect()->route('tenant.staff.index');
     }

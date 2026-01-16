@@ -85,13 +85,25 @@ const roleOptions = props.roles.map((role) => ({
                     </div>
                     <div class="grid gap-2">
                         <Label for="staff-password">Password (new users)</Label>
-                        <Input id="staff-password" name="password" type="password" placeholder="••••••••" />
+                        <Input id="staff-password" name="password" type="password" placeholder="••••••••" required />
                         <InputError :message="errors.password" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="membership-role">Membership role</Label>
                         <Input id="membership-role" name="membership_role" placeholder="owner or employee" />
                         <InputError :message="errors.membership_role" />
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="staff-role">Assign role</Label>
+                        <Select
+                            id="staff-role"
+                            name="role_id"
+                            :options="roleOptions"
+                            :disabled="roleOptions.length === 0"
+                            :placeholder="roleOptions.length ? 'Choose role' : 'No roles available'"
+                            width="full"
+                            :error="errors.role_id"
+                        />
                     </div>
                     <div class="flex items-center gap-2 md:col-span-2">
                         <Button type="submit" :disabled="processing">Add staff</Button>
