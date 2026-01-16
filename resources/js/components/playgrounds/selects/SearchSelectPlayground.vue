@@ -70,7 +70,7 @@ const placeholder = ref('Search and select');
 const searchPlaceholder = ref('Search...');
 const noResultsText = ref('No results');
 const inputName = ref('');
-const selectedValue = ref('');
+const selectedValue = ref<string | number>('');
 const baseOptions = ref(createSelectOptions());
 const createdOptions = ref<SelectOption[]>([]);
 

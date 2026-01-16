@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Button from '@/components/ui/Button.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import ThemeToggle from '@/components/ThemeToggle.vue';
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { system as designSystem } from '@/routes/design';
@@ -76,19 +72,6 @@ const statusColors = ref([
   { name: 'Warning', class: 'bg-warning' },
   { name: 'Error', class: 'bg-error' },
 ]);
-
-const breadcrumbPrimary = [
-  { label: 'Home', href: '/' },
-  { label: 'Library', href: '/library' },
-  { label: 'Data', current: true },
-];
-
-const breadcrumbSettings = [
-  { label: 'Home', href: '/' },
-  { ellipsis: true },
-  { label: 'Settings', href: '/settings' },
-  { label: 'Appearance', current: true },
-];
 
 </script>
 

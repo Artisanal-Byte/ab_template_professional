@@ -19,12 +19,12 @@ const props = defineProps({
 });
 
 const model = defineModel({
-  type: [String, Number],
+  type: String,
   default: '',
 });
 
 const option = computed(() => props.option as SelectOption);
-const optionValue = computed(() => getOptionValue(option.value));
+const optionValue = computed(() => String(getOptionValue(option.value)));
 const optionLabel = computed(() => getOptionLabel(option.value));
 </script>
 

@@ -29,7 +29,7 @@ const props = defineProps({
 });
 
 const model = defineModel({
-  type: [String, Number],
+  type: String,
   default: '',
 });
 
@@ -65,7 +65,7 @@ const getOptionId = (option: SelectOption) => {
           :id="getOptionId(option)"
           v-model="model"
           :name="props.name"
-          :value="getOptionValue(option)"
+          :value="String(getOptionValue(option))"
           :disabled="props.disabled || option.disabled"
         />
         <span class="leading-5">

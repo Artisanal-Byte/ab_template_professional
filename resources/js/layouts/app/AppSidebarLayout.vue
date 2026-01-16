@@ -6,8 +6,6 @@ import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import NavDrawer from '@/components/NavDrawer.vue';
 import { ref, watch } from 'vue';
 
-const DEFAULT_NAV_DRAWER_KEY = 'nav-drawer-desktop';
-
 const props = defineProps({
     breadcrumbs: {
         type: Array,
@@ -27,7 +25,7 @@ const props = defineProps({
     },
     navDrawerKey: {
         type: String,
-        default: DEFAULT_NAV_DRAWER_KEY,
+        default: 'nav-drawer-desktop',
     },
 });
 

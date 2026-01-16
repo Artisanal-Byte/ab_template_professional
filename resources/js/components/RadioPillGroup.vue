@@ -24,7 +24,7 @@ const props = defineProps({
 });
 
 const model = defineModel({
-  type: [String, Number],
+  type: String,
   default: '',
 });
 

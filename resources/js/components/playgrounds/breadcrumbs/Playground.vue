@@ -9,6 +9,19 @@ import Icon from '@/components/Icon.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
 import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
 
+type BreadcrumbFormItem = {
+  id: number;
+  label: string;
+  href: string;
+};
+
+type BreadcrumbPreviewItem = {
+  label?: string;
+  href?: string;
+  current?: boolean;
+  ellipsis?: boolean;
+};
+
 const patterns = [
   { label: 'Basic', value: 'basic' },
   { label: 'Ellipsis', value: 'ellipsis' },
@@ -16,17 +29,17 @@ const patterns = [
 
 const pattern = ref('basic');
 
-const basicItems = ref([
+const basicItems = ref<BreadcrumbFormItem[]>([
   { id: 1, label: 'Home', href: '/' },
   { id: 2, label: 'Library', href: '/library' },
   { id: 3, label: 'Data', href: '' },
 ]);
 
-const ellipsisLeading = ref([
+const ellipsisLeading = ref<BreadcrumbFormItem[]>([
   { id: 1, label: 'Home', href: '/' },
 ]);
 
-const ellipsisTrailing = ref([
+const ellipsisTrailing = ref<BreadcrumbFormItem[]>([
   { id: 1, label: 'Settings', href: '/settings' },
   { id: 2, label: 'Appearance', href: '' },
 ]);
@@ -49,7 +62,7 @@ const resolveHref = (label: string, href: string) => {
   return slug ? `/${slug}` : '';
 };
 
-const buildBasicItems = computed(() => {
+const buildBasicItems = computed<BreadcrumbPreviewItem[]>(() => {
   const cleaned = basicItems.value
     .map((item) => ({
       label: normalizeLabel(item.label),
@@ -71,8 +84,8 @@ const buildBasicItems = computed(() => {
   });
 });
 
-const buildEllipsisItems = computed(() => {
-  const leading = ellipsisLeading.value
+const buildEllipsisItems = computed<BreadcrumbPreviewItem[]>(() => {
+  const leading: BreadcrumbPreviewItem[] = ellipsisLeading.value
     .map((item) => ({
       label: normalizeLabel(item.label),
       href: item.href,
@@ -99,7 +112,7 @@ const buildEllipsisItems = computed(() => {
     };
   });
 
-  const items = [...leading];
+  const items: BreadcrumbPreviewItem[] = [...leading];
   if (items.length && mappedTrailing.length) {
     items.push({ ellipsis: true });
   }

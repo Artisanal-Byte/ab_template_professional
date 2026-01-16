@@ -8,7 +8,7 @@ defineOptions({
 });
 
 const model = defineModel({
-  type: [String, Number, Boolean],
+  type: String,
   default: '',
 });
 

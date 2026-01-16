@@ -89,6 +89,10 @@ const disabledActionSet = computed(
     () => new Set((props.disabledActions as string[]).map((item) => String(item))),
 );
 
+const uploadImageRef = computed(
+    () => props.uploadImage as unknown as ((file: File) => string | Promise<string>) | null,
+);
+
 const isActionHidden = (action: string) => {
     if (disabledActionSet.value.has(action)) {
         return true;
@@ -129,7 +133,7 @@ const {
     placeholder: toRef(props, 'placeholder'),
     disabled: toRef(props, 'disabled'),
     mentionItems: toRef(props, 'mentionItems'),
-    uploadImage: toRef(props, 'uploadImage'),
+    uploadImage: uploadImageRef,
 });
 
 const buttonClass = (action: string, active = false) =>
