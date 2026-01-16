@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import Select from '@/components/ui/Select.vue';
 import InputError from '@/components/InputError.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Form, Head } from '@inertiajs/vue3';
@@ -19,7 +21,7 @@ interface AdminUser {
     status: string;
 }
 
-defineProps<{
+const props = defineProps<{
     admins: AdminUser[];
 }>();
 
@@ -30,6 +32,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+const adminStatusOptions = [
+    { label: 'Active', value: 'active' },
+    { label: 'Locked', value: 'locked' },
+    { label: 'Disabled', value: 'disabled' },
+];
+
+const adminStatusSelections = ref<Record<number, string>>({});
+
+watch(
+    () => props.admins,
+    (admins) => {
+        adminStatusSelections.value = admins.reduce<Record<number, string>>((acc, admin) => {
+            acc[admin.id] = admin.status;
+            return acc;
+        }, {});
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -127,8 +147,15 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-status-${admin.id}`">Status</Label>
-                                                    <Input :id="`edit-status-${admin.id}`" name="status" :default-value="admin.status" />
-                                                    <InputError :message="errors.status" />
+                                                    <Select
+                                                        :id="`edit-status-${admin.id}`"
+                                                        v-model="adminStatusSelections[admin.id]"
+                                                        name="status"
+                                                        :options="adminStatusOptions"
+                                                        placeholder="Select status"
+                                                        width="full"
+                                                        :error="errors.status"
+                                                    />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-password-${admin.id}`">New password</Label>

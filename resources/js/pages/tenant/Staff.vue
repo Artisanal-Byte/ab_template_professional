@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
@@ -52,6 +53,24 @@ const roleOptions = props.roles.map((role) => ({
     label: role.name,
     value: String(role.id),
 }));
+
+const staffStatusOptions = [
+    { label: 'Active', value: 'active' },
+    { label: 'Disabled', value: 'disabled' },
+];
+
+const staffStatusSelections = ref<Record<number, string>>({});
+
+watch(
+    () => props.staff,
+    (staff) => {
+        staffStatusSelections.value = staff.reduce<Record<number, string>>((acc, member) => {
+            acc[member.id] = member.status;
+            return acc;
+        }, {});
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -161,8 +180,15 @@ const roleOptions = props.roles.map((role) => ({
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-status-${member.id}`">Status</Label>
-                                                    <Input :id="`edit-status-${member.id}`" name="status" :default-value="member.status" />
-                                                    <InputError :message="errors.status" />
+                                                    <Select
+                                                        :id="`edit-status-${member.id}`"
+                                                        v-model="staffStatusSelections[member.id]"
+                                                        name="status"
+                                                        :options="staffStatusOptions"
+                                                        placeholder="Select status"
+                                                        width="full"
+                                                        :error="errors.status"
+                                                    />
                                                 </div>
                                                 <div class="flex justify-end gap-2">
                                                     <Button type="submit" :disabled="processing">Save</Button>
