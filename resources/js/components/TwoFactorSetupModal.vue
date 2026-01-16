@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import InputOTP from '@/components/ui/InputOTP.vue';
 import Spinner from '@/components/ui/Spinner.vue';
+import Icon from '@/components/Icon.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { confirm } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
@@ -129,7 +130,8 @@ watch(
                                 class="border-b border-border last:border-b-0"
                             />
                         </div>
-                        <IconLucideScanLine
+                        <Icon
+                            name="lucide:scan-line"
                             class="relative z-20 size-6 text-foreground"
                         />
                     </div>
@@ -206,11 +208,12 @@ watch(
                                         @click="copy(manualSetupKey || '')"
                                         class="relative block h-auto border-l border-border px-3 hover:bg-muted"
                                     >
-                                        <IconLucideCheck
+                                        <Icon
                                             v-if="copied"
+                                            name="lucide:check"
                                             class="w-4 text-success"
                                         />
-                                        <IconLucideCopy v-else class="w-4" />
+                                        <Icon v-else name="lucide:copy" class="w-4" />
                                     </button>
                                 </template>
                             </div>

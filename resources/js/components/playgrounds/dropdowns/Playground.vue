@@ -415,7 +415,7 @@ const detailsOpen = ref(false);
           <div class="flex items-center gap-2">
             <Input v-model="itemLabel" placeholder="Add menu item" />
             <Button variant="outline" size="icon" @click="addItem" aria-label="Add menu item">
-              <IconLucidePlus class="h-4 w-4" />
+              <Icon name="lucide:plus" class="h-4 w-4" />
             </Button>
           </div>
           <div class="flex flex-wrap gap-2">

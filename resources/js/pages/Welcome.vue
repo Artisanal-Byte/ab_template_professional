@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue';
-import { dashboard, login, register } from '@/routes';
+import { login } from '@/routes';
+import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { Head, Link } from '@inertiajs/vue3';
-
-withDefaults(
-    defineProps<{
-        canRegister: boolean;
-    }>(),
-    {
-        canRegister: true,
-    },
-);
 </script>
 
 <template>
@@ -22,15 +14,12 @@ withDefaults(
             class="mb-6 w-full max-w-[335px] text-sm text-foreground-subtle not-has-[nav]:hidden lg:max-w-4xl"
         >
             <nav class="flex items-center justify-end gap-4">
-                <Button v-if="$page.props.auth.user" :as="Link" :href="dashboard()" size="sm">
+                <Button v-if="$page.props.auth.user" :as="Link" :href="tenantDashboard()" size="sm">
                     Dashboard
                 </Button>
                 <template v-else>
                     <Button :as="Link" :href="login()" size="sm" variant="ghost">
                         Log in
-                    </Button>
-                    <Button v-if="canRegister" :as="Link" :href="register()" size="sm" variant="outline">
-                        Register
                     </Button>
                 </template>
             </nav>
@@ -828,4 +817,3 @@ withDefaults(
         <div class="hidden h-14.5 lg:block"></div>
     </div>
 </template>
-

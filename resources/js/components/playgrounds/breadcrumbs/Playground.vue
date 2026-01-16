@@ -256,7 +256,7 @@ const detailsOpen = ref(false);
         <div class="flex items-center justify-between gap-2">
           <Label>Breadcrumb items</Label>
           <Button variant="outline" size="sm" @click="addBasicItem">
-            <IconLucidePlus class="h-4 w-4" />
+            <Icon name="lucide:plus" class="h-4 w-4" />
             Add label
           </Button>
         </div>
@@ -293,7 +293,7 @@ const detailsOpen = ref(false);
           <div class="flex items-center justify-between gap-2">
             <Label>Leading labels</Label>
             <Button variant="outline" size="sm" @click="addEllipsisLeading">
-              <IconLucidePlus class="h-4 w-4" />
+              <Icon name="lucide:plus" class="h-4 w-4" />
               Add label
             </Button>
           </div>
@@ -329,7 +329,7 @@ const detailsOpen = ref(false);
           <div class="flex items-center justify-between gap-2">
             <Label>Trailing labels</Label>
             <Button variant="outline" size="sm" @click="addEllipsisTrailing">
-              <IconLucidePlus class="h-4 w-4" />
+              <Icon name="lucide:plus" class="h-4 w-4" />
               Add label
             </Button>
           </div>

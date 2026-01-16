@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +16,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        app(PermissionRegistrar::class)->setPermissionsTeamId(null);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $webAdmin = User::firstOrCreate(
+            ['email' => 'webadmin@neujin.test'],
+            [
+                'name' => 'Web Admin',
+                'password' => Hash::make('Password!23'),
+                'status' => 'active',
+            ]
+        );
+
+        Role::firstOrCreate(['name' => 'web_admin', 'guard_name' => 'web', 'tenant_id' => null]);
+        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web', 'tenant_id' => null]);
+        Role::firstOrCreate(['name' => 'organization_owner', 'guard_name' => 'web', 'tenant_id' => null]);
+
+        if (! $webAdmin->hasRole('web_admin')) {
+            $webAdmin->assignRole('web_admin');
+        }
     }
 }

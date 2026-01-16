@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import Button from '@/components/ui/Button.vue';
+import Icon from '@/components/Icon.vue';
 import { cn } from '@/lib/utils';
 
 // Slots:
@@ -105,8 +106,8 @@ const toggleOpen = () => {
                 v-if="props.showChevron"
                 class="ml-auto flex items-center text-foreground-faint"
             >
-                <IconLucideChevronUp v-if="open" class="h-4 w-4" />
-                <IconLucideChevronDown v-else class="h-4 w-4" />
+                <Icon v-if="open" name="lucide:chevron-up" class="h-4 w-4" />
+                <Icon v-else name="lucide:chevron-down" class="h-4 w-4" />
             </span>
         </Button>
 

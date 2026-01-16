@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Tenant;
+use App\Models\TenantUser;
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
@@ -12,6 +14,14 @@ test('login screen can be rendered', function () {
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->withoutTwoFactor()->create();
+    $tenant = Tenant::factory()->create(['provisioned_at' => now()]);
+
+    TenantUser::factory()->create([
+        'tenant_id' => $tenant->id,
+        'user_id' => $user->id,
+        'membership_role' => 'employee',
+        'status' => 'active',
+    ]);
 
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
@@ -19,7 +29,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect('/tenant');
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {

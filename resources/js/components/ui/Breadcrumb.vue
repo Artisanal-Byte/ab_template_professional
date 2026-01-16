@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue';
+import Icon from '@/components/Icon.vue';
 import { cn } from '@/lib/utils';
 import { splitAttrs } from '@/lib/attrs';
 
@@ -50,7 +51,7 @@ const hasItems = computed(() => items.value.length > 0);
                                         aria-hidden="true"
                                         role="presentation"
                                     >
-                                        <IconLucideMoreHorizontal class="h-4 w-4" />
+                                        <Icon name="lucide:more-horizontal" class="h-4 w-4" />
                                         <span class="sr-only">More</span>
                                     </span>
                                 </slot>
@@ -78,7 +79,7 @@ const hasItems = computed(() => items.value.length > 0);
                         class="text-foreground-disabled [&>svg]:h-3.5 [&>svg]:w-3.5"
                     >
                         <slot name="separator">
-                            <IconLucideChevronRight />
+                            <Icon name="lucide:chevron-right" />
                         </slot>
                     </li>
                 </template>

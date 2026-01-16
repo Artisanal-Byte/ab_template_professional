@@ -4,6 +4,7 @@ import TwoFactorRecoveryCodes from '@/components/TwoFactorRecoveryCodes.vue';
 import TwoFactorSetupModal from '@/components/TwoFactorSetupModal.vue';
 import Badge from '@/components/ui/Badge.vue';
 import Button from '@/components/ui/Button.vue';
+import Icon from '@/components/Icon.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -65,7 +66,7 @@ onUnmounted(() => {
                             v-if="hasSetupData"
                             @click="showSetupModal = true"
                         >
-                            <IconLucideShieldCheck />Continue Setup
+                            <Icon name="lucide:shield-check" />Continue Setup
                         </Button>
                         <Form
                             v-else
@@ -74,7 +75,7 @@ onUnmounted(() => {
                             #default="{ processing }"
                         >
                             <Button type="submit" :disabled="processing">
-                                <IconLucideShieldCheck />Enable 2FA</Button
+                                <Icon name="lucide:shield-check" />Enable 2FA</Button
                             ></Form
                         >
                     </div>
@@ -102,7 +103,7 @@ onUnmounted(() => {
                                 type="submit"
                                 :disabled="processing"
                             >
-                                <IconLucideShieldBan />
+                                <Icon name="lucide:shield-ban" />
                                 Disable 2FA
                             </Button>
                         </Form>

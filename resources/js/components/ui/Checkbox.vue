@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue';
+import { computed, useAttrs, watch } from 'vue';
 import { cn } from '@/lib/utils';
 import { splitAttrs } from '@/lib/attrs';
 
@@ -9,6 +9,13 @@ defineOptions({
 
 const model = defineModel({
     default: false,
+});
+
+const props = defineProps({
+    defaultValue: {
+        type: Boolean,
+        default: undefined,
+    },
 });
 
 const attrs = useAttrs() as Record<string, unknown>;
@@ -22,6 +29,16 @@ const checkboxClass = computed(() =>
 );
 
 const boundAttrs = computed(() => attrsSplit.value.rest);
+
+watch(
+    () => props.defaultValue,
+    (value) => {
+        if ((model.value === false || model.value === null || model.value === undefined) && value !== undefined) {
+            model.value = value;
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -32,4 +49,3 @@ const boundAttrs = computed(() => attrsSplit.value.rest);
         :class="checkboxClass"
     />
 </template>
-

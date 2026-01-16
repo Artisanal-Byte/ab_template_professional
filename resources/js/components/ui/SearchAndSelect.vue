@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import Input from '@/components/ui/Input.vue';
 import ListboxDropdown from '@/components/ui/ListboxDropdown.vue';
 import SelectTrigger from '@/components/ui/SelectTrigger.vue';
+import Icon from '@/components/Icon.vue';
 import { getOptionLabel, getOptionValue } from '@/composables/useSelectDisplay';
 import type { SelectOption } from '@/types';
 import FieldError from '@/components/ui/FieldError.vue';
@@ -169,7 +170,7 @@ watch(open, (value) => {
                     class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground-muted transition-colors hover:bg-secondary-active"
                     @click="handleCreate"
                 >
-                    <IconLucidePlus class="h-4 w-4" />
+                    <Icon name="lucide:plus" class="h-4 w-4" />
                     Add "{{ searchTerm.trim() }}"
                 </button>
             </template>

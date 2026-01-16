@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import PopoverBase from '@/components/ui/PopoverBase.vue';
+import Icon from '@/components/Icon.vue';
 import { cn } from '@/lib/utils';
 import { getOptionValue } from '@/composables/useSelectDisplay';
 import type { SelectOption } from '@/types';
@@ -267,7 +268,11 @@ watch(
                                 @click="handleSelect(option)"
                             >
                                 <span class="mt-0.5 text-foreground-faint">
-                                    <IconLucideCheck v-if="isSelected(option)" class="h-4 w-4" />
+                                    <Icon
+                                        v-if="isSelected(option)"
+                                        name="lucide:check"
+                                        class="h-4 w-4"
+                                    />
                                 </span>
                                 <span class="flex-1">
                                     <span class="block break-words font-medium">

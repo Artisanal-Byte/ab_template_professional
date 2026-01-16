@@ -2,6 +2,7 @@
 import AlertError from '@/components/AlertError.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
+import Icon from '@/components/Icon.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
@@ -35,7 +36,7 @@ onMounted(async () => {
     <Card class="w-full">
         <template #title>
             <span class="flex items-center gap-3">
-                <IconLucideLockKeyhole class="size-4" />2FA Recovery Codes
+                <Icon name="lucide:lock-keyhole" class="size-4" />2FA Recovery Codes
             </span>
         </template>
         <template #description>
@@ -47,11 +48,12 @@ onMounted(async () => {
                 class="flex flex-col gap-3 select-none sm:flex-row sm:items-center sm:justify-between"
             >
                 <Button @click="toggleRecoveryCodesVisibility" class="w-fit">
-                    <IconLucideEyeOff
+                    <Icon
                         v-if="isRecoveryCodesVisible"
+                        name="lucide:eye-off"
                         class="size-4"
                     />
-                    <IconLucideEye v-else class="size-4" />
+                    <Icon v-else name="lucide:eye" class="size-4" />
                     {{ isRecoveryCodesVisible ? 'Hide' : 'View' }} Recovery
                     Codes
                 </Button>
@@ -69,7 +71,7 @@ onMounted(async () => {
                         type="submit"
                         :disabled="processing"
                     >
-                        <IconLucideRefreshCw /> Regenerate Codes
+                        <Icon name="lucide:refresh-cw" /> Regenerate Codes
                     </Button>
                 </Form>
             </div>

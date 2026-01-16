@@ -11,7 +11,9 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
 import { externalNavItems, mainNavItems } from '@/config/navConfig';
-import { dashboard } from '@/routes';
+import { dashboard as adminDashboard } from '@/routes/admin';
+import { dashboard as platformDashboard } from '@/routes/platform';
+import { dashboard as tenantDashboard } from '@/routes/tenant';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -39,8 +41,24 @@ const activeItemStyles = computed(
             : '',
 );
 
-const mainItems: NavItem[] = mainNavItems();
+const roles = (page.props.auth?.roles ?? []) as string[];
+const currentTenantId =
+    page.props.currentTenant?.id ?? page.props.tenantMemberships?.[0]?.tenant_id ?? null;
+const tenantMemberships = (page.props.tenantMemberships ?? []) as Array<{
+    tenant_id: string;
+    membership_role: string;
+}>;
+const tenantRole =
+    tenantMemberships.find((membership) => membership.tenant_id === currentTenantId)
+        ?.membership_role ?? null;
+const mainItems: NavItem[] = mainNavItems(roles, tenantRole);
 const rightItems: NavItem[] = externalNavItems();
+const homeRoute =
+    roles.includes('web_admin')
+        ? platformDashboard
+        : roles.includes('admin')
+          ? adminDashboard
+          : tenantDashboard;
 
 const isExternalLink = (item: NavItem) =>
     typeof item.href === 'string' && item.href.startsWith('http');
@@ -62,7 +80,7 @@ const isExternalLink = (item: NavItem) =>
                                 size="icon"
                                 class="mr-2 h-9 w-9"
                             >
-                                <IconLucideMenu class="h-5 w-5" />
+                                <Icon name="lucide:menu" class="h-5 w-5" />
                             </Button>
                         </template>
                         <span class="sr-only">Navigation Menu</span>
@@ -116,7 +134,7 @@ const isExternalLink = (item: NavItem) =>
                     </Dialog>
                 </div>
 
-                <Link :href="dashboard()" class="flex items-center gap-x-2">
+                <Link :href="homeRoute()" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 
@@ -147,7 +165,8 @@ const isExternalLink = (item: NavItem) =>
                         size="icon"
                         class="group h-9 w-9 cursor-pointer"
                     >
-                        <IconLucideSearch
+                        <Icon
+                            name="lucide:search"
                             class="size-5 opacity-80 group-hover:opacity-100"
                         />
                     </Button>
