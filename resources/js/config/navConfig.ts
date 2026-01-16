@@ -1,4 +1,3 @@
-import { BookOpen, Building2, LayoutGrid, Users } from 'lucide-vue-next';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { dashboard as platformDashboard } from '@/routes/platform';
 import { dashboard as tenantDashboard } from '@/routes/tenant';
@@ -17,12 +16,12 @@ export const mainNavItems = (
             {
                 title: 'Platform',
                 href: platformDashboard(),
-                icon: LayoutGrid,
+                icon: 'lucide:layout-grid',
             },
             {
                 title: 'Admin Users',
                 href: adminUsersIndex(),
-                icon: Users,
+                icon: 'lucide:users',
             },
         ];
     }
@@ -32,12 +31,12 @@ export const mainNavItems = (
             {
                 title: 'Admin',
                 href: adminDashboard(),
-                icon: LayoutGrid,
+                icon: 'lucide:layout-grid',
             },
             {
                 title: 'Organizations',
                 href: tenantsIndex(),
-                icon: Building2,
+                icon: 'lucide:building-2',
             },
         ];
     }
@@ -50,23 +49,23 @@ export const mainNavItems = (
         {
             title: 'Tenant',
             href: tenantDashboard(),
-            icon: LayoutGrid,
+            icon: 'lucide:layout-grid',
         },
         {
             title: 'Staff',
             href: tenantStaffIndex(),
-            icon: Users,
+            icon: 'lucide:users',
         },
-        // {
-        //     title: 'Roles',
-        //     href: tenantRolesIndex(),
-        //     icon: ShieldCheck,
-        // },
-        // {
-        //     title: 'Permissions',
-        //     href: tenantPermissionsIndex(),
-        //     icon: ShieldCheck,
-        // },
+        {
+            title: 'Roles',
+            href: tenantRolesIndex(),
+            icon: 'lucide:shield-check',
+        },
+        {
+            title: 'Permissions',
+            href: tenantPermissionsIndex(),
+            icon: 'lucide:shield-check',
+        },
     ];
 };
 
@@ -77,7 +76,7 @@ export const externalNavItems = (): NavItem[] => [
               {
                   title: 'Design System',
                   href: designSystem(),
-                  icon: BookOpen,
+                  icon: 'lucide:book-open',
               },
           ]),
 ];

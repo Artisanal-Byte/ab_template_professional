@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import Icon from '@/components/Icon.vue';
 import { toUrl } from '@/lib/utils';
 import type { NavItem } from '@/types';
 
@@ -42,8 +43,7 @@ const linkClass = computed(() => [
         :class="linkClass"
         :aria-label="props.collapsed ? item.title : undefined"
     >
-        <component v-if="item.icon" :is="item.icon" class="h-4 w-4" />
+        <Icon v-if="item.icon" :name="item.icon" class="h-4 w-4" />
         <span v-if="!props.collapsed">{{ item.title }}</span>
     </component>
 </template>
-

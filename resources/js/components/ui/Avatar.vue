@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots } from 'vue';
+import { computed, ref, useAttrs, useSlots, watch } from 'vue';
 import { cn } from '@/lib/utils';
 import { splitAttrs } from '@/lib/attrs';
 
@@ -29,6 +29,8 @@ const slots = useSlots();
 const attrs = useAttrs() as Record<string, unknown>;
 const attrsSplit = computed(() => splitAttrs(attrs));
 
+const imageFailed = ref(false);
+
 const sizeClasses: Record<string, string> = {
     sm: 'h-8 w-8',
     md: 'h-10 w-10',
@@ -43,12 +45,31 @@ const avatarClass = computed(() =>
     ),
 );
 
-const shouldShowImage = computed(() => Boolean(props.src) || Boolean(slots.image));
-const shouldShowFallback = computed(
-    () => Boolean(slots.fallback) || Boolean(props.fallback),
+const shouldShowImage = computed(
+    () => Boolean(slots.image) || (Boolean(props.src) && !imageFailed.value),
 );
+const shouldShowFallback = computed(() => {
+    if (Boolean(slots.image)) {
+        return false;
+    }
+    return (
+        (Boolean(slots.fallback) || Boolean(props.fallback)) &&
+        (!props.src || imageFailed.value)
+    );
+});
 
 const boundAttrs = computed(() => attrsSplit.value.rest);
+
+watch(
+    () => props.src,
+    () => {
+        imageFailed.value = false;
+    },
+);
+
+const handleImageError = () => {
+    imageFailed.value = true;
+};
 </script>
 
 <template>
@@ -59,6 +80,7 @@ const boundAttrs = computed(() => attrsSplit.value.rest);
                     :src="props.src"
                     :alt="props.alt"
                     class="h-full w-full object-cover"
+                    @error="handleImageError"
                 />
             </slot>
         </template>
@@ -73,4 +95,3 @@ const boundAttrs = computed(() => attrsSplit.value.rest);
         </template>
     </div>
 </template>
-

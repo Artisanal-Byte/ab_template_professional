@@ -5,11 +5,11 @@ import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import InputOTP from '@/components/ui/InputOTP.vue';
 import Spinner from '@/components/ui/Spinner.vue';
+import Icon from '@/components/Icon.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { confirm } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
 import { useClipboard } from '@vueuse/core';
-import { Check, Copy, ScanLine } from 'lucide-vue-next';
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 
 const props = defineProps({
@@ -130,7 +130,8 @@ watch(
                                 class="border-b border-border last:border-b-0"
                             />
                         </div>
-                        <ScanLine
+                        <Icon
+                            name="lucide:scan-line"
                             class="relative z-20 size-6 text-foreground"
                         />
                     </div>
@@ -207,11 +208,12 @@ watch(
                                         @click="copy(manualSetupKey || '')"
                                         class="relative block h-auto border-l border-border px-3 hover:bg-muted"
                                     >
-                                        <Check
+                                        <Icon
                                             v-if="copied"
+                                            name="lucide:check"
                                             class="w-4 text-success"
                                         />
-                                        <Copy v-else class="w-4" />
+                                        <Icon v-else name="lucide:copy" class="w-4" />
                                     </button>
                                 </template>
                             </div>
@@ -272,4 +274,3 @@ watch(
             </div>
     </Dialog>
 </template>
-

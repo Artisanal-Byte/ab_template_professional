@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import UserInfo from '@/components/UserInfo.vue';
+import Icon from '@/components/Icon.vue';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings } from 'lucide-vue-next';
 
 const handleLogout = () => {
     router.flushAll();
@@ -30,7 +30,7 @@ defineProps({
             prefetch
             as="button"
         >
-            <Settings class="h-4 w-4" />
+            <Icon name="lucide:settings" class="h-4 w-4" />
             Settings
         </Link>
         <div class="h-px bg-border"></div>
@@ -41,7 +41,7 @@ defineProps({
             as="button"
             data-test="logout-button"
         >
-            <LogOut class="h-4 w-4" />
+            <Icon name="lucide:log-out" class="h-4 w-4" />
             Log out
         </Link>
     </div>

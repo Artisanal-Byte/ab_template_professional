@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import Tooltip from '@/components/ui/Tooltip.vue';
+import Icon from '@/components/Icon.vue';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
@@ -15,7 +16,6 @@ import { dashboard as platformDashboard } from '@/routes/platform';
 import { dashboard as tenantDashboard } from '@/routes/tenant';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -80,7 +80,7 @@ const isExternalLink = (item: NavItem) =>
                                 size="icon"
                                 class="mr-2 h-9 w-9"
                             >
-                                <Menu class="h-5 w-5" />
+                                <Icon name="lucide:menu" class="h-5 w-5" />
                             </Button>
                         </template>
                         <span class="sr-only">Navigation Menu</span>
@@ -104,7 +104,8 @@ const isExternalLink = (item: NavItem) =>
                                 >
                                     <component
                                         v-if="item.icon"
-                                        :is="item.icon"
+                                        :is="Icon"
+                                        :name="item.icon"
                                         class="h-5 w-5"
                                     />
                                     {{ item.title }}
@@ -122,7 +123,8 @@ const isExternalLink = (item: NavItem) =>
                                 >
                                     <component
                                         v-if="item.icon"
-                                        :is="item.icon"
+                                        :is="Icon"
+                                        :name="item.icon"
                                         class="h-5 w-5"
                                     />
                                     <span>{{ item.title }}</span>
@@ -148,7 +150,8 @@ const isExternalLink = (item: NavItem) =>
                         >
                             <component
                                 v-if="item.icon"
-                                :is="item.icon"
+                                :is="Icon"
+                                :name="item.icon"
                                 class="mr-2 h-4 w-4"
                             />
                             {{ item.title }}
@@ -162,7 +165,8 @@ const isExternalLink = (item: NavItem) =>
                         size="icon"
                         class="group h-9 w-9 cursor-pointer"
                     >
-                        <Search
+                        <Icon
+                            name="lucide:search"
                             class="size-5 opacity-80 group-hover:opacity-100"
                         />
                     </Button>
@@ -184,8 +188,9 @@ const isExternalLink = (item: NavItem) =>
                                             :rel="isExternalLink(item) ? 'noopener noreferrer' : undefined"
                                         >
                                             <span class="sr-only">{{ item.title }}</span>
-                                            <component
-                                                :is="item.icon"
+                                            <Icon
+                                                v-if="item.icon"
+                                                :name="item.icon"
                                                 class="size-5 opacity-80 group-hover:opacity-100"
                                             />
                                         </component>

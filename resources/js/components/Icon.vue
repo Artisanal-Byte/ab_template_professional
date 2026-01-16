@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { Icon as IconifyIcon } from '@iconify/vue';
 import { cn } from '@/lib/utils';
-import * as icons from 'lucide-vue-next';
 
 const props = defineProps({
     name: {
@@ -27,18 +27,15 @@ const props = defineProps({
 });
 
 const className = computed(() => cn('h-4 w-4', props.class));
-
-const icon = computed(() => {
-    const iconName = props.name.charAt(0).toUpperCase() + props.name.slice(1);
-    return (icons as Record<string, any>)[iconName];
-});
 </script>
 
 <template>
     <component
-        :is="icon"
+        :is="IconifyIcon"
         :class="className"
-        :size="size"
+        :icon="name"
+        :width="size"
+        :height="size"
         :stroke-width="strokeWidth"
         :color="color"
     />

@@ -2,10 +2,10 @@
 import AlertError from '@/components/AlertError.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
+import Icon from '@/components/Icon.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
-import { Eye, EyeOff, LockKeyhole, RefreshCw } from 'lucide-vue-next';
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue';
 
 const { recoveryCodesList, fetchRecoveryCodes, errors } = useTwoFactorAuth();
@@ -36,7 +36,7 @@ onMounted(async () => {
     <Card class="w-full">
         <template #title>
             <span class="flex items-center gap-3">
-                <LockKeyhole class="size-4" />2FA Recovery Codes
+                <Icon name="lucide:lock-keyhole" class="size-4" />2FA Recovery Codes
             </span>
         </template>
         <template #description>
@@ -48,10 +48,12 @@ onMounted(async () => {
                 class="flex flex-col gap-3 select-none sm:flex-row sm:items-center sm:justify-between"
             >
                 <Button @click="toggleRecoveryCodesVisibility" class="w-fit">
-                    <component
-                        :is="isRecoveryCodesVisible ? EyeOff : Eye"
+                    <Icon
+                        v-if="isRecoveryCodesVisible"
+                        name="lucide:eye-off"
                         class="size-4"
                     />
+                    <Icon v-else name="lucide:eye" class="size-4" />
                     {{ isRecoveryCodesVisible ? 'Hide' : 'View' }} Recovery
                     Codes
                 </Button>
@@ -69,7 +71,7 @@ onMounted(async () => {
                         type="submit"
                         :disabled="processing"
                     >
-                        <RefreshCw /> Regenerate Codes
+                        <Icon name="lucide:refresh-cw" /> Regenerate Codes
                     </Button>
                 </Form>
             </div>
@@ -115,4 +117,3 @@ onMounted(async () => {
         </div>
     </Card>
 </template>
-

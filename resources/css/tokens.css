@@ -74,19 +74,20 @@
     --primary-border: color-mix(in oklab, var(--primary) 30%, transparent);
     --primary-strong: color-mix(in oklab, var(--primary) 80%, transparent);
 
-    --info-soft: color-mix(in oklab, var(--info) 10%, transparent);
-    --info-border: color-mix(in oklab, var(--info) 40%, transparent);
-    --success-soft: color-mix(in oklab, var(--success) 10%, transparent);
-    --success-border: color-mix(in oklab, var(--success) 40%, transparent);
-    --warning-soft: color-mix(in oklab, var(--warning) 10%, transparent);
-    --warning-border: color-mix(in oklab, var(--warning) 40%, transparent);
-    --error-soft: color-mix(in oklab, var(--error) 10%, transparent);
-    --error-border: color-mix(in oklab, var(--error) 40%, transparent);
+    --info-soft: color-mix(in oklab, var(--info) 40%, white);
+    --info-border: color-mix(in oklab, var(--info) 50%, black);
+    --success-soft: color-mix(in oklab, var(--success) 40%, white);
+    --success-border: color-mix(in oklab, var(--success) 50%, black);
+    --warning-soft: color-mix(in oklab, var(--warning) 40%, white);
+    --warning-border: color-mix(in oklab, var(--warning) 50%, black);
+    --error-soft: color-mix(in oklab, var(--error) 40%, white);
+    --error-border: color-mix(in oklab, var(--error) 50%, black);
 
     --accent-soft: color-mix(in oklab, var(--accent) 20%, transparent);
     --overlay: color-mix(in oklab, var(--foreground) 40%, transparent);
     --focus-ring: color-mix(in oklab, var(--primary) 30%, transparent);
     --skeleton: color-mix(in oklab, var(--foreground) 10%, transparent);
+    --skeleton-highlight: color-mix(in oklab, var(--foreground) 20%, transparent);
     --pattern-stroke: color-mix(in oklab, var(--foreground) 20%, transparent);
 }
 

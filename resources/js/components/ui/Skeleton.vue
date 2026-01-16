@@ -8,7 +8,7 @@ const attrsSplit = computed(() => splitAttrs(attrs));
 
 const skeletonClass = computed(() =>
     cn(
-        'animate-pulse rounded-md bg-secondary-subtle',
+        'rounded-md skeleton-shimmer',
         attrsSplit.value.className,
     ),
 );
@@ -19,4 +19,3 @@ const boundAttrs = computed(() => attrsSplit.value.rest);
 <template>
     <div v-bind="boundAttrs" :class="skeletonClass" />
 </template>
-

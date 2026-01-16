@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import UserInfo from '@/components/UserInfo.vue';
+import Icon from '@/components/Icon.vue';
 import { usePage } from '@inertiajs/vue3';
-import { ChevronsUpDown } from 'lucide-vue-next';
 import UserMenuContent from './UserMenuContent.vue';
 
 const props = defineProps({
@@ -31,8 +31,9 @@ const user = page.props.auth.user;
             <template #trigger-content>
                 <div class="flex w-full items-center gap-2">
                     <UserInfo :user="user" :compact="props.collapsed" />
-                    <ChevronsUpDown
+                    <Icon
                         v-if="!props.collapsed"
+                        name="lucide:chevrons-up-down"
                         class="ml-auto h-4 w-4 text-foreground-faint"
                     />
                 </div>
@@ -41,4 +42,3 @@ const user = page.props.auth.user;
         </DropdownMenu>
     </div>
 </template>
-

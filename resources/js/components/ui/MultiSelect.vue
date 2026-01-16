@@ -20,6 +20,10 @@ const props = defineProps({
         type: String,
         default: 'Select options',
     },
+    maxChips: {
+        type: Number,
+        default: 2,
+    },
     disabled: {
         type: Boolean,
         default: false,
@@ -28,13 +32,10 @@ const props = defineProps({
         type: String,
         default: 'md',
     },
-    align: {
-        type: String,
-        default: 'start',
-    },
     side: {
         type: String,
         default: 'bottom',
+        validator: (value: string) => ['top', 'bottom'].includes(value),
     },
     sideOffset: {
         type: Number,
@@ -61,12 +62,34 @@ const model = defineModel({
 
 const open = ref(false);
 
+const widthClasses: Record<string, string> = {
+    xs: 'w-32',
+    sm: 'w-40',
+    md: 'w-56',
+    lg: 'w-72',
+    xl: 'w-80',
+    full: 'w-full min-w-0',
+};
+
+const wrapperClass = computed(() => {
+    const widthClass = widthClasses[props.width] || widthClasses.md;
+    return `grid gap-1 ${widthClass}`;
+});
+
 const options = computed(() => props.options as SelectOption[]);
 
 const selectedOptions = computed(() =>
     options.value.filter((option) =>
         model.value.includes(getOptionValue(option)),
     ),
+);
+
+const visibleOptions = computed(() =>
+    selectedOptions.value.slice(0, Math.max(1, props.maxChips)),
+);
+
+const hiddenCount = computed(() =>
+    Math.max(0, selectedOptions.value.length - visibleOptions.value.length),
 );
 
 const handleSelect = (option: SelectOption) => {
@@ -80,13 +103,12 @@ const handleSelect = (option: SelectOption) => {
 </script>
 
 <template>
-    <div class="grid gap-1">
+    <div :class="wrapperClass">
         <ListboxDropdown
             v-model:open="open"
             :options="props.options"
             :selected-values="model"
             :width="props.width"
-            :align="props.align"
             :side="props.side"
             :side-offset="props.sideOffset"
             :loading="props.loading"
@@ -101,19 +123,16 @@ const handleSelect = (option: SelectOption) => {
                             {{ props.placeholder }}
                         </span>
                         <Badge
-                            v-for="option in selectedOptions"
+                            v-for="option in visibleOptions"
                             :key="String(getOptionValue(option))"
                         >
-                            {{ getOptionLabel(option) }}
+                            <span class="max-w-[10rem] truncate">
+                                {{ getOptionLabel(option) }}
+                            </span>
                         </Badge>
-                    </template>
-                    <template #meta>
-                        <span
-                            v-if="selectedOptions.length"
-                            class="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-foreground"
-                        >
-                            {{ selectedOptions.length }}
-                        </span>
+                        <Badge v-if="hiddenCount" class="shrink-0">
+                            +{{ hiddenCount }} more
+                        </Badge>
                     </template>
                 </SelectTrigger>
             </template>
@@ -130,4 +149,3 @@ const handleSelect = (option: SelectOption) => {
         <FieldError :error="props.error" />
     </div>
 </template>
-

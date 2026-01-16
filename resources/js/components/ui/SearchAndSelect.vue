@@ -3,9 +3,9 @@ import { computed, ref, watch } from 'vue';
 import Input from '@/components/ui/Input.vue';
 import ListboxDropdown from '@/components/ui/ListboxDropdown.vue';
 import SelectTrigger from '@/components/ui/SelectTrigger.vue';
+import Icon from '@/components/Icon.vue';
 import { getOptionLabel, getOptionValue } from '@/composables/useSelectDisplay';
 import type { SelectOption } from '@/types';
-import { Plus } from 'lucide-vue-next';
 import FieldError from '@/components/ui/FieldError.vue';
 
 const props = defineProps({
@@ -37,13 +37,10 @@ const props = defineProps({
         type: String,
         default: 'md',
     },
-    align: {
-        type: String,
-        default: 'start',
-    },
     side: {
         type: String,
         default: 'bottom',
+        validator: (value: string) => ['top', 'bottom'].includes(value),
     },
     sideOffset: {
         type: Number,
@@ -72,6 +69,20 @@ const model = defineModel({
 
 const open = ref(false);
 const searchTerm = ref('');
+
+const widthClasses: Record<string, string> = {
+    xs: 'w-32',
+    sm: 'w-40',
+    md: 'w-56',
+    lg: 'w-72',
+    xl: 'w-80',
+    full: 'w-full min-w-0',
+};
+
+const wrapperClass = computed(() => {
+    const widthClass = widthClasses[props.width] || widthClasses.md;
+    return `grid gap-1 ${widthClass}`;
+});
 
 const options = computed(() => props.options as SelectOption[]);
 
@@ -115,14 +126,13 @@ watch(open, (value) => {
 </script>
 
 <template>
-    <div class="grid gap-1">
+    <div :class="wrapperClass">
         <ListboxDropdown
             v-model:open="open"
             :options="props.options"
             :selected-values="[model]"
             :filter-text="searchTerm"
             :width="props.width"
-            :align="props.align"
             :side="props.side"
             :side-offset="props.sideOffset"
             :loading="props.loading"
@@ -160,7 +170,7 @@ watch(open, (value) => {
                     class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground-muted transition-colors hover:bg-secondary-active"
                     @click="handleCreate"
                 >
-                    <Plus class="h-4 w-4" />
+                    <Icon name="lucide:plus" class="h-4 w-4" />
                     Add "{{ searchTerm.trim() }}"
                 </button>
             </template>
@@ -174,4 +184,3 @@ watch(open, (value) => {
         <FieldError :error="props.error" />
     </div>
 </template>
-

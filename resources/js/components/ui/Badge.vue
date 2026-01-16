@@ -20,14 +20,14 @@ const attrsSplit = computed(() => splitAttrs(attrs));
 const variantClasses: Record<string, string> = {
     neutral: 'border-border-subtle bg-secondary-subtle text-foreground',
     primary: 'border-primary-border bg-primary-soft text-primary',
-    success: 'border-success-border bg-success-soft text-foreground',
-    warning: 'border-warning-border bg-warning-soft text-foreground',
-    error: 'border-error-border bg-error-soft text-foreground',
+    success: 'border-success-border bg-success-soft text-success',
+    warning: 'border-warning-border bg-warning-soft text-warning',
+    error: 'border-error-border bg-error-soft text-error',
 };
 
 const badgeClass = computed(() =>
     cn(
-        'inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium',
         variantClasses[props.variant] || variantClasses.neutral,
         attrsSplit.value.className,
     ),

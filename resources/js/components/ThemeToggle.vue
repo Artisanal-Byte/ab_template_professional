@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { useAppearance } from '@/composables/useAppearance';
-import { Monitor, Moon, Sun } from 'lucide-vue-next';
+import Icon from '@/components/Icon.vue';
 
 const { appearance, updateAppearance } = useAppearance();
 
 const options = [
-    { value: 'light', label: 'Light', Icon: Sun },
-    { value: 'dark', label: 'Dark', Icon: Moon },
-    { value: 'system', label: 'System', Icon: Monitor },
+    { value: 'light', label: 'Light', icon: 'lucide:sun' },
+    { value: 'dark', label: 'Dark', icon: 'lucide:moon' },
+    { value: 'system', label: 'System', icon: 'lucide:monitor' },
 ] as const;
 </script>
 
 <template>
     <div class="inline-flex items-center gap-1 rounded-lg border border-border bg-secondary-subtle p-1">
         <button
-            v-for="{ value, label, Icon } in options"
+            v-for="{ value, label, icon } in options"
             :key="value"
             type="button"
             :aria-pressed="appearance === value"
@@ -26,9 +26,8 @@ const options = [
                     : 'text-foreground-faint hover:bg-secondary-active hover:text-foreground',
             ]"
         >
-            <component :is="Icon" class="h-4 w-4" />
+            <Icon :name="icon" class="h-4 w-4" />
             <span>{{ label }}</span>
         </button>
     </div>
 </template>
-
