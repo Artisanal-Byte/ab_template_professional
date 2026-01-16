@@ -1,18 +1,10 @@
-import {
-    BookOpen,
-    Building2,
-    LayoutGrid,
-    ShieldCheck,
-    Users,
-} from 'lucide-vue-next';
+import { BookOpen, Building2, LayoutGrid, Users } from 'lucide-vue-next';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { dashboard as platformDashboard } from '@/routes/platform';
 import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { index as adminUsersIndex } from '@/routes/platform/admin-users';
 import { index as tenantsIndex } from '@/routes/admin/tenants';
 import { index as tenantStaffIndex } from '@/routes/tenant/staff';
-import { index as tenantRolesIndex } from '@/routes/tenant/roles';
-import { index as tenantPermissionsIndex } from '@/routes/tenant/permissions';
 import { system as designSystem } from '@/routes/design';
 import type { NavItem } from '@/types';
 
@@ -65,16 +57,16 @@ export const mainNavItems = (
             href: tenantStaffIndex(),
             icon: Users,
         },
-        {
-            title: 'Roles',
-            href: tenantRolesIndex(),
-            icon: ShieldCheck,
-        },
-        {
-            title: 'Permissions',
-            href: tenantPermissionsIndex(),
-            icon: ShieldCheck,
-        },
+        // {
+        //     title: 'Roles',
+        //     href: tenantRolesIndex(),
+        //     icon: ShieldCheck,
+        // },
+        // {
+        //     title: 'Permissions',
+        //     href: tenantPermissionsIndex(),
+        //     icon: ShieldCheck,
+        // },
     ];
 };
 
