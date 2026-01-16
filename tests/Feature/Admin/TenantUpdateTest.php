@@ -54,10 +54,12 @@ it('updates tenant details', function () {
         ->and($tenant->slug)->toBe('updated_slug');
 
     $owner->refresh();
-    app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
     expect($owner->email)->toBe('owner@new.com')
-        ->and($owner->roles()->where('roles.tenant_id', $tenant->id)->where('name', 'owner')->exists())->toBeTrue()
         ->and(Hash::check('new-password', $owner->password))->toBeTrue();
+
+    app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
+    expect($owner->roles()->where('roles.tenant_id', $tenant->id)->where('name', 'Administrator')->exists())
+        ->toBeTrue();
 });
 
 it('keeps other tenant owners intact when switching to a new owner email', function () {
@@ -153,13 +155,14 @@ it('assigns an owner when missing using the provided email and password', functi
         ->and($owner?->hasRole('organization_owner'))->toBeTrue()
         ->and(Hash::check('new-password', $owner?->password ?? ''))->toBeTrue();
 
-    app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
-    expect($owner?->roles()->where('roles.tenant_id', $tenant->id)->where('name', 'owner')->exists())->toBeTrue();
-
     $membership = $tenant->memberships()
         ->where('membership_role', 'owner')
         ->where('user_id', $owner?->id)
         ->first();
 
     expect($membership)->not->toBeNull();
+
+    app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
+    expect($owner?->roles()->where('roles.tenant_id', $tenant->id)->where('name', 'Administrator')->exists())
+        ->toBeTrue();
 });

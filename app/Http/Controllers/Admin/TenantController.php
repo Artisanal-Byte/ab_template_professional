@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -85,7 +86,9 @@ class TenantController extends Controller
             $dbName = $dbName.'_'.Str::lower(Str::random(4));
         }
 
-        $tenant = DB::transaction(function () use ($request, $owner, $ownerEmail, $slug, $dbName) {
+        $ownerUser = null;
+
+        $tenant = DB::transaction(function () use ($request, $owner, $ownerEmail, $slug, $dbName, &$ownerUser) {
             $tenant = Tenant::create([
                 'name' => $request->string('name')->toString(),
                 'slug' => $slug,
@@ -119,12 +122,12 @@ class TenantController extends Controller
                 'status' => 'active',
             ]);
 
-            $this->assignTenantOwnerRole($tenant, $ownerUser);
-
             return $tenant;
         });
 
         $provisioner->ensureProvisioned($tenant);
+        $this->seedTenantRolesAndPermissions($tenant);
+        $this->assignTenantAdministratorRole($tenant, $ownerUser);
 
         return redirect()->route('admin.tenants.index');
     }
@@ -213,7 +216,7 @@ class TenantController extends Controller
                 $ownerUser->assignRole('organization_owner');
             }
 
-            $this->assignTenantOwnerRole($tenant, $ownerUser);
+            $this->assignTenantAdministratorRole($tenant, $ownerUser);
 
             $existingMembership = TenantUser::query()
                 ->where('tenant_id', $tenant->id)
@@ -256,7 +259,49 @@ class TenantController extends Controller
         return redirect()->route('admin.tenants.index');
     }
 
-    private function assignTenantOwnerRole(Tenant $tenant, User $ownerUser): void
+    private function seedTenantRolesAndPermissions(Tenant $tenant): void
+    {
+        $registrar = app(PermissionRegistrar::class);
+        $previousTeam = $registrar->getPermissionsTeamId();
+
+        $registrar->setPermissionsTeamId($tenant->id);
+
+        $permissionNames = [
+            'documents.view',
+            'documents.create',
+            'documents.edit',
+            'documents.review',
+        ];
+
+        $permissions = collect($permissionNames)
+            ->map(fn (string $name) => Permission::firstOrCreate([
+                'name' => $name,
+                'guard_name' => 'web',
+                'tenant_id' => $tenant->id,
+            ]))
+            ->keyBy('name');
+
+        $roles = [
+            'Administrator' => $permissions->values(),
+            'Creator' => $permissions->only(['documents.view', 'documents.create', 'documents.edit'])->values(),
+            'Reviewer' => $permissions->only(['documents.view', 'documents.review'])->values(),
+            'User' => $permissions->only(['documents.view'])->values(),
+        ];
+
+        foreach ($roles as $roleName => $rolePermissions) {
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'web',
+                'tenant_id' => $tenant->id,
+            ]);
+
+            $role->syncPermissions($rolePermissions);
+        }
+
+        $registrar->setPermissionsTeamId($previousTeam);
+    }
+
+    private function assignTenantAdministratorRole(Tenant $tenant, User $ownerUser): void
     {
         $registrar = app(PermissionRegistrar::class);
         $previousTeam = $registrar->getPermissionsTeamId();
@@ -264,7 +309,7 @@ class TenantController extends Controller
         $registrar->setPermissionsTeamId($tenant->id);
 
         $role = Role::firstOrCreate([
-            'name' => 'owner',
+            'name' => 'Administrator',
             'guard_name' => 'web',
             'tenant_id' => $tenant->id,
         ]);
