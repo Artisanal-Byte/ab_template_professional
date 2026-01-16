@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Button from '@/components/ui/Button.vue';
-import Dialog from '@/components/ui/Dialog.vue';
-import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
-import RichTextEditor from '@/components/ui/RichTextEditor.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
-import Tooltip from '@/components/ui/Tooltip.vue';
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { system as designSystem } from '@/routes/design';
@@ -25,6 +21,10 @@ import CardsPlayground from '@/components/playgrounds/cards/Playground.vue';
 import BreadcrumbPlayground from '@/components/playgrounds/breadcrumbs/Playground.vue';
 import AvatarPlayground from '@/components/playgrounds/avatars/Playground.vue';
 import OtpPlayground from '@/components/playgrounds/otp/Playground.vue';
+import TooltipPlayground from '@/components/playgrounds/tooltips/Playground.vue';
+import DropdownPlayground from '@/components/playgrounds/dropdowns/Playground.vue';
+import ModalPlayground from '@/components/playgrounds/modals/Playground.vue';
+import RichTextEditorPlayground from '@/components/playgrounds/rich_text/Playground.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -41,15 +41,17 @@ const tabs = ref([
   { id: 'checkboxes', label: 'Checkboxes' },
   { id: 'radios', label: 'Radios' },
   { id: 'selects', label: 'Selects' },
+  { id: 'badges', label: 'Badges' },
   { id: 'alerts', label: 'Alerts' },
   { id: 'loading', label: 'Loading' },
   { id: 'cards', label: 'Cards' },
   { id: 'breadcrumbs', label: 'Breadcrumbs' },
   { id: 'avatars', label: 'Avatars' },
   { id: 'otp', label: 'OTP' },
-  { id: 'overlays', label: 'Overlays' },
+  { id: 'tooltips', label: 'Tooltips' },
+  { id: 'dropdowns', label: 'Dropdowns' },
+  { id: 'modals', label: 'Modals' },
   { id: 'editors', label: 'Editors' },
-  { id: 'badges', label: 'Badges' },
 ]);
 const activeTab = ref(tabs.value[0].id);
 
@@ -75,13 +77,19 @@ const statusColors = ref([
   { name: 'Error', class: 'bg-error' },
 ]);
 
-const mentionItems = [
-  { id: '1', label: 'Avery Grant' },
-  { id: '2', label: 'Jules Park' },
-  { id: '3', label: 'Morgan Lee' },
+const breadcrumbPrimary = [
+  { label: 'Home', href: '/' },
+  { label: 'Library', href: '/library' },
+  { label: 'Data', current: true },
 ];
 
-const editorContent = ref('<p>Draft your next quality update here.</p>');
+const breadcrumbSettings = [
+  { label: 'Home', href: '/' },
+  { ellipsis: true },
+  { label: 'Settings', href: '/settings' },
+  { label: 'Appearance', current: true },
+];
+
 </script>
 
 <template>
@@ -220,95 +228,16 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
           <OtpPlayground />
         </div>
 
-        <div v-if="activeTab === 'overlays'" class="grid gap-10 py-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Tooltips</h2>
-            <div class="flex flex-wrap items-center gap-4">
-              <Tooltip>
-                <template #trigger>
-                  <Button variant="outline">Hover me</Button>
-                </template>
-                Tooltip text goes here.
-              </Tooltip>
-              <Tooltip side="right">
-                <template #trigger>
-                  <Button variant="ghost">Right tooltip</Button>
-                </template>
-                Positioned on the right.
-              </Tooltip>
-            </div>
-          </section>
+        <div v-if="activeTab === 'tooltips'" class="grid gap-10 py-6">
+          <TooltipPlayground />
+        </div>
 
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Dropdown menu</h2>
-            <div class="flex flex-wrap items-start gap-6">
-              <div class="w-full max-w-sm">
-                <DropdownMenu
-                  width="full"
-                  trigger-label="Open menu"
-                  trigger-variant="secondary"
-                  trigger-size="md"
-                >
-                  <div class="grid gap-1">
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
-                      Profile
-                    </button>
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
-                      Notifications
-                    </button>
-                    <div class="my-1 h-px bg-border"></div>
-                    <button class="w-full rounded-md px-2 py-1 text-left text-error hover:bg-error-soft">
-                      Sign out
-                    </button>
-                  </div>
-                </DropdownMenu>
-              </div>
-              <div class="inline-flex">
-                <DropdownMenu
-                  width="xs"
-                  trigger-label="Standard button"
-                  trigger-variant="outline"
-                  trigger-size="xs"
-                >
-                  <div class="grid gap-1">
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
-                      Quick action
-                    </button>
-                    <button class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover">
-                      Export
-                    </button>
-                  </div>
-                </DropdownMenu>
-              </div>
-            </div>
+        <div v-if="activeTab === 'dropdowns'" class="grid gap-10 py-6">
+          <DropdownPlayground />
+        </div>
 
-          </section>
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Dialog</h2>
-            <Dialog>
-              <template #trigger>
-                <Button>Open dialog</Button>
-              </template>
-              <template #title>Invite collaborator</template>
-              <template #description>
-                Send an invite to a teammate and assign a role.
-              </template>
-              <div class="grid gap-3">
-                <div class="grid gap-2">
-                  <Label for="dialog-email">Email address</Label>
-                  <Input id="dialog-email" type="email" placeholder="name@company.com" />
-                </div>
-                <div class="grid gap-2">
-                  <Label for="dialog-role">Role</Label>
-                  <Input id="dialog-role" placeholder="Reviewer" />
-                </div>
-              </div>
-              <template #footer="{ close }">
-                <Button variant="ghost" @click="close">Cancel</Button>
-                <Button variant="primary">Send invite</Button>
-              </template>
-            </Dialog>
-          </section>
+        <div v-if="activeTab === 'modals'" class="grid gap-10 py-6">
+          <ModalPlayground />
         </div>
 
         <div v-if="activeTab === 'selects'" class="grid gap-10 py-6">
@@ -316,18 +245,7 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
         </div>
 
         <div v-if="activeTab === 'editors'" class="grid gap-10 py-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Rich text editor</h2>
-            <RichTextEditor
-              v-model="editorContent"
-              placeholder="Write update notes, type @ to mention..."
-              :mention-items="mentionItems"
-            />
-            <div class="rounded-lg border border-border bg-card p-4 text-sm text-foreground-muted">
-              <div class="mb-2 text-xs uppercase tracking-wide text-foreground-disabled">HTML output</div>
-              <pre class="whitespace-pre-wrap break-words">{{ editorContent }}</pre>
-            </div>
-          </section>
+          <RichTextEditorPlayground />
         </div>
         <div v-if="activeTab === 'badges'" class="grid gap-10 py-6">
           <BadgePlayground />

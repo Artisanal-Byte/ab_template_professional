@@ -21,12 +21,14 @@ import {
     AlignCenter,
     AlignRight,
     Table2,
+    ChevronDown,
 } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import PopoverBase from '@/components/ui/PopoverBase.vue';
 import { useRichTextEditor } from '@/composables/useRichTextEditor';
 import FieldError from '@/components/ui/FieldError.vue';
 
@@ -40,6 +42,10 @@ const props = defineProps({
         default: false,
     },
     mentionItems: {
+        type: Array,
+        default: () => [],
+    },
+    disabledActions: {
         type: Array,
         default: () => [],
     },
@@ -91,6 +97,42 @@ const imageUrl = ref('');
 const imageFileInput = ref<HTMLInputElement | null>(null);
 const fontSize = ref('16px');
 const hasLink = computed(() => Boolean(editor.value?.isActive('link')));
+const fontSizeOpen = ref(false);
+const fontSizeOptions = ['14px', '16px', '18px', '22px', '28px'];
+
+const actionGroups: Record<string, string[]> = {
+    headers: ['heading1', 'heading2', 'heading3'],
+    lists: ['bulletList', 'orderedList'],
+    align: ['alignLeft', 'alignCenter', 'alignRight'],
+};
+
+const disabledActionSet = computed(
+    () => new Set((props.disabledActions as string[]).map((item) => String(item))),
+);
+
+const isActionHidden = (action: string) => {
+    if (disabledActionSet.value.has(action)) {
+        return true;
+    }
+    return Object.entries(actionGroups).some(
+        ([group, actions]) =>
+            disabledActionSet.value.has(group) && actions.includes(action),
+    );
+};
+
+const visible = computed(() => ({
+    inline: ['bold', 'italic', 'underline', 'strike'].some((id) => !isActionHidden(id)),
+    headers: ['heading1', 'heading2', 'heading3'].some((id) => !isActionHidden(id)),
+    fontSize: !isActionHidden('fontSize'),
+    lists: ['bulletList', 'orderedList', 'blockquote', 'codeBlock'].some(
+        (id) => !isActionHidden(id),
+    ),
+    align: ['alignLeft', 'alignCenter', 'alignRight'].some((id) => !isActionHidden(id)),
+    insert: ['link', 'image', 'table'].some((id) => !isActionHidden(id)),
+    history: ['undo', 'redo'].some((id) => !isActionHidden(id)),
+}));
+
+const showSeparator = (left: boolean, right: boolean) => left && right;
 
 const {
     editor,
@@ -111,13 +153,16 @@ const {
     uploadImage: toRef(props, 'uploadImage'),
 });
 
-const buttonClass = (active = false) =>
+const buttonClass = (action: string, active = false) =>
     cn(
         'inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent text-foreground-subtle transition hover:bg-secondary-active hover:text-foreground',
         active ? 'bg-secondary-strong text-foreground' : '',
     );
 
-const actionButtonClass = 'inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-background text-foreground-subtle hover:bg-secondary-active';
+const actionButtonClass = (action: string) =>
+    cn(
+        'inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-background text-foreground-subtle hover:bg-secondary-active',
+    );
 
 const promptForLink = () => {
     if (!editor.value) {
@@ -173,6 +218,7 @@ const onImageFileChange = async (event: Event) => {
 const setFontSize = (size: string) => {
     fontSize.value = size;
     applyFontSize(size);
+    fontSizeOpen.value = false;
 };
 </script>
 
@@ -180,149 +226,202 @@ const setFontSize = (size: string) => {
     <div class="rounded-lg border border-border bg-card text-card-foreground">
         <div class="flex flex-wrap items-center gap-1 border-b border-border bg-secondary-muted p-2">
             <button
-                :class="buttonClass(editor?.isActive('bold'))"
+                v-if="!isActionHidden('bold')"
+                :class="buttonClass('bold', editor?.isActive('bold'))"
                 type="button"
                 @click="editor?.chain().focus().toggleBold().run()"
             >
                 <Bold class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('italic'))"
+                v-if="!isActionHidden('italic')"
+                :class="buttonClass('italic', editor?.isActive('italic'))"
                 type="button"
                 @click="editor?.chain().focus().toggleItalic().run()"
             >
                 <Italic class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('underline'))"
+                v-if="!isActionHidden('underline')"
+                :class="buttonClass('underline', editor?.isActive('underline'))"
                 type="button"
                 @click="editor?.chain().focus().toggleUnderline().run()"
             >
                 <UnderlineIcon class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('strike'))"
+                v-if="!isActionHidden('strike')"
+                :class="buttonClass('strike', editor?.isActive('strike'))"
                 type="button"
                 @click="editor?.chain().focus().toggleStrike().run()"
             >
                 <Strikethrough class="h-4 w-4" />
             </button>
-            <span class="mx-1 h-5 w-px bg-border" />
+            <span
+                v-if="showSeparator(visible.inline, visible.headers || visible.fontSize)"
+                class="mx-1 h-5 w-px bg-border"
+            />
             <button
-                :class="buttonClass(editor?.isActive('heading', { level: 1 }))"
+                v-if="!isActionHidden('heading1')"
+                :class="buttonClass('heading1', editor?.isActive('heading', { level: 1 }))"
                 type="button"
                 @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"
             >
                 <Heading1 class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('heading', { level: 2 }))"
+                v-if="!isActionHidden('heading2')"
+                :class="buttonClass('heading2', editor?.isActive('heading', { level: 2 }))"
                 type="button"
                 @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
             >
                 <Heading2 class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('heading', { level: 3 }))"
+                v-if="!isActionHidden('heading3')"
+                :class="buttonClass('heading3', editor?.isActive('heading', { level: 3 }))"
                 type="button"
                 @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
             >
                 <Heading3 class="h-4 w-4" />
             </button>
-            <select
-                class="ml-1 h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground"
-                :value="fontSize"
-                @change="setFontSize(($event.target as HTMLSelectElement).value)"
+            <PopoverBase
+                v-if="!isActionHidden('fontSize')"
+                v-model:open="fontSizeOpen"
+                content-class="w-[3.75rem] min-w-[3.75rem] p-1"
+                :match-trigger-width="true"
+                trigger-width-var="--rte-font-size-width"
+                :side-offset="6"
             >
-                <option value="14px">14px</option>
-                <option value="16px">16px</option>
-                <option value="18px">18px</option>
-                <option value="22px">22px</option>
-                <option value="28px">28px</option>
-            </select>
-            <span class="mx-1 h-5 w-px bg-border" />
+                <template #trigger>
+                    <button
+                        type="button"
+                        class="ml-1 inline-flex h-9 w-[3.75rem] items-center justify-between gap-1 rounded-md px-1 text-sm text-foreground transition hover:bg-secondary-active"
+                        style="--rte-font-size-width: 3.75rem;"
+                    >
+                        <span>{{ fontSize }}</span>
+                        <ChevronDown class="h-4 w-4 text-foreground-faint" />
+                    </button>
+                </template>
+                <div class="grid gap-1">
+                    <button
+                        v-for="size in fontSizeOptions"
+                        :key="size"
+                        type="button"
+                        class="w-full rounded-md px-2 py-1 text-left text-sm text-foreground hover:bg-secondary-hover"
+                        @click="setFontSize(size)"
+                    >
+                        {{ size }}
+                    </button>
+                </div>
+            </PopoverBase>
+            <span
+                v-if="showSeparator(visible.headers || visible.fontSize, visible.lists)"
+                class="mx-1 h-5 w-px bg-border"
+            />
             <button
-                :class="buttonClass(editor?.isActive('bulletList'))"
+                v-if="!isActionHidden('bulletList')"
+                :class="buttonClass('bulletList', editor?.isActive('bulletList'))"
                 type="button"
                 @click="editor?.chain().focus().toggleBulletList().run()"
             >
                 <List class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('orderedList'))"
+                v-if="!isActionHidden('orderedList')"
+                :class="buttonClass('orderedList', editor?.isActive('orderedList'))"
                 type="button"
                 @click="editor?.chain().focus().toggleOrderedList().run()"
             >
                 <ListOrdered class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('blockquote'))"
+                v-if="!isActionHidden('blockquote')"
+                :class="buttonClass('blockquote', editor?.isActive('blockquote'))"
                 type="button"
                 @click="editor?.chain().focus().toggleBlockquote().run()"
             >
                 <Quote class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive('codeBlock'))"
+                v-if="!isActionHidden('codeBlock')"
+                :class="buttonClass('codeBlock', editor?.isActive('codeBlock'))"
                 type="button"
                 @click="editor?.chain().focus().toggleCodeBlock().run()"
             >
                 <Code class="h-4 w-4" />
             </button>
-            <span class="mx-1 h-5 w-px bg-border" />
+            <span
+                v-if="showSeparator(visible.lists, visible.align)"
+                class="mx-1 h-5 w-px bg-border"
+            />
             <button
-                :class="buttonClass(editor?.isActive({ textAlign: 'left' }))"
+                v-if="!isActionHidden('alignLeft')"
+                :class="buttonClass('alignLeft', editor?.isActive({ textAlign: 'left' }))"
                 type="button"
                 @click="editor?.chain().focus().setTextAlign('left').run()"
             >
                 <AlignLeft class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive({ textAlign: 'center' }))"
+                v-if="!isActionHidden('alignCenter')"
+                :class="buttonClass('alignCenter', editor?.isActive({ textAlign: 'center' }))"
                 type="button"
                 @click="editor?.chain().focus().setTextAlign('center').run()"
             >
                 <AlignCenter class="h-4 w-4" />
             </button>
             <button
-                :class="buttonClass(editor?.isActive({ textAlign: 'right' }))"
+                v-if="!isActionHidden('alignRight')"
+                :class="buttonClass('alignRight', editor?.isActive({ textAlign: 'right' }))"
                 type="button"
                 @click="editor?.chain().focus().setTextAlign('right').run()"
             >
                 <AlignRight class="h-4 w-4" />
             </button>
-            <span class="mx-1 h-5 w-px bg-border" />
+            <span
+                v-if="showSeparator(visible.align, visible.insert)"
+                class="mx-1 h-5 w-px bg-border"
+            />
             <button
-                :class="buttonClass(editor?.isActive('link'))"
+                v-if="!isActionHidden('link')"
+                :class="buttonClass('link', editor?.isActive('link'))"
                 type="button"
                 @click="promptForLink"
             >
                 <Link2 class="h-4 w-4" />
             </button>
             <button
-                :class="actionButtonClass"
+                v-if="!isActionHidden('image')"
+                :class="actionButtonClass('image')"
                 type="button"
                 @click="promptForImage"
             >
                 <ImageIcon class="h-4 w-4" />
             </button>
             <button
-                :class="actionButtonClass"
+                v-if="!isActionHidden('table')"
+                :class="actionButtonClass('table')"
                 type="button"
                 @click="editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
             >
                 <Table2 class="h-4 w-4" />
             </button>
-            <span class="mx-1 h-5 w-px bg-border" />
+            <span
+                v-if="showSeparator(visible.insert, visible.history)"
+                class="mx-1 h-5 w-px bg-border"
+            />
             <button
-                :class="actionButtonClass"
+                v-if="!isActionHidden('undo')"
+                :class="actionButtonClass('undo')"
                 type="button"
                 @click="editor?.chain().focus().undo().run()"
             >
                 <Undo class="h-4 w-4" />
             </button>
             <button
-                :class="actionButtonClass"
+                v-if="!isActionHidden('redo')"
+                :class="actionButtonClass('redo')"
                 type="button"
                 @click="editor?.chain().focus().redo().run()"
             >
@@ -333,7 +432,7 @@ const setFontSize = (size: string) => {
             </template>
         </div>
         <div
-            v-if="editor?.isActive('table')"
+            v-if="editor?.isActive('table') && !isActionHidden('table')"
             class="flex items-center gap-2 border-b border-border bg-secondary-soft px-2 py-2 text-xs text-foreground-subtle"
         >
             <span class="text-[11px] font-semibold uppercase tracking-wide text-foreground-disabled">
@@ -399,7 +498,7 @@ const setFontSize = (size: string) => {
             </div>
         </div>
         <div
-            v-else-if="editor?.isActive('image')"
+            v-else-if="editor?.isActive('image') && !isActionHidden('image')"
             class="flex items-center gap-2 border-b border-border bg-secondary-soft px-2 py-2 text-xs text-foreground-subtle"
         >
             <span class="text-[11px] font-semibold uppercase tracking-wide text-foreground-disabled">
@@ -582,4 +681,3 @@ const setFontSize = (size: string) => {
     display: block;
 }
 </style>
-
