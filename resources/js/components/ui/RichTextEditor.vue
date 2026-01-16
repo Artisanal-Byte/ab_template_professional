@@ -1,33 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, toRef } from 'vue';
 import { EditorContent } from '@tiptap/vue-3';
-import {
-    Bold,
-    Italic,
-    Underline as UnderlineIcon,
-    Strikethrough,
-    List,
-    ListOrdered,
-    Quote,
-    Code,
-    Heading1,
-    Heading2,
-    Heading3,
-    Undo,
-    Redo,
-    Link2,
-    Image as ImageIcon,
-    AlignLeft,
-    AlignCenter,
-    AlignRight,
-    Table2,
-    ChevronDown,
-} from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import Icon from '@/components/Icon.vue';
 import PopoverBase from '@/components/ui/PopoverBase.vue';
 import { useRichTextEditor } from '@/composables/useRichTextEditor';
 import FieldError from '@/components/ui/FieldError.vue';
@@ -231,7 +210,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleBold().run()"
             >
-                <Bold class="h-4 w-4" />
+                <IconLucideBold class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('italic')"
@@ -239,7 +218,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleItalic().run()"
             >
-                <Italic class="h-4 w-4" />
+                <IconLucideItalic class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('underline')"
@@ -247,7 +226,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleUnderline().run()"
             >
-                <UnderlineIcon class="h-4 w-4" />
+                <IconLucideUnderline class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('strike')"
@@ -255,7 +234,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleStrike().run()"
             >
-                <Strikethrough class="h-4 w-4" />
+                <IconLucideStrikethrough class="h-4 w-4" />
             </button>
             <span
                 v-if="showSeparator(visible.inline, visible.headers || visible.fontSize)"
@@ -267,7 +246,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleHeading({ level: 1 }).run()"
             >
-                <Heading1 class="h-4 w-4" />
+                <Icon name="lucide:heading-1" class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('heading2')"
@@ -275,7 +254,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleHeading({ level: 2 }).run()"
             >
-                <Heading2 class="h-4 w-4" />
+                <Icon name="lucide:heading-2" class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('heading3')"
@@ -283,7 +262,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleHeading({ level: 3 }).run()"
             >
-                <Heading3 class="h-4 w-4" />
+                <Icon name="lucide:heading-3" class="h-4 w-4" />
             </button>
             <PopoverBase
                 v-if="!isActionHidden('fontSize')"
@@ -300,7 +279,7 @@ const setFontSize = (size: string) => {
                         style="--rte-font-size-width: 3.75rem;"
                     >
                         <span>{{ fontSize }}</span>
-                        <ChevronDown class="h-4 w-4 text-foreground-faint" />
+                        <IconLucideChevronDown class="h-4 w-4 text-foreground-faint" />
                     </button>
                 </template>
                 <div class="grid gap-1">
@@ -325,7 +304,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleBulletList().run()"
             >
-                <List class="h-4 w-4" />
+                <IconLucideList class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('orderedList')"
@@ -333,7 +312,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleOrderedList().run()"
             >
-                <ListOrdered class="h-4 w-4" />
+                <IconLucideListOrdered class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('blockquote')"
@@ -341,7 +320,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleBlockquote().run()"
             >
-                <Quote class="h-4 w-4" />
+                <IconLucideQuote class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('codeBlock')"
@@ -349,7 +328,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().toggleCodeBlock().run()"
             >
-                <Code class="h-4 w-4" />
+                <IconLucideCode class="h-4 w-4" />
             </button>
             <span
                 v-if="showSeparator(visible.lists, visible.align)"
@@ -361,7 +340,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().setTextAlign('left').run()"
             >
-                <AlignLeft class="h-4 w-4" />
+                <IconLucideAlignLeft class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('alignCenter')"
@@ -369,7 +348,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().setTextAlign('center').run()"
             >
-                <AlignCenter class="h-4 w-4" />
+                <IconLucideAlignCenter class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('alignRight')"
@@ -377,7 +356,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().setTextAlign('right').run()"
             >
-                <AlignRight class="h-4 w-4" />
+                <IconLucideAlignRight class="h-4 w-4" />
             </button>
             <span
                 v-if="showSeparator(visible.align, visible.insert)"
@@ -389,7 +368,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="promptForLink"
             >
-                <Link2 class="h-4 w-4" />
+                <Icon name="lucide:link-2" class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('image')"
@@ -397,7 +376,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="promptForImage"
             >
-                <ImageIcon class="h-4 w-4" />
+                <IconLucideImage class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('table')"
@@ -405,7 +384,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
             >
-                <Table2 class="h-4 w-4" />
+                <Icon name="lucide:table-2" class="h-4 w-4" />
             </button>
             <span
                 v-if="showSeparator(visible.insert, visible.history)"
@@ -417,7 +396,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().undo().run()"
             >
-                <Undo class="h-4 w-4" />
+                <IconLucideUndo class="h-4 w-4" />
             </button>
             <button
                 v-if="!isActionHidden('redo')"
@@ -425,7 +404,7 @@ const setFontSize = (size: string) => {
                 type="button"
                 @click="editor?.chain().focus().redo().run()"
             >
-                <Redo class="h-4 w-4" />
+                <IconLucideRedo class="h-4 w-4" />
             </button>
             <template v-if="editor?.isActive('image')">
                 <span class="mx-1 h-5 w-px bg-border" />

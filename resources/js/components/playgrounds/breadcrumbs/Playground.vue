@@ -5,9 +5,9 @@ import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import Icon from '@/components/Icon.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
 import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
-import { Plus, Trash2 } from 'lucide-vue-next';
 
 const patterns = [
   { label: 'Basic', value: 'basic' },
@@ -243,7 +243,7 @@ const detailsOpen = ref(false);
         <div class="flex items-center justify-between gap-2">
           <Label>Breadcrumb items</Label>
           <Button variant="outline" size="sm" @click="addBasicItem">
-            <Plus class="h-4 w-4" />
+            <IconLucidePlus class="h-4 w-4" />
             Add label
           </Button>
         </div>
@@ -268,7 +268,7 @@ const detailsOpen = ref(false);
                 :disabled="basicItems.length <= 1"
                 @click="removeBasicItem(item.id)"
               >
-                <Trash2 class="h-4 w-4" />
+                <Icon name="lucide:trash-2" class="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -280,7 +280,7 @@ const detailsOpen = ref(false);
           <div class="flex items-center justify-between gap-2">
             <Label>Leading labels</Label>
             <Button variant="outline" size="sm" @click="addEllipsisLeading">
-              <Plus class="h-4 w-4" />
+              <IconLucidePlus class="h-4 w-4" />
               Add label
             </Button>
           </div>
@@ -305,7 +305,7 @@ const detailsOpen = ref(false);
                   :disabled="ellipsisLeading.length <= 1"
                   @click="removeEllipsisLeading(item.id)"
                 >
-                  <Trash2 class="h-4 w-4" />
+                  <Icon name="lucide:trash-2" class="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -316,7 +316,7 @@ const detailsOpen = ref(false);
           <div class="flex items-center justify-between gap-2">
             <Label>Trailing labels</Label>
             <Button variant="outline" size="sm" @click="addEllipsisTrailing">
-              <Plus class="h-4 w-4" />
+              <IconLucidePlus class="h-4 w-4" />
               Add label
             </Button>
           </div>
@@ -341,7 +341,7 @@ const detailsOpen = ref(false);
                   :disabled="ellipsisTrailing.length <= 1"
                   @click="removeEllipsisTrailing(item.id)"
                 >
-                  <Trash2 class="h-4 w-4" />
+                  <Icon name="lucide:trash-2" class="h-4 w-4" />
                 </Button>
               </div>
             </div>

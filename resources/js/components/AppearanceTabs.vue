@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useAppearance } from '@/composables/useAppearance';
-import { Monitor, Moon, Sun } from 'lucide-vue-next';
+import Icon from '@/components/Icon.vue';
 
 const { appearance, updateAppearance } = useAppearance();
 
 const tabs = [
-    { value: 'light', Icon: Sun, label: 'Light' },
-    { value: 'dark', Icon: Moon, label: 'Dark' },
-    { value: 'system', Icon: Monitor, label: 'System' },
+    { value: 'light', icon: 'lucide:sun', label: 'Light' },
+    { value: 'dark', icon: 'lucide:moon', label: 'Dark' },
+    { value: 'system', icon: 'lucide:monitor', label: 'System' },
 ] as const;
 </script>
 
@@ -16,7 +16,7 @@ const tabs = [
         class="inline-flex gap-1 rounded-lg border border-border bg-secondary-subtle p-1"
     >
         <button
-            v-for="{ value, Icon, label } in tabs"
+            v-for="{ value, icon, label } in tabs"
             :key="value"
             @click="updateAppearance(value)"
             :class="[
@@ -26,9 +26,8 @@ const tabs = [
                     : 'text-foreground-faint hover:bg-secondary-active hover:text-foreground',
             ]"
         >
-            <component :is="Icon" class="-ml-1 h-4 w-4" />
+            <Icon :name="icon" class="-ml-1 h-4 w-4" />
             <span class="ml-1.5 text-sm">{{ label }}</span>
         </button>
     </div>
 </template>
-

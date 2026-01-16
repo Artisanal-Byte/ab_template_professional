@@ -6,11 +6,11 @@ import {
     PopoverRoot,
     PopoverTrigger,
 } from 'reka-ui';
-import { CalendarDays, Clock } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import { splitAttrs } from '@/lib/attrs';
 import { inputBase } from '@/lib/uiClass';
 import FieldError from '@/components/ui/FieldError.vue';
+import Icon from '@/components/Icon.vue';
 import {
     applyDateMask,
     applyDateTimeMask,
@@ -194,7 +194,9 @@ const timeLabel = computed(() =>
     activeTimeUnit.value === 'hour' ? 'Hours' : 'Minutes',
 );
 
-const icon = computed(() => (modeConfig.value.isTime ? Clock : CalendarDays));
+const iconName = computed(() =>
+    modeConfig.value.isTime ? 'lucide:clock' : 'lucide:calendar-days',
+);
 
 const updateModelFromSelection = () => {
     if (modeConfig.value.isTime) {
@@ -538,8 +540,8 @@ onBeforeUnmount(() => {
                         @input="onInput"
                         @blur="onBlur"
                     />
-                    <component
-                        :is="icon"
+                    <Icon
+                        :name="iconName"
                         class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-faint"
                     />
                 </div>
@@ -674,5 +676,3 @@ onBeforeUnmount(() => {
         <FieldError :error="props.error" />
     </div>
 </template>
-
-

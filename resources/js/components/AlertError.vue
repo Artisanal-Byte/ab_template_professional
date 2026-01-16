@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import Alert from '@/components/ui/Alert.vue';
-import { AlertCircle } from 'lucide-vue-next';
 
 const props = defineProps({
     errors: {
@@ -21,7 +20,7 @@ const uniqueErrors = computed(() => Array.from(new Set(props.errors)));
     <Alert variant="error">
         <template #title>
             <span class="flex items-center gap-2">
-                <AlertCircle class="size-4" />
+                <IconLucideAlertCircle class="size-4" />
                 {{ title }}
             </span>
         </template>

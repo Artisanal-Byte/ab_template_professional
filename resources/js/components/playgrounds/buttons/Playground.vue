@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import * as lucideIcons from 'lucide-vue-next';
+import lucideIcons from '@iconify/json/json/lucide.json';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Input from '@/components/ui/Input.vue';
@@ -55,31 +55,19 @@ const type = ref('button');
 const as = ref('button');
 const disabled = ref('false');
 const label = ref('Button');
-const iconName = ref('Search');
-
-const iconExclusions = new Set([
-  'createLucideIcon',
-  'LucideIcon',
-  'LucideProps',
-  'Icon',
-  'default',
-]);
+const iconName = ref('search');
 
 const formatIconLabel = (name: string) =>
   name
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
 const iconOptions = computed(() =>
-  Object.keys(lucideIcons)
-    .filter(
-      (key) =>
-        /^[A-Z]/.test(key) && !iconExclusions.has(key),
-    )
+  Object.keys(lucideIcons.icons)
     .sort((a, b) => a.localeCompare(b))
-    .map((key) => ({
-      label: formatIconLabel(key),
-      value: key,
+    .map((name) => ({
+      label: formatIconLabel(name),
+      value: name,
     })),
 );
 
@@ -146,7 +134,8 @@ const componentProps = [
 const isButtonAs = computed(() => as.value === 'button');
 const isDisabled = computed(() => disabled.value === 'true');
 const isIconSize = computed(() => size.value === 'icon');
-const resolvedIconName = computed(() => iconName.value || 'Search');
+const resolvedIconName = computed(() => iconName.value || 'search');
+const iconValue = computed(() => `lucide:${resolvedIconName.value}`);
 const resolvedAs = computed(() => (as.value === 'Link' ? Link : as.value));
 
 const previewProps = computed(() => ({
@@ -189,7 +178,7 @@ const buildButtonAttrs = () => {
 
 const buildButtonContent = () =>
   isIconSize.value
-    ? `<Icon name="${resolvedIconName.value}" />`
+    ? `<Icon name="${iconValue.value}" />`
     : label.value || 'Button';
 
 const importText = computed(() => buildImports().join('\n'));
@@ -246,7 +235,7 @@ const detailsOpen = ref(false);
     <Card content-class="flex items-center justify-center">
       <template #title>Preview</template>
       <Button v-bind="previewProps">
-        <Icon v-if="isIconSize" :name="resolvedIconName" class="h-4 w-4" />
+        <Icon v-if="isIconSize" :name="iconValue" class="h-4 w-4" />
         <span v-else>{{ computedLabel }}</span>
       </Button>
     </Card>

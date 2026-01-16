@@ -9,7 +9,6 @@ import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { confirm } from '@/routes/two-factor';
 import { Form } from '@inertiajs/vue3';
 import { useClipboard } from '@vueuse/core';
-import { Check, Copy, ScanLine } from 'lucide-vue-next';
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 
 const props = defineProps({
@@ -130,7 +129,7 @@ watch(
                                 class="border-b border-border last:border-b-0"
                             />
                         </div>
-                        <ScanLine
+                        <IconLucideScanLine
                             class="relative z-20 size-6 text-foreground"
                         />
                     </div>
@@ -207,11 +206,11 @@ watch(
                                         @click="copy(manualSetupKey || '')"
                                         class="relative block h-auto border-l border-border px-3 hover:bg-muted"
                                     >
-                                        <Check
+                                        <IconLucideCheck
                                             v-if="copied"
                                             class="w-4 text-success"
                                         />
-                                        <Copy v-else class="w-4" />
+                                        <IconLucideCopy v-else class="w-4" />
                                     </button>
                                 </template>
                             </div>
@@ -272,4 +271,3 @@ watch(
             </div>
     </Dialog>
 </template>
-

@@ -3,7 +3,6 @@ import { computed } from 'vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import Button from '@/components/ui/Button.vue';
 import { useAppearance } from '@/composables/useAppearance';
-import { Menu, Moon, Sun } from 'lucide-vue-next';
 
 type BreadcrumbItemType = {
     title: string;
@@ -42,7 +41,7 @@ const breadcrumbItems = computed(
                 aria-label="Open navigation"
                 @click="emit('toggle-mobile')"
             >
-                <Menu class="h-4 w-4" />
+                <IconLucideMenu class="h-4 w-4" />
             </Button>
             <Button
                 variant="ghost"
@@ -51,7 +50,7 @@ const breadcrumbItems = computed(
                 aria-label="Toggle navigation"
                 @click="emit('toggle-desktop')"
             >
-                <Menu class="h-4 w-4" />
+                <IconLucideMenu class="h-4 w-4" />
             </Button>
             <template v-if="breadcrumbItems.length > 0">
                 <Breadcrumbs :breadcrumbs="breadcrumbItems" />
@@ -64,8 +63,8 @@ const breadcrumbItems = computed(
             aria-label="Toggle theme"
             @click="toggleTheme"
         >
-            <Sun v-if="appearance === 'dark'" class="h-4 w-4" />
-            <Moon v-else class="h-4 w-4" />
+            <IconLucideSun v-if="appearance === 'dark'" class="h-4 w-4" />
+            <IconLucideMoon v-else class="h-4 w-4" />
         </Button>
     </header>
 </template>

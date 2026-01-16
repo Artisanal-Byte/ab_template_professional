@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue';
-import { ChevronDown } from 'lucide-vue-next';
 import Button from '@/components/ui/Button.vue';
 import { splitAttrs } from '@/lib/attrs';
 import { cn } from '@/lib/utils';
@@ -44,8 +43,7 @@ const triggerClass = computed(() =>
         </span>
         <span class="flex items-center gap-2">
             <slot name="meta" />
-            <ChevronDown class="h-4 w-4 text-foreground-faint" />
+            <IconLucideChevronDown class="h-4 w-4 text-foreground-faint" />
         </span>
     </Button>
 </template>
-

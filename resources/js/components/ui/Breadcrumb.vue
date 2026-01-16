@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue';
-import { ChevronRight, MoreHorizontal } from 'lucide-vue-next';
 import { cn } from '@/lib/utils';
 import { splitAttrs } from '@/lib/attrs';
 
@@ -51,7 +50,7 @@ const hasItems = computed(() => items.value.length > 0);
                                         aria-hidden="true"
                                         role="presentation"
                                     >
-                                        <MoreHorizontal class="h-4 w-4" />
+                                        <IconLucideMoreHorizontal class="h-4 w-4" />
                                         <span class="sr-only">More</span>
                                     </span>
                                 </slot>
@@ -79,7 +78,7 @@ const hasItems = computed(() => items.value.length > 0);
                         class="text-foreground-disabled [&>svg]:h-3.5 [&>svg]:w-3.5"
                     >
                         <slot name="separator">
-                            <ChevronRight />
+                            <IconLucideChevronRight />
                         </slot>
                     </li>
                 </template>
@@ -90,4 +89,3 @@ const hasItems = computed(() => items.value.length > 0);
         </ol>
     </nav>
 </template>
-

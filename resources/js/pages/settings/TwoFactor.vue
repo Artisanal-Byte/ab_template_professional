@@ -10,7 +10,6 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { disable, enable, show } from '@/routes/two-factor';
 import { BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
-import { ShieldBan, ShieldCheck } from 'lucide-vue-next';
 import { onUnmounted, ref } from 'vue';
 
 interface Props {
@@ -66,7 +65,7 @@ onUnmounted(() => {
                             v-if="hasSetupData"
                             @click="showSetupModal = true"
                         >
-                            <ShieldCheck />Continue Setup
+                            <IconLucideShieldCheck />Continue Setup
                         </Button>
                         <Form
                             v-else
@@ -75,7 +74,7 @@ onUnmounted(() => {
                             #default="{ processing }"
                         >
                             <Button type="submit" :disabled="processing">
-                                <ShieldCheck />Enable 2FA</Button
+                                <IconLucideShieldCheck />Enable 2FA</Button
                             ></Form
                         >
                     </div>
@@ -103,7 +102,7 @@ onUnmounted(() => {
                                 type="submit"
                                 :disabled="processing"
                             >
-                                <ShieldBan />
+                                <IconLucideShieldBan />
                                 Disable 2FA
                             </Button>
                         </Form>
@@ -119,4 +118,3 @@ onUnmounted(() => {
         </SettingsLayout>
     </AppLayout>
 </template>
-

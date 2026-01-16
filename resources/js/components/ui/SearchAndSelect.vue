@@ -5,7 +5,6 @@ import ListboxDropdown from '@/components/ui/ListboxDropdown.vue';
 import SelectTrigger from '@/components/ui/SelectTrigger.vue';
 import { getOptionLabel, getOptionValue } from '@/composables/useSelectDisplay';
 import type { SelectOption } from '@/types';
-import { Plus } from 'lucide-vue-next';
 import FieldError from '@/components/ui/FieldError.vue';
 
 const props = defineProps({
@@ -170,7 +169,7 @@ watch(open, (value) => {
                     class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground-muted transition-colors hover:bg-secondary-active"
                     @click="handleCreate"
                 >
-                    <Plus class="h-4 w-4" />
+                    <IconLucidePlus class="h-4 w-4" />
                     Add "{{ searchTerm.trim() }}"
                 </button>
             </template>

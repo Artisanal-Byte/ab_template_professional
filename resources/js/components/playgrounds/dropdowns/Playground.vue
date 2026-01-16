@@ -3,11 +3,17 @@ import { computed, ref } from 'vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
+import InlineDropdown from '@/components/ui/InlineDropdown.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
+import Icon from '@/components/Icon.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
 import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
-import { Plus, Trash2 } from 'lucide-vue-next';
+
+const dropdownVariantOptions = [
+  { label: 'Popover', value: 'popover' },
+  { label: 'Inline', value: 'inline' },
+];
 
 const sideOptions = [
   { label: 'Bottom', value: 'bottom' },
@@ -72,6 +78,7 @@ const disabledOptions = [
   { label: 'True', value: 'true' },
 ];
 
+const dropdownVariant = ref('popover');
 const side = ref('bottom');
 const align = ref('start');
 const sideOffset = ref('6');
@@ -91,7 +98,9 @@ const menuItems = computed(() =>
   items.value.filter((item) => item.trim().length > 0),
 );
 
-const previewProps = computed(() => ({
+const isInline = computed(() => dropdownVariant.value === 'inline');
+
+const previewPopoverProps = computed(() => ({
   side: side.value,
   align: align.value,
   sideOffset: Number(sideOffset.value),
@@ -103,15 +112,24 @@ const previewProps = computed(() => ({
   triggerDisabled: isDisabled.value,
 }));
 
+const previewInlineProps = computed(() => ({
+  width: width.value,
+  triggerVariant: triggerVariant.value,
+  triggerSize: triggerSize.value,
+  triggerLabel: triggerLabel.value || 'Open menu',
+  triggerDisabled: isDisabled.value,
+}));
+
 const tokens = [
   { token: '--card', role: 'Menu background' },
   { token: '--card-foreground', role: 'Menu text' },
+  { token: '--border-subtle', role: 'Container border' },
   { token: '--secondary-hover', role: 'Item hover' },
   { token: '--error', role: 'Destructive text' },
   { token: '--error-soft', role: 'Destructive hover' },
 ];
 
-const componentProps = [
+const popoverProps = [
   {
     name: 'side',
     type: 'string',
@@ -168,6 +186,41 @@ const componentProps = [
   },
 ];
 
+const inlineProps = [
+  {
+    name: 'width',
+    type: 'string',
+    values: ['xs', 'sm', 'md', 'lg', 'xl', 'full'],
+    defaultValue: 'md',
+  },
+  {
+    name: 'triggerLabel',
+    type: 'string',
+    values: ['Button label'],
+    defaultValue: 'Open menu',
+  },
+  {
+    name: 'triggerVariant',
+    type: 'string',
+    values: ['primary', 'secondary', 'outline', 'ghost', 'success', 'info', 'warning', 'destructive', 'link'],
+    defaultValue: 'secondary',
+  },
+  {
+    name: 'triggerSize',
+    type: 'string',
+    values: ['sm', 'md', 'lg', 'xl', 'icon'],
+    defaultValue: 'md',
+  },
+  {
+    name: 'triggerDisabled',
+    type: 'boolean',
+    values: ['true', 'false'],
+    defaultValue: 'false',
+  },
+];
+
+const componentProps = computed(() => (isInline.value ? inlineProps : popoverProps));
+
 const addItem = () => {
   const label = itemLabel.value.trim();
   if (!label) {
@@ -181,26 +234,37 @@ const removeItem = (index: number) => {
   items.value = items.value.filter((_, itemIndex) => itemIndex !== index);
 };
 
-const buildImports = () => [
-  "import DropdownMenu from '@/components/ui/DropdownMenu.vue';",
-  "import Button from '@/components/ui/Button.vue';",
-];
+const buildImports = () => {
+  if (isInline.value) {
+    return [
+      "import InlineDropdown from '@/components/ui/InlineDropdown.vue';",
+      "import Button from '@/components/ui/Button.vue';",
+    ];
+  }
+
+  return [
+    "import DropdownMenu from '@/components/ui/DropdownMenu.vue';",
+    "import Button from '@/components/ui/Button.vue';",
+  ];
+};
 
 const buildDropdownAttrs = () => {
   const attrs = [];
-  if (side.value !== 'bottom') {
-    attrs.push(`side="${side.value}"`);
-  }
-  if (align.value !== 'start') {
-    attrs.push(`align="${align.value}"`);
-  }
-  if (sideOffset.value !== '6') {
-    attrs.push(`:side-offset="${sideOffset.value}"`);
+  if (!isInline.value) {
+    if (side.value !== 'bottom') {
+      attrs.push(`side="${side.value}"`);
+    }
+    if (align.value !== 'start') {
+      attrs.push(`align="${align.value}"`);
+    }
+    if (sideOffset.value !== '6') {
+      attrs.push(`:side-offset="${sideOffset.value}"`);
+    }
   }
   if (width.value !== 'md') {
     attrs.push(`width="${width.value}"`);
   }
-  if (menuWidth.value !== 'auto') {
+  if (!isInline.value && menuWidth.value !== 'auto') {
     attrs.push(`menu-width="${menuWidth.value}"`);
   }
   if (triggerVariant.value !== 'secondary') {
@@ -240,6 +304,10 @@ const usageLine = computed(() => {
   const attrs = buildDropdownAttrs();
   const attrText = attrs.length ? ` ${attrs.join(' ')}` : '';
   const label = triggerLabel.value || 'Open menu';
+  if (isInline.value) {
+    return `<InlineDropdown${attrText} trigger-label="${label}">\n  <div class="grid gap-1">\n${buildMenuLines()}\n  </div>\n</InlineDropdown>`;
+  }
+
   return `<DropdownMenu${attrText} trigger-label="${label}">\n  <div class="grid gap-1">\n${buildMenuLines()}\n  </div>\n</DropdownMenu>`;
 });
 
@@ -284,7 +352,7 @@ const detailsOpen = ref(false);
     <div class="grid gap-2">
       <Card content-class="flex items-center justify-center">
         <template #title>Preview</template>
-        <DropdownMenu v-bind="previewProps">
+        <DropdownMenu v-if="!isInline" v-bind="previewPopoverProps">
           <div class="grid gap-1">
             <template v-for="(item, index) in menuItems" :key="`${item}-${index}`">
               <button
@@ -301,32 +369,53 @@ const detailsOpen = ref(false);
             </button>
           </div>
         </DropdownMenu>
+        <InlineDropdown v-else v-bind="previewInlineProps">
+          <div class="grid gap-1">
+            <template v-for="(item, index) in menuItems" :key="`${item}-${index}`">
+              <button
+                class="w-full rounded-md px-2 py-1 text-left hover:bg-secondary-hover"
+              >
+                {{ item }}
+              </button>
+            </template>
+            <div v-if="menuItems.length" class="my-1 h-px bg-border"></div>
+            <button
+              class="w-full rounded-md px-2 py-1 text-left text-error hover:bg-error-soft"
+            >
+              {{ destructiveLabel || 'Sign out' }}
+            </button>
+          </div>
+        </InlineDropdown>
       </Card>
     </div>
 
     <div class="grid gap-6">
       <div class="grid gap-4 md:grid-cols-5">
-        <RadioPillGroup v-model="side" name="dropdown-side" label="Side" :options="sideOptions" />
-        <RadioPillGroup v-model="align" name="dropdown-align" label="Align" :options="alignOptions" />
-        <RadioPillGroup v-model="sideOffset" name="dropdown-offset" label="Offset" :options="offsetOptions" />
+        <RadioPillGroup v-model="dropdownVariant" name="dropdown-variant" label="Variant" :options="dropdownVariantOptions" />
+        <RadioPillGroup v-if="!isInline" v-model="side" name="dropdown-side" label="Side" :options="sideOptions" />
+        <RadioPillGroup v-if="!isInline" v-model="align" name="dropdown-align" label="Align" :options="alignOptions" />
+        <RadioPillGroup v-if="!isInline" v-model="sideOffset" name="dropdown-offset" label="Offset" :options="offsetOptions" />
         <RadioPillGroup v-model="width" name="dropdown-width" label="Width" :options="widthOptions" />
-        <RadioPillGroup v-model="menuWidth" name="dropdown-menu-width" label="Menu width" :options="menuWidthOptions" />
       </div>
 
       <div class="grid gap-4 md:grid-cols-5">
-        <RadioPillGroup v-model="triggerVariant" name="dropdown-variant" label="Variant" :options="variantOptions" />
+        <RadioPillGroup v-if="!isInline" v-model="menuWidth" name="dropdown-menu-width" label="Menu width" :options="menuWidthOptions" />
+        <RadioPillGroup v-model="triggerVariant" name="dropdown-trigger-variant" label="Trigger variant" :options="variantOptions" />
         <RadioPillGroup v-model="triggerSize" name="dropdown-size" label="Size" :options="sizeOptions" />
         <RadioPillGroup v-model="triggerDisabled" name="dropdown-disabled" label="Disabled" :options="disabledOptions" />
         <div class="flex flex-col gap-3">
           <Label>Trigger label</Label>
           <Input v-model="triggerLabel" placeholder="Open menu" />
         </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-1">
         <div class="flex flex-col gap-3">
           <Label>Menu item</Label>
           <div class="flex items-center gap-2">
             <Input v-model="itemLabel" placeholder="Add menu item" />
             <Button variant="outline" size="icon" @click="addItem" aria-label="Add menu item">
-              <Plus class="h-4 w-4" />
+              <IconLucidePlus class="h-4 w-4" />
             </Button>
           </div>
           <div class="flex flex-wrap gap-2">
@@ -342,7 +431,7 @@ const detailsOpen = ref(false);
                 @click="removeItem(index)"
                 aria-label="Remove menu item"
               >
-                <Trash2 class="h-3.5 w-3.5" />
+                <Icon name="lucide:trash-2" class="h-3.5 w-3.5" />
               </button>
             </div>
           </div>
