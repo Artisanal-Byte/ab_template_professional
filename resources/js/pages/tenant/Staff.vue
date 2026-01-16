@@ -21,6 +21,7 @@ interface StaffMember {
     membership_role: string;
     status: string;
     roles: string[];
+    can_assign_role: boolean;
 }
 
 interface RoleOption {
@@ -165,7 +166,7 @@ const roleOptions = props.roles.map((role) => ({
                                         </Form>
                                     </div>
                                     <Form
-                                        v-if="roleOptions.length"
+                                        v-if="roleOptions.length && member.can_assign_role"
                                         v-bind="StaffController.assignRole.form()"
                                         class="mt-3 grid gap-2"
                                     >

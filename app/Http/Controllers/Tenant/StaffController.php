@@ -38,6 +38,7 @@ class StaffController extends Controller
                 'membership_role' => $membership->membership_role,
                 'status' => $membership->status,
                 'roles' => $membership->user?->getRoleNames()->values()->all() ?? [],
+                'can_assign_role' => $membership->membership_role !== 'owner',
             ]);
 
         $roles = Role::query()
