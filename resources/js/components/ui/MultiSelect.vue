@@ -20,6 +20,10 @@ const props = defineProps({
         type: String,
         default: 'Select options',
     },
+    maxChips: {
+        type: Number,
+        default: 2,
+    },
     disabled: {
         type: Boolean,
         default: false,
@@ -80,6 +84,14 @@ const selectedOptions = computed(() =>
     ),
 );
 
+const visibleOptions = computed(() =>
+    selectedOptions.value.slice(0, Math.max(1, props.maxChips)),
+);
+
+const hiddenCount = computed(() =>
+    Math.max(0, selectedOptions.value.length - visibleOptions.value.length),
+);
+
 const handleSelect = (option: SelectOption) => {
     const value = getOptionValue(option);
     if (model.value.includes(value)) {
@@ -111,19 +123,16 @@ const handleSelect = (option: SelectOption) => {
                             {{ props.placeholder }}
                         </span>
                         <Badge
-                            v-for="option in selectedOptions"
+                            v-for="option in visibleOptions"
                             :key="String(getOptionValue(option))"
                         >
-                            {{ getOptionLabel(option) }}
+                            <span class="max-w-[10rem] truncate">
+                                {{ getOptionLabel(option) }}
+                            </span>
                         </Badge>
-                    </template>
-                    <template #meta>
-                        <span
-                            v-if="selectedOptions.length"
-                            class="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-foreground"
-                        >
-                            {{ selectedOptions.length }}
-                        </span>
+                        <Badge v-if="hiddenCount" class="shrink-0">
+                            +{{ hiddenCount }} more
+                        </Badge>
                     </template>
                 </SelectTrigger>
             </template>

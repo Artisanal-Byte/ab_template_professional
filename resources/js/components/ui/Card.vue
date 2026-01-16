@@ -49,8 +49,6 @@ const hasContent = computed(() => Boolean(slots.default));
 const contentClass = computed(() =>
     cn(
         'py-4 px-6',
-        // hasHeader.value ? 'pt-0' : '',
-        hasFooter.value ? 'pb-0' : '',
         props.contentClass,
     ),
 );

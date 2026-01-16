@@ -44,6 +44,12 @@ const optionsState = [
   { label: 'Empty', value: 'empty' },
 ];
 
+const chipCounts = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+];
+
 const errorOptions = [
   { label: 'None', value: 'none' },
   { label: 'String', value: 'string' },
@@ -58,6 +64,7 @@ const sideOffset = ref('6');
 const disabled = ref('false');
 const loading = ref('false');
 const errorType = ref('none');
+const maxChips = ref('2');
 const labelText = ref('Multi select');
 const placeholder = ref('Select options');
 const noResultsText = ref('No results');
@@ -93,6 +100,7 @@ const previewProps = computed(() => ({
   loading: isLoading.value,
   noResultsText: noResultsText.value,
   error: errorValue.value,
+  maxChips: Number(maxChips.value),
 }));
 
 const tokens = [
@@ -134,6 +142,12 @@ const componentProps = [
     type: 'string',
     values: ['Select options'],
     defaultValue: 'Select options',
+  },
+  {
+    name: 'maxChips',
+    type: 'number',
+    values: ['1', '2', '3'],
+    defaultValue: '2',
   },
   {
     name: 'disabled',
@@ -218,6 +232,9 @@ const buildSelectAttrs = () => {
   if (sideOffset.value !== '6') {
     attrs.push(`:side-offset="${sideOffset.value}"`);
   }
+  if (maxChips.value !== '2') {
+    attrs.push(`:max-chips="${maxChips.value}"`);
+  }
   if (isLoading.value) {
     attrs.push('loading');
   }
@@ -298,9 +315,10 @@ const detailsOpen = ref(false);
         <RadioPillGroup v-model="side" name="multi-side" label="Side" :options="sideOptions" />
         <RadioPillGroup v-model="sideOffset" name="multi-offset" label="Offset" :options="sideOffsets" />
         <RadioPillGroup v-model="optionMode" name="multi-options" label="Options" :options="optionsState" />
+        <RadioPillGroup v-model="maxChips" name="multi-chips" label="Max chips" :options="chipCounts" />
         <RadioPillGroup v-model="disabled" name="multi-disabled" label="Disabled" :options="disabledOptions" />
         <RadioPillGroup v-model="loading" name="multi-loading" label="Loading" :options="loadingOptions" />
-        <RadioPillGroup v-model="errorType" name="multi-error" label="Error" :options="errorOptions" class="col-span-2" />
+        <RadioPillGroup v-model="errorType" name="multi-error" label="Error" :options="errorOptions" />
         <div class="flex flex-col gap-3">
           <Label>Label text</Label>
           <Input v-model="labelText" placeholder="Multi select" />

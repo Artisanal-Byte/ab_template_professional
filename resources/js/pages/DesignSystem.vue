@@ -1,20 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Alert from '@/components/ui/Alert.vue';
-import Avatar from '@/components/ui/Avatar.vue';
-import Badge from '@/components/ui/Badge.vue';
-import Breadcrumb from '@/components/ui/Breadcrumb.vue';
 import Button from '@/components/ui/Button.vue';
-import Card from '@/components/ui/Card.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import Input from '@/components/ui/Input.vue';
-import InputOTP from '@/components/ui/InputOTP.vue';
 import Label from '@/components/ui/Label.vue';
 import RichTextEditor from '@/components/ui/RichTextEditor.vue';
-import Separator from '@/components/ui/Separator.vue';
-import Skeleton from '@/components/ui/Skeleton.vue';
-import Spinner from '@/components/ui/Spinner.vue';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import Tooltip from '@/components/ui/Tooltip.vue';
 import { Head } from '@inertiajs/vue3';
@@ -28,6 +19,12 @@ import DateTimePlayground from '@/components/playgrounds/date_time/Playground.vu
 import CheckboxPlayground from '@/components/playgrounds/checkbox_radio/CheckboxPlayground.vue';
 import RadioPlayground from '@/components/playgrounds/checkbox_radio/RadioPlayground.vue';
 import SelectPlayground from '@/components/playgrounds/selects/Playground.vue';
+import AlertPlayground from '@/components/playgrounds/alerts/Playground.vue';
+import LoadingPlayground from '@/components/playgrounds/loading/Playground.vue';
+import CardsPlayground from '@/components/playgrounds/cards/Playground.vue';
+import BreadcrumbPlayground from '@/components/playgrounds/breadcrumbs/Playground.vue';
+import AvatarPlayground from '@/components/playgrounds/avatars/Playground.vue';
+import OtpPlayground from '@/components/playgrounds/otp/Playground.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -44,10 +41,12 @@ const tabs = ref([
   { id: 'checkboxes', label: 'Checkboxes' },
   { id: 'radios', label: 'Radios' },
   { id: 'selects', label: 'Selects' },
-  { id: 'feedback', label: 'Feedback' },
+  { id: 'alerts', label: 'Alerts' },
+  { id: 'loading', label: 'Loading' },
   { id: 'cards', label: 'Cards' },
-  { id: 'navigation', label: 'Navigation' },
-  { id: 'security', label: 'Security' },
+  { id: 'breadcrumbs', label: 'Breadcrumbs' },
+  { id: 'avatars', label: 'Avatars' },
+  { id: 'otp', label: 'OTP' },
   { id: 'overlays', label: 'Overlays' },
   { id: 'editors', label: 'Editors' },
   { id: 'badges', label: 'Badges' },
@@ -75,19 +74,6 @@ const statusColors = ref([
   { name: 'Warning', class: 'bg-warning' },
   { name: 'Error', class: 'bg-error' },
 ]);
-
-const breadcrumbPrimary = [
-  { label: 'Home', href: '/' },
-  { label: 'Library', href: '/library' },
-  { label: 'Data', current: true },
-];
-
-const breadcrumbSettings = [
-  { label: 'Home', href: '/' },
-  { ellipsis: true },
-  { label: 'Settings', href: '/settings' },
-  { label: 'Appearance', current: true },
-];
 
 const mentionItems = [
   { id: '1', label: 'Avery Grant' },
@@ -210,160 +196,28 @@ const editorContent = ref('<p>Draft your next quality update here.</p>');
           <RadioPlayground />
         </div>
 
-        <div v-if="activeTab === 'feedback'" class="grid gap-10 pb-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Alerts</h2>
-            <div class="grid gap-4">
-              <Alert>
-                <template #title>Neutral notice</template>
-                <template #description>
-                  System updates are scheduled tonight at 10 PM.
-                </template>
-              </Alert>
-              <Alert variant="info">
-                <template #title>Info</template>
-                <template #description>
-                  New documents are ready for review.
-                </template>
-              </Alert>
-              <Alert variant="success">
-                <template #title>Success</template>
-                <template #description>
-                  Your changes were saved.
-                </template>
-              </Alert>
-              <Alert variant="warning">
-                <template #title>Warning</template>
-                <template #description>
-                  Some fields are missing required data.
-                </template>
-              </Alert>
-              <Alert variant="error">
-                <template #title>Error</template>
-                <template #description>
-                  We could not complete that action.
-                </template>
-              </Alert>
-            </div>
-          </section>
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Loading</h2>
-            <div class="flex flex-wrap items-center gap-6">
-              <div class="flex items-center gap-2 text-sm text-foreground-subtle">
-                <Spinner size="sm" />
-                <span>Small</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-foreground-subtle">
-                <Spinner />
-                <span>Medium</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-foreground-subtle">
-                <Spinner size="lg" />
-                <span>Large</span>
-              </div>
-            </div>
-            <div class="grid max-w-md gap-3">
-              <Skeleton class="h-4 w-3/4" />
-              <Skeleton class="h-4 w-full" />
-              <Skeleton class="h-4 w-5/6" />
-            </div>
-          </section>
+        <div v-if="activeTab === 'alerts'" class="grid gap-10 pb-6">
+          <AlertPlayground />
+        </div>
+
+        <div v-if="activeTab === 'loading'" class="grid gap-10 pb-6">
+          <LoadingPlayground />
         </div>
 
         <div v-if="activeTab === 'cards'" class="grid gap-10 py-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Cards</h2>
-            <div class="grid gap-6 md:grid-cols-2">
-              <Card>
-                <template #title>Audit readiness</template>
-                <template #description>
-                  Stay ahead with templated checklists.
-                </template>
-                <div class="flex flex-wrap gap-2">
-                  <Badge>Policies</Badge>
-                  <Badge variant="primary">Workflows</Badge>
-                  <Badge variant="success">Sign-off</Badge>
-                </div>
-                <template #footer>
-                  <Button size="sm">Review now</Button>
-                  <Button size="sm" variant="outline">Preview</Button>
-                </template>
-              </Card>
-              <Card>
-                <template #title>Team onboarding</template>
-                <template #description>
-                  Invite contributors and assign roles.
-                </template>
-                <div class="grid gap-2 text-sm text-foreground-subtle">
-                  <div class="flex items-center justify-between">
-                    <span>Policy templates</span>
-                    <span>12</span>
-                  </div>
-                  <Separator />
-                  <div class="flex items-center justify-between">
-                    <span>Pending reviews</span>
-                    <span>4</span>
-                  </div>
-                </div>
-                <template #footer>
-                  <div class="flex w-full justify-end">
-                    <Button size="sm" variant="secondary">Invite</Button>
-                  </div>
-                </template>
-              </Card>
-            </div>
-          </section>
+          <CardsPlayground />
         </div>
 
-        <div v-if="activeTab === 'navigation'" class="grid gap-10 py-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Breadcrumbs</h2>
-            <Breadcrumb :items="breadcrumbPrimary" />
-            <Breadcrumb :items="breadcrumbSettings" />
-          </section>
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">Avatars</h2>
-            <div class="flex flex-wrap items-center gap-6">
-              <div class="flex items-center gap-3 text-sm text-foreground-subtle">
-                <Avatar size="sm" fallback="SM" />
-                <span>Small</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm text-foreground-subtle">
-                <Avatar fallback="MD" />
-                <span>Medium</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm text-foreground-subtle">
-                <Avatar size="lg">
-                  <template #image>
-                    <img
-                      src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=facearea&facepad=2"
-                      alt="User avatar" class="h-full w-full object-cover" />
-                  </template>
-                </Avatar>
-                <span>Large</span>
-              </div>
-            </div>
-          </section>
+        <div v-if="activeTab === 'breadcrumbs'" class="grid gap-10 py-6">
+          <BreadcrumbPlayground />
         </div>
 
-        <div v-if="activeTab === 'security'" class="grid gap-10 py-6">
-          <section class="grid gap-4">
-            <h2 class="text-2xl font-semibold">One-time passwords</h2>
-            <div class="grid gap-4">
-              <div class="grid gap-2">
-                <Label for="otp-code">Verification code</Label>
-                <InputOTP id="otp-code" :otp-length="6" />
-              </div>
-              <div class="grid gap-2">
-                <Label for="otp-split">Split with separator</Label>
-                <InputOTP id="otp-split" :otp-length="6" :separator-at="3" />
-              </div>
-              <div class="grid gap-2">
-                <Label for="otp-short">4-digit OTP</Label>
-                <InputOTP id="otp-short" :otp-length="4" />
-              </div>
-            </div>
-          </section>
+        <div v-if="activeTab === 'avatars'" class="grid gap-10 py-6">
+          <AvatarPlayground />
+        </div>
+
+        <div v-if="activeTab === 'otp'" class="grid gap-10 py-6">
+          <OtpPlayground />
         </div>
 
         <div v-if="activeTab === 'overlays'" class="grid gap-10 py-6">
