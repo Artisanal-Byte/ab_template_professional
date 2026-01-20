@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Form, Head } from '@inertiajs/vue3';
 import PermissionController from '@/actions/App/Http/Controllers/Tenant/PermissionController';
@@ -54,7 +54,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <div class="grid flex-1 gap-2">
                         <Label for="permission-name">Permission name</Label>
                         <Input id="permission-name" name="name" placeholder="documents.publish" />
-                        <InputError :message="errors.name" />
+                        <FormError :error="errors.name" />
                     </div>
                     <Button type="submit" :disabled="processing">Create permission</Button>
                 </Form>
@@ -85,3 +85,4 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
     </AppLayout>
 </template>
+

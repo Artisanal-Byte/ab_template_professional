@@ -5,7 +5,7 @@ import { ref, useTemplateRef } from 'vue';
 
 // Components
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
@@ -63,7 +63,7 @@ const isOpen = ref(false);
                             ref="passwordInput"
                             placeholder="Password"
                         />
-                        <InputError :message="errors.password" />
+                        <FormError :error="errors.password" />
                     </div>
 
                     <div class="flex items-center justify-end gap-2">
@@ -95,4 +95,5 @@ const isOpen = ref(false);
         </div>
     </div>
 </template>
+
 

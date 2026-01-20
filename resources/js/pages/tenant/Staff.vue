@@ -7,7 +7,7 @@ import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Select from '@/components/ui/Select.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import StaffController from '@/actions/App/Http/Controllers/Tenant/StaffController';
@@ -95,22 +95,22 @@ watch(
                     <div class="grid gap-2">
                         <Label for="staff-name">Name</Label>
                         <Input id="staff-name" name="name" placeholder="Full name" />
-                        <InputError :message="errors.name" />
+                        <FormError :error="errors.name" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="staff-email">Email</Label>
                         <Input id="staff-email" name="email" type="email" placeholder="user@tenant.com" />
-                        <InputError :message="errors.email" />
+                        <FormError :error="errors.email" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="staff-password">Password (new users)</Label>
                         <Input id="staff-password" name="password" type="password" placeholder="••••••••" required />
-                        <InputError :message="errors.password" />
+                        <FormError :error="errors.password" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="membership-role">Membership role</Label>
                         <Input id="membership-role" name="membership_role" placeholder="owner or employee" />
-                        <InputError :message="errors.membership_role" />
+                        <FormError :error="errors.membership_role" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="staff-role">Assign role</Label>
@@ -176,7 +176,7 @@ watch(
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-role-${member.id}`">Membership role</Label>
                                                     <Input :id="`edit-role-${member.id}`" name="membership_role" :default-value="member.membership_role" />
-                                                    <InputError :message="errors.membership_role" />
+                                                    <FormError :error="errors.membership_role" />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-status-${member.id}`">Status</Label>
@@ -234,3 +234,4 @@ watch(
         </div>
     </AppLayout>
 </template>
+

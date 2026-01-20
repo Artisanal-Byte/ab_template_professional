@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue';
 import { splitAttrs } from '@/lib/attrs';
 import { inputBase } from '@/lib/uiClass';
-import FieldError from '@/components/ui/FieldError.vue';
+import FormError from '@/components/ui/FormError.vue';
 
 defineOptions({
     inheritAttrs: false,
@@ -108,6 +108,7 @@ const onInput = (event: Event) => {
             @keydown="onKeydown"
             @input="onInput"
         />
-        <FieldError :error="props.error" />
+        <FormError :error="props.error" />
     </div>
 </template>
+

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import TextLink from '@/components/TextLink.vue';
 import Button from '@/components/ui/Button.vue';
 import Checkbox from '@/components/ui/Checkbox.vue';
@@ -50,7 +50,7 @@ defineProps<{
                         autocomplete="email"
                         placeholder="email@example.com"
                     />
-                    <InputError :message="errors.email" />
+                    <FormError :error="errors.email" />
                 </div>
 
                 <div class="grid gap-2">
@@ -74,7 +74,7 @@ defineProps<{
                         autocomplete="current-password"
                         placeholder="Password"
                     />
-                    <InputError :message="errors.password" />
+                    <FormError :error="errors.password" />
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -99,4 +99,5 @@ defineProps<{
         </Form>
     </AuthBase>
 </template>
+
 

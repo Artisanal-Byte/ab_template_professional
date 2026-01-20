@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import TextLink from '@/components/TextLink.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -41,7 +41,7 @@ defineProps<{
                         autofocus
                         placeholder="email@example.com"
                     />
-                    <InputError :message="errors.email" />
+                    <FormError :error="errors.email" />
                 </div>
 
                 <div class="my-6 flex items-center justify-start">
@@ -63,5 +63,6 @@ defineProps<{
         </div>
     </AuthLayout>
 </template>
+
 
 

@@ -6,7 +6,7 @@ import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 
 import DeleteUser from '@/components/DeleteUser.vue';
 import HeadingSmall from '@/components/HeadingSmall.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
@@ -59,7 +59,7 @@ const user = page.props.auth.user;
                             autocomplete="name"
                             placeholder="Full name"
                         />
-                        <InputError class="mt-2" :message="errors.name" />
+                        <FormError class="mt-2" :error="errors.name" />
                     </div>
 
                     <div class="grid gap-2">
@@ -74,7 +74,7 @@ const user = page.props.auth.user;
                             autocomplete="username"
                             placeholder="Email address"
                         />
-                        <InputError class="mt-2" :message="errors.email" />
+                        <FormError class="mt-2" :error="errors.email" />
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">
@@ -126,5 +126,6 @@ const user = page.props.auth.user;
         </SettingsLayout>
     </AppLayout>
 </template>
+
 
 

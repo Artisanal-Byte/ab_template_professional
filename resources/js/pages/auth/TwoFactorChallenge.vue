@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import InputOTP from '@/components/ui/InputOTP.vue';
@@ -72,7 +72,7 @@ const code = ref<string>('');
                                 autofocus
                             />
                         </div>
-                        <InputError :message="errors.code" />
+                        <FormError :error="errors.code" />
                     </div>
                     <Button type="submit" class="w-full" :disabled="processing"
                         >Continue</Button
@@ -104,7 +104,7 @@ const code = ref<string>('');
                         :autofocus="showRecoveryInput"
                         required
                     />
-                    <InputError :message="errors.recovery_code" />
+                    <FormError :error="errors.recovery_code" />
                     <Button type="submit" class="w-full" :disabled="processing"
                         >Continue</Button
                     >
@@ -124,4 +124,5 @@ const code = ref<string>('');
         </div>
     </AuthLayout>
 </template>
+
 

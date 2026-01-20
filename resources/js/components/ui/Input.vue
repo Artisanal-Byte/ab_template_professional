@@ -2,7 +2,7 @@
 import { computed, useAttrs, watch } from 'vue';
 import { splitAttrs } from '@/lib/attrs';
 import { inputBase } from '@/lib/uiClass';
-import FieldError from '@/components/ui/FieldError.vue';
+import FormError from '@/components/ui/FormError.vue';
 
 defineOptions({
     inheritAttrs: false,
@@ -54,6 +54,7 @@ watch(
             v-bind="boundAttrs"
             :class="inputClass"
         />
-        <FieldError :error="props.error" />
+        <FormError :error="props.error" />
     </div>
 </template>
+

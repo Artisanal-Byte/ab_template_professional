@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AlertError from '@/components/AlertError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Card from '@/components/ui/Card.vue';
 import Icon from '@/components/Icon.vue';
@@ -84,7 +84,7 @@ onMounted(async () => {
                 ]"
             >
                 <div v-if="errors?.length" class="mt-6">
-                    <AlertError :errors="errors" />
+                    <FormError variant="alert" :error="errors" />
                 </div>
                 <div v-else class="mt-3 space-y-3">
                     <div

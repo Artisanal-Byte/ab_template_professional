@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
@@ -34,7 +34,7 @@ import { Form, Head } from '@inertiajs/vue3';
                         autofocus
                     />
 
-                    <InputError :message="errors.password" />
+                    <FormError :error="errors.password" />
                 </div>
 
                 <div class="flex items-center">
@@ -51,3 +51,4 @@ import { Form, Head } from '@inertiajs/vue3';
         </Form>
     </AuthLayout>
 </template>
+

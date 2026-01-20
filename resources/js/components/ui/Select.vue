@@ -4,7 +4,7 @@ import ListboxDropdown from '@/components/ui/ListboxDropdown.vue';
 import SelectTrigger from '@/components/ui/SelectTrigger.vue';
 import { getOptionLabel, getOptionValue } from '@/composables/useSelectDisplay';
 import type { SelectOption } from '@/types';
-import FieldError from '@/components/ui/FieldError.vue';
+import FormError from '@/components/ui/FormError.vue';
 
 const props = defineProps({
     options: {
@@ -118,6 +118,7 @@ const handleSelect = (option: SelectOption) => {
             :name="props.name"
             :value="model"
         />
-        <FieldError :error="props.error" />
+        <FormError :error="props.error" />
     </div>
 </template>
+

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
@@ -42,7 +42,7 @@ const inputEmail = ref(props.email);
                         class="mt-1 block w-full"
                         readonly
                     />
-                    <InputError :message="errors.email" class="mt-2" />
+                    <FormError :error="errors.email" class="mt-2" />
                 </div>
 
                 <div class="grid gap-2">
@@ -56,7 +56,7 @@ const inputEmail = ref(props.email);
                         autofocus
                         placeholder="Password"
                     />
-                    <InputError :message="errors.password" />
+                    <FormError :error="errors.password" />
                 </div>
 
                 <div class="grid gap-2">
@@ -71,7 +71,7 @@ const inputEmail = ref(props.email);
                         class="mt-1 block w-full"
                         placeholder="Confirm password"
                     />
-                    <InputError :message="errors.password_confirmation" />
+                    <FormError :error="errors.password_confirmation" />
                 </div>
 
                 <Button
@@ -87,3 +87,4 @@ const inputEmail = ref(props.email);
         </Form>
     </AuthLayout>
 </template>
+

@@ -6,7 +6,7 @@ import Checkbox from '@/components/ui/Checkbox.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Form, Head } from '@inertiajs/vue3';
 import RoleController from '@/actions/App/Http/Controllers/Tenant/RoleController';
@@ -64,7 +64,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <div class="grid flex-1 gap-2">
                         <Label for="role-name">Role name</Label>
                         <Input id="role-name" name="name" placeholder="Quality Manager" />
-                        <InputError :message="errors.name" />
+                        <FormError :error="errors.name" />
                     </div>
                     <Button type="submit" :disabled="processing">Create role</Button>
                 </Form>
@@ -138,3 +138,4 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
     </AppLayout>
 </template>
+

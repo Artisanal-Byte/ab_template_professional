@@ -9,7 +9,7 @@ import Label from '@/components/ui/Label.vue';
 import Icon from '@/components/Icon.vue';
 import PopoverBase from '@/components/ui/PopoverBase.vue';
 import { useRichTextEditor } from '@/composables/useRichTextEditor';
-import FieldError from '@/components/ui/FieldError.vue';
+import FormError from '@/components/ui/FormError.vue';
 
 const props = defineProps({
     placeholder: {
@@ -581,7 +581,7 @@ const setFontSize = (size: string) => {
             </template>
         </Dialog>
     </div>
-    <FieldError class="mt-1" :error="props.error" />
+    <FormError class="mt-1" :error="props.error" />
 </template>
 
 <style scoped>
@@ -664,3 +664,4 @@ const setFontSize = (size: string) => {
     display: block;
 }
 </style>
+

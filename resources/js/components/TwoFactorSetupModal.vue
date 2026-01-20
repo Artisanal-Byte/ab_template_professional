@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import AlertError from '@/components/AlertError.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import InputOTP from '@/components/ui/InputOTP.vue';
@@ -142,7 +141,7 @@ watch(
                 </p>
             </div>
                 <template v-if="!showVerificationStep">
-                    <AlertError v-if="errors?.length" :errors="errors" />
+                    <FormError v-if="errors?.length" variant="alert" :error="errors" />
                     <template v-else>
                         <div
                             class="relative mx-auto flex max-w-md items-center overflow-hidden"
@@ -243,8 +242,8 @@ watch(
                                     :otp-length="6"
                                     :disabled="processing"
                                 />
-                                <InputError
-                                    :message="
+                                <FormError
+                                    :error="
                                         errors?.['confirmTwoFactorAuthentication.code']
                                     "
                                 />
@@ -274,3 +273,4 @@ watch(
             </div>
     </Dialog>
 </template>
+

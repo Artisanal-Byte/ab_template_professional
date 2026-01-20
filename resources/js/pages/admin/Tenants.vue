@@ -5,7 +5,7 @@ import Card from '@/components/ui/Card.vue';
 import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Form, Head } from '@inertiajs/vue3';
 import TenantController from '@/actions/App/Http/Controllers/Admin/TenantController';
@@ -65,27 +65,27 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <div class="grid gap-2">
                         <Label for="tenant-name">Organization name</Label>
                         <Input id="tenant-name" name="name" placeholder="Neujin Bio Labs" />
-                        <InputError :message="errors.name" />
+                        <FormError :error="errors.name" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="tenant-slug">Slug</Label>
                         <Input id="tenant-slug" name="slug" placeholder="neujin_labs" />
-                        <InputError :message="errors.slug" />
+                        <FormError :error="errors.slug" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="owner-name">Owner name</Label>
                         <Input id="owner-name" name="owner_name" placeholder="Owner name" />
-                        <InputError :message="errors.owner_name" />
+                        <FormError :error="errors.owner_name" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="owner-email">Owner email</Label>
                         <Input id="owner-email" name="owner_email" type="email" placeholder="owner@org.com" />
-                        <InputError :message="errors.owner_email" />
+                        <FormError :error="errors.owner_email" />
                     </div>
                     <div class="grid gap-2 md:col-span-2">
                         <Label for="owner-password">Owner password (new users)</Label>
                         <Input id="owner-password" name="owner_password" type="password" placeholder="••••••••" />
-                        <InputError :message="errors.owner_password" />
+                        <FormError :error="errors.owner_password" />
                     </div>
                     <div class="flex items-center gap-2 md:col-span-3">
                         <Button type="submit" :disabled="processing">Create organization</Button>
@@ -141,12 +141,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                 <div class="grid gap-2">
                                                     <Label :for="`tenant-name-${tenant.id}`">Organization name</Label>
                                                     <Input :id="`tenant-name-${tenant.id}`" name="name" :default-value="tenant.name" />
-                                                    <InputError :message="errors.name" />
+                                                    <FormError :error="errors.name" />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`tenant-slug-${tenant.id}`">Slug</Label>
                                                     <Input :id="`tenant-slug-${tenant.id}`" name="slug" :default-value="tenant.slug" />
-                                                    <InputError :message="errors.slug" />
+                                                    <FormError :error="errors.slug" />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`owner-email-${tenant.id}`">Owner email</Label>
@@ -156,12 +156,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                                                         type="email"
                                                         :default-value="tenant.owner?.email ?? ''"
                                                     />
-                                                    <InputError :message="errors.owner_email" />
+                                                    <FormError :error="errors.owner_email" />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`owner-password-${tenant.id}`">New owner password</Label>
                                                     <Input :id="`owner-password-${tenant.id}`" name="owner_password" type="password" />
-                                                    <InputError :message="errors.owner_password" />
+                                                    <FormError :error="errors.owner_password" />
                                                 </div>
                                                 <div class="flex justify-end gap-2">
                                                     <Button type="submit" :disabled="processing">
@@ -198,3 +198,4 @@ const breadcrumbs: BreadcrumbItem[] = [
         </div>
     </AppLayout>
 </template>
+

@@ -9,7 +9,7 @@ import {
 import { cn } from '@/lib/utils';
 import { splitAttrs } from '@/lib/attrs';
 import { inputBase } from '@/lib/uiClass';
-import FieldError from '@/components/ui/FieldError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Icon from '@/components/Icon.vue';
 import {
     applyDateMask,
@@ -673,6 +673,7 @@ onBeforeUnmount(() => {
                 </PopoverContent>
             </PopoverPortal>
         </PopoverRoot>
-        <FieldError :error="props.error" />
+        <FormError :error="props.error" />
     </div>
 </template>
+

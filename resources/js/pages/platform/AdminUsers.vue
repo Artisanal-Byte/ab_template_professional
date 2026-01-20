@@ -7,7 +7,7 @@ import Dialog from '@/components/ui/Dialog.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Select from '@/components/ui/Select.vue';
-import InputError from '@/components/InputError.vue';
+import FormError from '@/components/ui/FormError.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Form, Head } from '@inertiajs/vue3';
 import AdminUserController from '@/actions/App/Http/Controllers/Platform/AdminUserController';
@@ -78,17 +78,17 @@ watch(
                     <div class="grid gap-2">
                         <Label for="admin-name">Name</Label>
                         <Input id="admin-name" name="name" placeholder="Full name" />
-                        <InputError :message="errors.name" />
+                        <FormError :error="errors.name" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="admin-email">Email</Label>
                         <Input id="admin-email" name="email" type="email" placeholder="email@company.com" />
-                        <InputError :message="errors.email" />
+                        <FormError :error="errors.email" />
                     </div>
                     <div class="grid gap-2">
                         <Label for="admin-password">Password</Label>
                         <Input id="admin-password" name="password" type="password" placeholder="••••••••" />
-                        <InputError :message="errors.password" />
+                        <FormError :error="errors.password" />
                     </div>
                     <div class="flex items-center gap-2 md:col-span-3">
                         <Button type="submit" :disabled="processing">Create admin</Button>
@@ -138,12 +138,12 @@ watch(
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-name-${admin.id}`">Name</Label>
                                                     <Input :id="`edit-name-${admin.id}`" name="name" :default-value="admin.name" />
-                                                    <InputError :message="errors.name" />
+                                                    <FormError :error="errors.name" />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-email-${admin.id}`">Email</Label>
                                                     <Input :id="`edit-email-${admin.id}`" name="email" type="email" :default-value="admin.email" />
-                                                    <InputError :message="errors.email" />
+                                                    <FormError :error="errors.email" />
                                                 </div>
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-status-${admin.id}`">Status</Label>
@@ -160,7 +160,7 @@ watch(
                                                 <div class="grid gap-2">
                                                     <Label :for="`edit-password-${admin.id}`">New password</Label>
                                                     <Input :id="`edit-password-${admin.id}`" name="password" type="password" />
-                                                    <InputError :message="errors.password" />
+                                                    <FormError :error="errors.password" />
                                                 </div>
                                                 <div class="flex justify-end gap-2">
                                                     <Button type="submit" :disabled="processing">
@@ -192,3 +192,4 @@ watch(
         </div>
     </AppLayout>
 </template>
+

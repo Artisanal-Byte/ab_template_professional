@@ -6,7 +6,7 @@ import SelectTrigger from '@/components/ui/SelectTrigger.vue';
 import Icon from '@/components/Icon.vue';
 import { getOptionLabel, getOptionValue } from '@/composables/useSelectDisplay';
 import type { SelectOption } from '@/types';
-import FieldError from '@/components/ui/FieldError.vue';
+import FormError from '@/components/ui/FormError.vue';
 
 const props = defineProps({
     options: {
@@ -181,6 +181,7 @@ watch(open, (value) => {
             :name="props.name"
             :value="model"
         />
-        <FieldError :error="props.error" />
+        <FormError :error="props.error" />
     </div>
 </template>
+
