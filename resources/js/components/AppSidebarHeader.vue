@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import AppBreadcrumbs from '@/components/AppBreadcrumbs.vue';
 import Button from '@/components/ui/Button.vue';
 import Icon from '@/components/Icon.vue';
 import { useAppearance } from '@/composables/useAppearance';
@@ -54,7 +54,7 @@ const breadcrumbItems = computed(
                 <Icon name="lucide:menu" class="h-4 w-4" />
             </Button>
             <template v-if="breadcrumbItems.length > 0">
-                <Breadcrumbs :breadcrumbs="breadcrumbItems" />
+                <AppBreadcrumbs :breadcrumbs="breadcrumbItems" />
             </template>
         </div>
         <Button

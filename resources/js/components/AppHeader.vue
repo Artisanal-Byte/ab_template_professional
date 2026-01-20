@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLogo from '@/components/AppLogo.vue';
-import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import AppBreadcrumbs from '@/components/AppBreadcrumbs.vue';
 import Avatar from '@/components/ui/Avatar.vue';
 import Button from '@/components/ui/Button.vue';
 import Dialog from '@/components/ui/Dialog.vue';
@@ -230,7 +230,7 @@ const isExternalLink = (item: NavItem) =>
             <div
                 class="mx-auto flex h-12 w-full items-center justify-start px-4 text-foreground-faint md:max-w-7xl"
             >
-                <Breadcrumbs :breadcrumbs="breadcrumbs" />
+                <AppBreadcrumbs :breadcrumbs="breadcrumbs" />
             </div>
         </div>
     </div>
