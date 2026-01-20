@@ -2,7 +2,7 @@ name: Deploy Staging (Self-hosted runner)
 
 on:
   push:
-    branches: [staging]
+    branches: [xyz]
   workflow_dispatch:
     inputs:
       run_migrations:

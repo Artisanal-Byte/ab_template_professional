@@ -2,7 +2,7 @@ name: Deploy Production (Artifact + Releases)
 
 on:
   push:
-    branches: [production]
+    branches: [xyz]
   workflow_dispatch:
     inputs:
       run_migrations:

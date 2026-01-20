@@ -6,6 +6,6 @@
         "port": "22",
         "beforeHooks": "",
         "afterHooks": "",
-        "path": "/var/www/artisanal_byte/qms_neujin/qms_neujin_production"
+        "path": "/var/www/artisanal_byte/{new directory Structure here}"
     }
 ]
