@@ -6,8 +6,9 @@ import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Tooltip from '@/components/ui/Tooltip.vue';
 import RadioPillGroup from '@/components/RadioPillGroup.vue';
-import DrawerSection from '@/components/playgrounds/DrawerSection.vue';
+import PlaygroundMetaPanel from '@/components/playgrounds/PlaygroundMetaPanel.vue';
 
+// Side options reflect Tooltip `side` prop.
 const sideOptions = [
   { label: 'Top', value: 'top' },
   { label: 'Right', value: 'right' },
@@ -15,24 +16,28 @@ const sideOptions = [
   { label: 'Left', value: 'left' },
 ];
 
+// Align options reflect Tooltip `align` prop.
 const alignOptions = [
   { label: 'Start', value: 'start' },
   { label: 'Center', value: 'center' },
   { label: 'End', value: 'end' },
 ];
 
+// Offset options map to Tooltip `sideOffset` prop values.
 const offsetOptions = [
   { label: '4px', value: '4' },
   { label: '6px', value: '6' },
   { label: '10px', value: '10' },
 ];
 
+// Delay options map to Tooltip `delayDuration` prop values.
 const delayOptions = [
   { label: '0ms', value: '0' },
   { label: '150ms', value: '150' },
   { label: '300ms', value: '300' },
 ];
 
+// Arrow options toggle Tooltip arrow rendering.
 const arrowOptions = [
   { label: 'Show', value: 'true' },
   { label: 'Hide', value: 'false' },
@@ -135,32 +140,6 @@ const usageLine = computed(() => {
   return `<Tooltip${attrText}>\n  <template #trigger>\n    <Button variant="outline">${resolvedLabel}</Button>\n  </template>\n  ${resolvedText}\n</Tooltip>`;
 });
 
-const copyImportLabel = ref('Copy');
-const copyUsageLabel = ref('Copy');
-
-const copyText = async (value: string, target: typeof copyImportLabel) => {
-  try {
-    await navigator.clipboard.writeText(value);
-    target.value = 'Copied';
-    window.setTimeout(() => {
-      target.value = 'Copy';
-    }, 1500);
-  } catch {
-    target.value = 'Copy failed';
-    window.setTimeout(() => {
-      target.value = 'Copy';
-    }, 1500);
-  }
-};
-
-const copyImport = () => {
-  copyText(importText.value, copyImportLabel);
-};
-
-const copyUsage = () => {
-  copyText(usageLine.value, copyUsageLabel);
-};
-
 const detailsOpen = ref(false);
 </script>
 
@@ -205,85 +184,13 @@ const detailsOpen = ref(false);
         </div>
       </div>
 
-      <div class="grid gap-2">
-        <Label>Sample code</Label>
-        <div class="grid gap-3 md:grid-cols-2">
-          <div class="grid gap-2">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-foreground-subtle">Import</span>
-              <Button variant="outline" size="sm" @click="copyImport">
-                {{ copyImportLabel }}
-              </Button>
-            </div>
-            <code
-              class="whitespace-pre-wrap rounded-md border border-border-subtle bg-secondary-soft p-3 text-sm text-foreground"
-            >
-          {{ importText }}
-        </code>
-          </div>
-          <div class="grid gap-2">
-            <div class="flex items-center justify-between">
-              <span class="text-sm font-medium text-foreground-subtle">Usage</span>
-              <Button variant="outline" size="sm" @click="copyUsage">
-                {{ copyUsageLabel }}
-              </Button>
-            </div>
-            <code
-              class="whitespace-pre-wrap rounded-md border border-border-subtle bg-secondary-soft p-3 text-sm text-foreground"
-            >
-          {{ usageLine }}
-        </code>
-          </div>
-        </div>
-      </div>
-
-      <DrawerSection v-model:open="detailsOpen" title="Tokens & props">
-        <div class="grid gap-6 md:grid-cols-2">
-          <div>
-            <Label class="text-lg">Tokens used</Label>
-            <ul class="mt-3 text-foreground-subtle">
-              <li class="grid grid-cols-2 items-center gap-2 font-semibold text-warning">
-                <span>Role</span>
-                <span>Token</span>
-              </li>
-              <li v-for="token in tokens" :key="token.token" class="grid grid-cols-2 gap-2">
-                <span>{{ token.role }}</span>
-                <code class="rounded bg-secondary-soft px-2 py-0.5 text-sm text-foreground">
-                  {{ token.token }}
-                </code>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <Label class="text-lg">Props ({{ componentProps.length }})</Label>
-            <div class="mt-3 grid gap-3 text-sm text-foreground-subtle">
-              <div
-                v-for="prop in componentProps"
-                :key="prop.name"
-                class="rounded-md border border-border-subtle bg-secondary-soft p-3"
-              >
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="font-semibold text-foreground">{{ prop.name }}</span>
-                  <span class="text-xs text-foreground-faint">{{ prop.type }}</span>
-                </div>
-                <div class="mt-2 text-xs text-foreground-faint">
-                  Default: {{ prop.defaultValue }}
-                </div>
-                <div class="mt-2 flex flex-wrap gap-2 text-xs text-foreground">
-                  <span
-                    v-for="value in prop.values"
-                    :key="value"
-                    class="rounded-full border border-border-subtle bg-background px-2 py-0.5"
-                  >
-                    {{ value }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </DrawerSection>
+      <PlaygroundMetaPanel
+        v-model:open="detailsOpen"
+        :import-text="importText"
+        :usage-text="usageLine"
+        :tokens="tokens"
+        :component-props="componentProps"
+      />
     </div>
   </section>
 </template>

@@ -6,12 +6,14 @@ import { system as designSystem } from '@/routes/design';
 import type { BreadcrumbItem } from '@/types';
 import ButtonPlayground from '@/components/playgrounds/buttons/Playground.vue';
 import BadgePlayground from '@/components/playgrounds/badges/Playground.vue';
+import IconPlayground from '@/components/playgrounds/icons/Playground.vue';
 import InputPlayground from '@/components/playgrounds/inputs/Playground.vue';
 import DateTimePlayground from '@/components/playgrounds/date_time/Playground.vue';
 import CheckboxPlayground from '@/components/playgrounds/checkbox_radio/CheckboxPlayground.vue';
 import RadioPlayground from '@/components/playgrounds/checkbox_radio/RadioPlayground.vue';
 import SelectPlayground from '@/components/playgrounds/selects/Playground.vue';
 import AlertPlayground from '@/components/playgrounds/alerts/Playground.vue';
+import ErrorPlayground from '@/components/playgrounds/errors/Playground.vue';
 import LoadingPlayground from '@/components/playgrounds/loading/Playground.vue';
 import CardsPlayground from '@/components/playgrounds/cards/Playground.vue';
 import BreadcrumbPlayground from '@/components/playgrounds/breadcrumbs/Playground.vue';
@@ -38,7 +40,9 @@ const tabs = ref([
   { id: 'radios', label: 'Radios' },
   { id: 'selects', label: 'Selects' },
   { id: 'badges', label: 'Badges' },
+  { id: 'icons', label: 'Icons' },
   { id: 'alerts', label: 'Alerts' },
+  { id: 'errors', label: 'Errors' },
   { id: 'loading', label: 'Loading' },
   { id: 'cards', label: 'Cards' },
   { id: 'breadcrumbs', label: 'Breadcrumbs' },
@@ -232,6 +236,12 @@ const statusColors = ref([
         </div>
         <div v-if="activeTab === 'badges'" class="grid gap-10 py-6">
           <BadgePlayground />
+        </div>
+        <div v-if="activeTab === 'icons'" class="grid gap-10 py-6">
+          <IconPlayground />
+        </div>
+        <div v-if="activeTab === 'errors'" class="grid gap-10 py-6">
+          <ErrorPlayground />
         </div>
         </main>
       </div>
