@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Tenant;
 
+use App\Models\User;
 use App\Support\CurrentTenant;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -22,11 +23,18 @@ class StoreStaffRequest extends FormRequest
     public function rules(): array
     {
         $tenantId = app(CurrentTenant::class)->get()?->id;
+        $email = $this->string('email')->lower()->toString();
+        $userExists = $email !== '' && User::query()->where('email', $email)->exists();
 
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-            'password' => ['required', 'string', Password::defaults()],
+            'password' => [
+                Rule::requiredIf(! $userExists),
+                'nullable',
+                'string',
+                Password::defaults(),
+            ],
             'membership_role' => ['required', 'string'],
             'role_id' => [
                 'required',

@@ -87,13 +87,21 @@ it('blocks adding staff already linked to another organization', function () {
         'status' => 'active',
     ]);
 
+    $role = Role::create([
+        'name' => 'Auditor',
+        'guard_name' => 'web',
+        'tenant_id' => $tenant->id,
+    ]);
+
     $this->actingAs($owner);
 
     $response = $this->withSession(['tenant_id' => $tenant->id])
         ->post(route('tenant.staff.store'), [
             'name' => 'Staff Member',
             'email' => 'staff@acme.test',
+            'password' => 'Password123!',
             'membership_role' => 'employee',
+            'role_id' => $role->id,
         ]);
 
     $response->assertSessionHasErrors(['email']);
