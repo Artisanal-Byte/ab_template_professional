@@ -4,10 +4,8 @@ import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { externalNavItems, mainNavItems } from '@/config/navConfig';
-import { dashboard as adminDashboard } from '@/routes/admin';
-import { dashboard as platformDashboard } from '@/routes/platform';
-import { dashboard as tenantDashboard } from '@/routes/tenant';
-import { Link, usePage } from '@inertiajs/vue3';
+import { dashboard } from '@/routes';
+import { Link } from '@inertiajs/vue3';
 import AppLogo from './AppLogo.vue';
 const props = defineProps({
     collapsed: {
@@ -16,24 +14,9 @@ const props = defineProps({
     },
 });
 
-const page = usePage();
-const roles = (page.props.auth?.roles ?? []) as string[];
-const currentTenantId =
-    page.props.currentTenant?.id ?? page.props.tenantMemberships?.[0]?.tenant_id ?? null;
-const tenantMemberships = (page.props.tenantMemberships ?? []) as Array<{
-    tenant_id: string;
-    membership_role: string;
-}>;
-const tenantRole =
-    tenantMemberships.find((membership) => membership.tenant_id === currentTenantId)
-        ?.membership_role ?? null;
-const mainItems = mainNavItems(roles, tenantRole);
+const mainItems = mainNavItems();
 const footerItems = externalNavItems();
-const homeRoute = roles.includes('web_admin')
-    ? platformDashboard
-    : roles.includes('admin')
-      ? adminDashboard
-      : tenantDashboard;
+const homeRoute = dashboard;
 </script>
 
 <template>

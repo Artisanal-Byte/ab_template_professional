@@ -14,8 +14,8 @@ const footerOptions = [
   { label: 'Split', value: 'split' },
 ];
 
-const titleText = ref('Audit readiness');
-const descriptionText = ref('Key checkpoints for compliance tracking.');
+const titleText = ref('Project overview');
+const descriptionText = ref('Key milestones and recent updates.');
 const bodyText = ref('Use this space to summarize the next steps or recent activity.');
 const footerMode = ref('single');
 const primaryLabel = ref('Review');

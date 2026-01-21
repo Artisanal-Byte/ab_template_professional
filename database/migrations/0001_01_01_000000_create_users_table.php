@@ -9,18 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id');
-
-            $table->string('name', 150);
-            $table->string('email', 190)->unique();
-            $table->string('password'); // hashed password
-            $table->string('status', 20)->default('active'); // active|locked|disabled
-
-            $table->timestampTz('last_login_at')->nullable();
-            $table->timestampsTz();
-
-            $table->index('status');
-            $table->index('last_login_at');
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
         });
     }
 

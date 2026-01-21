@@ -2,43 +2,43 @@
 import FormError from '@/components/ui/FormError.vue';
 import TextLink from '@/components/TextLink.vue';
 import Button from '@/components/ui/Button.vue';
-import Checkbox from '@/components/ui/Checkbox.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AuthBase from '@/layouts/AuthLayout.vue';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
+import { login } from '@/routes';
+import { store } from '@/routes/register';
 import { Form, Head } from '@inertiajs/vue3';
-
-defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-}>();
 </script>
 
 <template>
     <AuthBase
-        title="Log in to your account"
-        description="Enter your email and password below to log in"
+        title="Create your account"
+        description="Share a few details to get started"
     >
-        <Head title="Log in" />
-
-        <div
-            v-if="status"
-            class="mb-4 text-center text-sm font-medium text-success"
-        >
-            {{ status }}
-        </div>
+        <Head title="Register" />
 
         <Form
             v-bind="store.form()"
-            :reset-on-success="['password']"
+            :reset-on-success="['password', 'password_confirmation']"
             v-slot="{ errors, processing }"
             class="flex flex-col gap-6"
         >
             <div class="grid gap-6">
+                <div class="grid gap-2">
+                    <Label for="name">Full name</Label>
+                    <Input
+                        id="name"
+                        name="name"
+                        required
+                        autofocus
+                        :tabindex="1"
+                        autocomplete="name"
+                        placeholder="Jane Doe"
+                    />
+                    <FormError :error="errors.name" />
+                </div>
+
                 <div class="grid gap-2">
                     <Label for="email">Email address</Label>
                     <Input
@@ -46,8 +46,7 @@ defineProps<{
                         type="email"
                         name="email"
                         required
-                        autofocus
-                        :tabindex="1"
+                        :tabindex="2"
                         autocomplete="email"
                         placeholder="email@example.com"
                     />
@@ -55,56 +54,53 @@ defineProps<{
                 </div>
 
                 <div class="grid gap-2">
-                    <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
-                        <TextLink
-                            v-if="canResetPassword"
-                            :href="request()"
-                            class="text-sm"
-                            :tabindex="5"
-                        >
-                            Forgot password?
-                        </TextLink>
-                    </div>
+                    <Label for="password">Password</Label>
                     <Input
                         id="password"
                         type="password"
                         name="password"
                         required
-                        :tabindex="2"
-                        autocomplete="current-password"
-                        placeholder="Password"
+                        :tabindex="3"
+                        autocomplete="new-password"
+                        placeholder="Create a password"
                     />
                     <FormError :error="errors.password" />
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox id="remember" name="remember" :tabindex="3" />
-                        <span>Remember me</span>
-                    </Label>
+                <div class="grid gap-2">
+                    <Label for="password_confirmation">Confirm password</Label>
+                    <Input
+                        id="password_confirmation"
+                        type="password"
+                        name="password_confirmation"
+                        required
+                        :tabindex="4"
+                        autocomplete="new-password"
+                        placeholder="Repeat your password"
+                    />
+                    <FormError :error="errors.password_confirmation" />
                 </div>
 
                 <Button
                     type="submit"
-                    class="mt-4 w-full"
-                    :tabindex="4"
+                    class="mt-2 w-full"
+                    :tabindex="5"
                     :disabled="processing"
-                    data-test="login-button"
+                    data-test="register-button"
                 >
                     <Spinner v-if="processing" />
-                    Log in
+                    Create account
                 </Button>
             </div>
 
             <p class="text-center text-sm text-foreground-subtle">
-                Don't have an account?
+                Already have an account?
                 <TextLink
-                    :href="register()"
+                    :href="login()"
                     class="text-sm"
                     :tabindex="6"
                 >
-                    Create one
+                    Log in
                 </TextLink>
             </p>
         </Form>

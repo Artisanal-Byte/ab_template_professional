@@ -1,14 +1,9 @@
 <?php
 
-use App\Models\Tenant;
-use App\Models\TenantUser;
 use App\Models\User;
-use App\Services\Tenancy\TenantProvisioner;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
-
-use function Pest\Laravel\mock;
 
 test('email verification screen can be rendered', function () {
     $user = User::factory()->unverified()->create();
@@ -20,19 +15,8 @@ test('email verification screen can be rendered', function () {
 
 test('email can be verified', function () {
     $user = User::factory()->unverified()->create();
-    $tenant = Tenant::factory()->create();
-
-    TenantUser::factory()->create([
-        'tenant_id' => $tenant->id,
-        'user_id' => $user->id,
-        'membership_role' => 'owner',
-        'status' => 'active',
-    ]);
 
     Event::fake();
-    mock(TenantProvisioner::class)
-        ->shouldReceive('ensureProvisioned')
-        ->andReturnNull();
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
@@ -44,7 +28,7 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect('/tenant?verified=1');
+    $response->assertRedirect('/dashboard?verified=1');
 });
 
 test('email is not verified with invalid hash', function () {
@@ -83,41 +67,18 @@ test('email is not verified with invalid user id', function () {
 
 test('verified user is redirected to dashboard from verification prompt', function () {
     $user = User::factory()->create();
-    $tenant = Tenant::factory()->create();
-
-    TenantUser::factory()->create([
-        'tenant_id' => $tenant->id,
-        'user_id' => $user->id,
-        'membership_role' => 'owner',
-        'status' => 'active',
-    ]);
-
     Event::fake();
-    mock(TenantProvisioner::class)
-        ->shouldReceive('ensureProvisioned')
-        ->andReturnNull();
 
     $response = $this->actingAs($user)->get(route('verification.notice'));
 
     Event::assertNotDispatched(Verified::class);
-    $response->assertRedirect('/tenant');
+    $response->assertRedirect('/dashboard');
 });
 
 test('already verified user visiting verification link is redirected without firing event again', function () {
     $user = User::factory()->create();
-    $tenant = Tenant::factory()->create();
-
-    TenantUser::factory()->create([
-        'tenant_id' => $tenant->id,
-        'user_id' => $user->id,
-        'membership_role' => 'owner',
-        'status' => 'active',
-    ]);
 
     Event::fake();
-    mock(TenantProvisioner::class)
-        ->shouldReceive('ensureProvisioned')
-        ->andReturnNull();
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
@@ -126,7 +87,7 @@ test('already verified user visiting verification link is redirected without fir
     );
 
     $this->actingAs($user)->get($verificationUrl)
-        ->assertRedirect('/tenant?verified=1');
+        ->assertRedirect('/dashboard?verified=1');
 
     Event::assertNotDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();

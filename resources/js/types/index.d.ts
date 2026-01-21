@@ -2,7 +2,6 @@ import { InertiaLinkProps } from '@inertiajs/vue3';
 
 export interface Auth {
     user: User;
-    roles?: string[];
 }
 
 export interface BreadcrumbItem {
@@ -31,17 +30,6 @@ export type AppPageProps<
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
-    currentTenant?: {
-        id: string;
-        name: string;
-        slug: string;
-    } | null;
-    tenantMemberships?: Array<{
-        tenant_id: string;
-        tenant_name: string | null;
-        membership_role: string;
-        status: string;
-    }>;
     sidebarOpen: boolean;
 };
 

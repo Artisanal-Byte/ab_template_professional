@@ -63,7 +63,7 @@ const labelText = ref('Multi select');
 const placeholder = ref('Select options');
 const noResultsText = ref('No results');
 const inputName = ref('');
-const selectedValues = ref(['qa', 'regulatory']);
+const selectedValues = ref(['product', 'marketing']);
 const options = ref(createSelectOptions());
 
 const isDisabled = computed(() => disabled.value === 'true');

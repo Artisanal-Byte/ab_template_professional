@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import Badge from '@/components/ui/Badge.vue';
 import Card from '@/components/ui/Card.vue';
 import Separator from '@/components/ui/Separator.vue';
-import { dashboard as tenantDashboard } from '@/routes/tenant';
+import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
@@ -11,7 +11,7 @@ import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: tenantDashboard().url,
+        href: dashboard().url,
     },
 ];
 </script>
@@ -27,33 +27,33 @@ const breadcrumbs: BreadcrumbItem[] = [
                         Dashboard
                     </h1>
                     <p class="text-sm text-foreground-faint">
-                        Snapshot of compliance activity and recent work.
+                        Snapshot of recent activity and upcoming work.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <Badge variant="primary">Active</Badge>
-                    <Badge>QMS Core</Badge>
+                    <Badge>Starter</Badge>
                 </div>
             </header>
 
             <section class="grid gap-4 md:grid-cols-3">
                 <Card>
-                    <template #title>Pending approvals</template>
-                    <template #description>Awaiting sign-off</template>
+                    <template #title>Team inbox</template>
+                    <template #description>Updates to review</template>
                     <div class="relative aspect-video overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                         <PlaceholderPattern />
                     </div>
                 </Card>
                 <Card>
-                    <template #title>Training status</template>
-                    <template #description>Required sessions</template>
+                    <template #title>Project rhythm</template>
+                    <template #description>Upcoming milestones</template>
                     <div class="relative aspect-video overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                         <PlaceholderPattern />
                     </div>
                 </Card>
                 <Card>
-                    <template #title>Audit readiness</template>
-                    <template #description>Key checkpoints</template>
+                    <template #title>Quality signals</template>
+                    <template #description>System health</template>
                     <div class="relative aspect-video overflow-hidden rounded-lg border border-border-subtle bg-secondary-soft">
                         <PlaceholderPattern />
                     </div>
@@ -64,21 +64,21 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <Card>
                     <template #title>Recent activity</template>
                     <template #description>
-                        Latest updates across policies and workflows.
+                        Highlights from your workspace.
                     </template>
                     <div class="grid gap-4 text-sm text-foreground-subtle">
                         <div class="flex items-center justify-between">
-                            <span>SOP-14 updated</span>
+                            <span>Welcome message published</span>
                             <span>2 hours ago</span>
                         </div>
                         <Separator class="bg-border-subtle" />
                         <div class="flex items-center justify-between">
-                            <span>Training cycle published</span>
+                            <span>Project plan refreshed</span>
                             <span>Today</span>
                         </div>
                         <Separator class="bg-border-subtle" />
                         <div class="flex items-center justify-between">
-                            <span>CAPA review assigned</span>
+                            <span>Milestone review scheduled</span>
                             <span>Yesterday</span>
                         </div>
                     </div>

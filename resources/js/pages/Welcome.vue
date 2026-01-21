@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue';
-import { login } from '@/routes';
-import { dashboard as tenantDashboard } from '@/routes/tenant';
+import { login, register } from '@/routes';
+import { dashboard } from '@/routes';
 import { Head, Link } from '@inertiajs/vue3';
 </script>
 
@@ -14,12 +14,15 @@ import { Head, Link } from '@inertiajs/vue3';
             class="mb-6 w-full max-w-[335px] text-sm text-foreground-subtle not-has-[nav]:hidden lg:max-w-4xl"
         >
             <nav class="flex items-center justify-end gap-4">
-                <Button v-if="$page.props.auth.user" :as="Link" :href="tenantDashboard()" size="sm">
+                <Button v-if="$page.props.auth.user" :as="Link" :href="dashboard()" size="sm">
                     Dashboard
                 </Button>
                 <template v-else>
                     <Button :as="Link" :href="login()" size="sm" variant="ghost">
                         Log in
+                    </Button>
+                    <Button :as="Link" :href="register()" size="sm">
+                        Register
                     </Button>
                 </template>
             </nav>

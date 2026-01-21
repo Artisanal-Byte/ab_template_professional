@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Support\CurrentTenant;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -38,17 +37,6 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-        $currentTenant = app(CurrentTenant::class)->get();
-        $memberships = $request->user()
-            ? $request->user()->tenantMemberships()->with('tenant')->get()
-            : collect();
-        $sessionTenantId = $request->session()->get('tenant_id');
-
-        if (! $currentTenant && $sessionTenantId) {
-            $currentTenant = $memberships
-                ->firstWhere('tenant_id', $sessionTenantId)
-                ?->tenant;
-        }
 
         return [
             ...parent::share($request),
@@ -56,21 +44,7 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
-                'roles' => $request->user()?->getRoleNames(),
             ],
-            'currentTenant' => $currentTenant ? [
-                'id' => $currentTenant->id,
-                'name' => $currentTenant->name,
-                'slug' => $currentTenant->slug,
-            ] : null,
-            'tenantMemberships' => $memberships->map(function ($membership) {
-                return [
-                    'tenant_id' => $membership->tenant_id,
-                    'tenant_name' => $membership->tenant?->name,
-                    'membership_role' => $membership->membership_role,
-                    'status' => $membership->status,
-                ];
-            }),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
