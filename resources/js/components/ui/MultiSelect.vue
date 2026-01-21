@@ -22,7 +22,7 @@ const props = defineProps({
     },
     maxChips: {
         type: Number,
-        default: 2,
+        default: 1,
     },
     disabled: {
         type: Boolean,
@@ -122,17 +122,23 @@ const handleSelect = (option: SelectOption) => {
                         <span v-if="selectedOptions.length === 0" class="text-foreground-faint">
                             {{ props.placeholder }}
                         </span>
-                        <Badge
-                            v-for="option in visibleOptions"
-                            :key="String(getOptionValue(option))"
+                        <span
+                            v-else
+                            class="flex min-w-0 flex-nowrap items-center gap-2 overflow-hidden"
                         >
-                            <span class="max-w-[10rem] truncate">
-                                {{ getOptionLabel(option) }}
-                            </span>
-                        </Badge>
-                        <Badge v-if="hiddenCount" class="shrink-0">
-                            +{{ hiddenCount }} more
-                        </Badge>
+                            <Badge
+                                v-for="option in visibleOptions"
+                                :key="String(getOptionValue(option))"
+                                class="min-w-0 max-w-full"
+                            >
+                                <span class="block max-w-full truncate">
+                                    {{ getOptionLabel(option) }}
+                                </span>
+                            </Badge>
+                            <Badge v-if="hiddenCount" class="shrink-0">
+                                +{{ hiddenCount }}
+                            </Badge>
+                        </span>
                     </template>
                 </SelectTrigger>
             </template>
@@ -149,4 +155,3 @@ const handleSelect = (option: SelectOption) => {
         <FormError :error="props.error" />
     </div>
 </template>
-

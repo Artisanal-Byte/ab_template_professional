@@ -58,7 +58,7 @@ const sideOffset = ref('6');
 const disabled = ref('false');
 const loading = ref('false');
 const errorType = ref('none');
-const maxChips = ref('2');
+const maxChips = ref('1');
 const labelText = ref('Multi select');
 const placeholder = ref('Select options');
 const noResultsText = ref('No results');
@@ -141,7 +141,7 @@ const componentProps = [
     name: 'maxChips',
     type: 'number',
     values: ['1', '2', '3'],
-    defaultValue: '2',
+    defaultValue: '1',
   },
   {
     name: 'disabled',
@@ -222,7 +222,7 @@ const buildSelectAttrs = () =>
     { when: width.value !== 'md', attr: `width="${width.value}"` },
     { when: side.value !== 'bottom', attr: `side="${side.value}"` },
     { when: sideOffset.value !== '6', attr: `:side-offset="${sideOffset.value}"` },
-    { when: maxChips.value !== '2', attr: `:max-chips="${maxChips.value}"` },
+    { when: maxChips.value !== '1', attr: `:max-chips="${maxChips.value}"` },
     { when: isLoading.value, attr: 'loading' },
     {
       when: Boolean(noResultsText.value) && noResultsText.value !== 'No results',
