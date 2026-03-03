@@ -8,6 +8,7 @@ import ButtonPlayground from '@/components/playgrounds/buttons/Playground.vue';
 import BadgePlayground from '@/components/playgrounds/badges/Playground.vue';
 import IconPlayground from '@/components/playgrounds/icons/Playground.vue';
 import InputPlayground from '@/components/playgrounds/inputs/Playground.vue';
+import CurrencyInputPlayground from '@/components/playgrounds/currency/Playground.vue';
 import DateTimePlayground from '@/components/playgrounds/date_time/Playground.vue';
 import CheckboxPlayground from '@/components/playgrounds/checkbox_radio/CheckboxPlayground.vue';
 import RadioPlayground from '@/components/playgrounds/checkbox_radio/RadioPlayground.vue';
@@ -35,6 +36,7 @@ const tabs = ref([
   { id: 'foundations', label: 'Foundations' },
   { id: 'buttons', label: 'Buttons' },
   { id: 'inputs', label: 'Inputs' },
+  { id: 'currency-input', label: 'Currency Input' },
   { id: 'date-time', label: 'Date & Time' },
   { id: 'checkboxes', label: 'Checkboxes' },
   { id: 'radios', label: 'Radios' },
@@ -177,6 +179,10 @@ const statusColors = ref([
 
         <div v-if="activeTab === 'inputs'" class="grid gap-10 pb-6">
           <InputPlayground />
+        </div>
+
+        <div v-if="activeTab === 'currency-input'" class="grid gap-10 pb-6">
+          <CurrencyInputPlayground />
         </div>
 
         <div v-if="activeTab === 'date-time'" class="grid gap-10 pb-6">
