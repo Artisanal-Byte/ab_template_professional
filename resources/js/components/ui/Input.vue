@@ -23,7 +23,7 @@ const props = defineProps({
     },
 });
 
-const model = defineModel({
+const model = defineModel<string | number | null>({
     default: '',
 });
 
@@ -57,4 +57,3 @@ watch(
         <FormError :error="props.error" />
     </div>
 </template>
-
