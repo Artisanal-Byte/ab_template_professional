@@ -13,6 +13,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     })->name('dashboard');
 });
 
+// INTENTIONAL: the design system playground is a development-only surface.
+// Keep this route disabled in production so demo/playground UI is never exposed.
 if (! app()->isProduction()) {
     Route::get('/design_system_and_components', function () {
         return Inertia::render('DesignSystem');

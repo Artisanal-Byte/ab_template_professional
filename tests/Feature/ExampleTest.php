@@ -3,5 +3,11 @@
 test('returns a successful response', function () {
     $response = $this->get(route('home'));
 
+    $response->assertSuccessful();
+});
+
+test('dashboard redirects guests to login', function () {
+    $response = $this->get(route('dashboard'));
+
     $response->assertRedirect(route('login'));
 });

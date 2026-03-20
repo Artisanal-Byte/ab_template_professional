@@ -11,9 +11,17 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>
+        // INTENTIONAL: keep DesignSystem playground code out of production bundles.
+        // The route is development-only in `routes/web.php`; excluding it here prevents
+        // shipping playground/demo UI to production clients.
         resolvePageComponent(
             `./pages/${name}.vue`,
-            import.meta.glob<DefineComponent>('./pages/**/*.vue'),
+            import.meta.env.PROD
+                ? import.meta.glob<DefineComponent>([
+                      './pages/**/*.vue',
+                      '!./pages/DesignSystem.vue',
+                  ])
+                : import.meta.glob<DefineComponent>('./pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
