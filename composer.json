@@ -12,19 +12,19 @@
         "php": "^8.4",
         "inertiajs/inertia-laravel": "^3.0@beta",
         "laravel/fortify": "^1.36",
-        "laravel/framework": "13.x-dev as 12.99.99",
-        "laravel/tinker": "^3.0@dev",
-        "laravel/wayfinder": "dev-main"
+        "laravel/framework": "^13.0",
+        "laravel/tinker": "^3.0",
+        "laravel/wayfinder": "^0.1.14"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
         "larastan/larastan": "^3.9",
-        "laravel/boost": "dev-main",
-        "laravel/pail": "1.x-dev",
+        "laravel/boost": "^2.3",
+        "laravel/pail": "^1.2.6",
         "laravel/pint": "^1.28",
-        "laravel/sail": "1.x-dev",
+        "laravel/sail": "^1.54",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "v8.x-dev",
+        "nunomaduro/collision": "^8.9",
         "pestphp/pest": "^4.4",
         "pestphp/pest-plugin-laravel": "^4.1",
         "phpunit/phpunit": "^12.5"
@@ -97,6 +97,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }
