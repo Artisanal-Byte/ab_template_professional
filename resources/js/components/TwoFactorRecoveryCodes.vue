@@ -60,7 +60,7 @@ onMounted(async () => {
 
                 <Form
                     v-if="isRecoveryCodesVisible && recoveryCodesList.length"
-                    v-bind="regenerateRecoveryCodes.form()"
+                    v-bind="regenerateRecoveryCodes()"
                     method="post"
                     :options="{ preserveScroll: true }"
                     @success="fetchRecoveryCodes"
@@ -117,3 +117,4 @@ onMounted(async () => {
         </div>
     </Card>
 </template>
+

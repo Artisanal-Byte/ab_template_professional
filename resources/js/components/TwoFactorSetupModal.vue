@@ -222,7 +222,7 @@ watch(
 
                 <template v-else>
                     <Form
-                        v-bind="confirm.form()"
+                        v-bind="confirm()"
                         reset-on-error
                         @finish="code = ''"
                         @success="isOpen = false"
@@ -273,4 +273,5 @@ watch(
             </div>
     </Dialog>
 </template>
+
 
