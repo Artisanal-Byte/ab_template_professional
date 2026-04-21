@@ -27,6 +27,10 @@ const props = defineProps({
         type: String,
         default: 'scale',
     },
+    size: {
+        type: String,
+        default: 'sm',
+    },
     contentClass: {
         type: String,
         default: '',
@@ -47,10 +51,22 @@ const open = defineModel('open', {
 });
 
 const contentClasses = computed(() => {
+    const sizeClasses = (() => {
+        if (props.size === 'md') {
+            return 'w-[95vw] lg:w-[60vw]';
+        }
+
+        if (props.size === 'lg') {
+            return 'w-[95vw] lg:w-[80vw]';
+        }
+
+        return 'w-[95vw] lg:w-[32rem]';
+    })();
+
     const baseClasses =
         props.transition === 'slide-left'
             ? 'fixed left-0 top-0 z-50 h-full border border-border bg-card text-card-foreground shadow-lg will-change-transform'
-            : 'fixed left-1/2 top-1/2 z-50 w-[min(92vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-card p-6 text-card-foreground shadow-lg transition-all duration-200 ease-out';
+            : `fixed left-1/2 top-1/2 z-50 ${sizeClasses} max-h-[95vh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-border bg-card p-6 text-card-foreground shadow-lg transition-all duration-200 ease-out`;
 
     return cn(baseClasses, props.contentClass);
 });

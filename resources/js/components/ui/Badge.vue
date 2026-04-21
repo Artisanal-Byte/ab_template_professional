@@ -20,9 +20,9 @@ const attrsSplit = computed(() => splitAttrs(attrs));
 const variantClasses: Record<string, string> = {
     neutral: 'border-border-subtle bg-secondary-subtle text-foreground',
     primary: 'border-primary-border bg-primary-soft text-primary',
-    success: 'border-success-border bg-success-soft text-success',
-    warning: 'border-warning-border bg-warning-soft text-warning',
-    error: 'border-error-border bg-error-soft text-error',
+    success: 'border-success-border bg-success-soft text-foreground',
+    warning: 'border-warning-border bg-warning-soft text-foreground',
+    error: 'border-error-border bg-error-soft text-foreground',
 };
 
 const badgeClass = computed(() =>
