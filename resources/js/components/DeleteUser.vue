@@ -45,7 +45,7 @@ const isOpen = ref(false);
                     your account.
                 </template>
                 <Form
-                    v-bind="ProfileController.destroy.form()"
+                    v-bind="ProfileController.destroy()"
                     reset-on-success
                     @error="() => passwordInput?.$el?.focus()"
                     :options="{

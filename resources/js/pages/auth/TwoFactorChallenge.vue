@@ -53,7 +53,7 @@ const code = ref<string>('');
         <div class="space-y-6">
             <template v-if="!showRecoveryInput">
                 <Form
-                    v-bind="store.form()"
+                    v-bind="store()"
                     class="space-y-4"
                     reset-on-error
                     @error="code = ''"
@@ -92,7 +92,7 @@ const code = ref<string>('');
 
             <template v-else>
                 <Form
-                    v-bind="store.form()"
+                    v-bind="store()"
                     class="space-y-4"
                     reset-on-error
                     #default="{ errors, processing, clearErrors }"
