@@ -58,9 +58,21 @@ const componentProps = [
     defaultValue: 'empty',
   },
   {
+    name: 'collapsible',
+    type: 'boolean',
+    values: ['true', 'false'],
+    defaultValue: 'false',
+  },
+  {
+    name: 'startCollapsed',
+    type: 'boolean',
+    values: ['true', 'false'],
+    defaultValue: 'false',
+  },
+  {
     name: 'slots',
     type: 'slot',
-    values: ['title', 'description', 'default', 'footer'],
+    values: ['title', 'description', 'actions', 'default', 'footer'],
     defaultValue: 'none',
   },
 ];
@@ -122,6 +134,23 @@ const detailsOpen = ref(false);
           <Button v-if="footerMode === 'split'" variant="outline">{{ secondaryLabel }}</Button>
         </template>
       </Card>
+    </div>
+
+    <div class="grid gap-3">
+      <h3 class="text-sm font-semibold uppercase tracking-widest text-foreground-faint">Collapsible</h3>
+      <div class="grid gap-3 md:grid-cols-2">
+        <Card collapsible>
+          <template #title>Collapsible (Open)</template>
+          <template #description>Body is visible by default, click chevron to collapse.</template>
+          <div class="text-sm text-foreground-subtle">Same Card component with internal collapse state.</div>
+        </Card>
+
+        <Card collapsible start-collapsed>
+          <template #title>Collapsible (Start Collapsed)</template>
+          <template #description>Uses <code>startCollapsed</code> to begin closed.</template>
+          <div class="text-sm text-foreground-subtle">Expand to reveal content with built-in transition.</div>
+        </Card>
+      </div>
     </div>
 
     <div class="grid gap-6">

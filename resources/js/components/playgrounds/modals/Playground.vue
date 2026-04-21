@@ -25,31 +25,26 @@ const closeOptions = [
   { label: 'Hide', value: 'false' },
 ];
 
-// Panel width options map to Dialog `panelWidth` prop.
-const panelWidthOptions = [
-  { label: '320px', value: 'w-[320px]' },
-  { label: '420px', value: 'w-[420px]' },
-  { label: '520px', value: 'w-[520px]' },
+const sizeOptions = [
+  { label: 'Small', value: 'sm' },
+  { label: 'Medium', value: 'md' },
+  { label: 'Large', value: 'lg' },
 ];
 
 const transition = ref('scale');
 const modal = ref('true');
 const showClose = ref('true');
-const panelWidth = ref('w-[320px]');
+const size = ref('sm');
 const triggerLabel = ref('Open dialog');
 
 const isModal = computed(() => modal.value === 'true');
 const isCloseVisible = computed(() => showClose.value === 'true');
 
-const contentClass = computed(() =>
-  transition.value === 'slide-left' ? panelWidth.value : '',
-);
-
 const previewProps = computed(() => ({
   modal: isModal.value,
   transition: transition.value,
+  size: size.value,
   showClose: isCloseVisible.value,
-  contentClass: contentClass.value,
 }));
 
 const tokens = [
@@ -60,6 +55,12 @@ const tokens = [
 ];
 
 const componentProps = [
+  {
+    name: 'size',
+    type: "'sm' | 'md' | 'lg'",
+    values: ['sm', 'md', 'lg'],
+    defaultValue: 'sm',
+  },
   {
     name: 'modal',
     type: 'boolean',
@@ -101,10 +102,10 @@ const buildImports = () => [
 
 const buildDialogAttrs = () =>
   buildAttrList([
+    { when: size.value !== 'sm', attr: `size="${size.value}"` },
     { when: !isModal.value, attr: ':modal="false"' },
     { when: transition.value !== 'scale', attr: `transition="${transition.value}"` },
     { when: !isCloseVisible.value, attr: ':show-close="false"' },
-    { when: Boolean(contentClass.value), attr: `content-class="${contentClass.value}"` },
   ]);
 
 const importText = computed(() => buildImports().join('\n'));
@@ -160,15 +161,9 @@ const detailsOpen = ref(false);
     <div class="grid gap-6">
       <div class="grid gap-4 md:grid-cols-4">
         <RadioPillGroup v-model="transition" name="dialog-transition" label="Transition" :options="transitionOptions" />
+        <RadioPillGroup v-model="size" name="dialog-size" label="Size" :options="sizeOptions" />
         <RadioPillGroup v-model="modal" name="dialog-modal" label="Modal" :options="modalOptions" />
         <RadioPillGroup v-model="showClose" name="dialog-close" label="Close button" :options="closeOptions" />
-        <RadioPillGroup
-          v-model="panelWidth"
-          name="dialog-width"
-          label="Panel width"
-          :options="panelWidthOptions"
-          :disabled="transition !== 'slide-left'"
-        />
       </div>
 
       <div class="grid gap-4 md:grid-cols-2">
