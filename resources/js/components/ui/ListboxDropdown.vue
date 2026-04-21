@@ -63,6 +63,14 @@ const props = defineProps({
         type: Boolean,
         default: true,
     },
+    openOnArrowKeys: {
+        type: Boolean,
+        default: true,
+    },
+    focusSearchOnOpen: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits(['select']);
@@ -147,6 +155,61 @@ const handleSelect = (option: SelectOption) => {
     }
 };
 
+const focusListboxContent = () => {
+    const target = contentRef.value?.$el ?? contentRef.value;
+    target?.focus?.();
+};
+
+const focusSearchInput = () => {
+    const target = contentRef.value?.$el ?? contentRef.value;
+    const searchInput = target?.querySelector?.(
+        'input[type="search"], input:not([type]), input[type="text"]',
+    ) as HTMLInputElement | null;
+    searchInput?.focus?.();
+};
+
+const openFromTrigger = async (startFromEnd: boolean): Promise<void> => {
+    if (!flatOptions.value.length) {
+        open.value = true;
+        await nextTick();
+        focusListboxContent();
+        return;
+    }
+
+    activeIndex.value = startFromEnd ? flatOptions.value.length - 1 : 0;
+    open.value = true;
+    await nextTick();
+    focusListboxContent();
+};
+
+const handleTriggerKeydown = async (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+        if (open.value) {
+            event.preventDefault();
+            open.value = false;
+        }
+        return;
+    }
+
+    if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+    }
+
+    const shouldOpenFromStart =
+        event.key === 'Enter'
+        || event.key === ' '
+        || event.key === 'Spacebar'
+        || (props.openOnArrowKeys && event.key === 'ArrowDown');
+    const shouldOpenFromEnd = props.openOnArrowKeys && event.key === 'ArrowUp';
+
+    if (!shouldOpenFromStart && !shouldOpenFromEnd) {
+        return;
+    }
+
+    event.preventDefault();
+    await openFromTrigger(shouldOpenFromEnd);
+};
+
 const handleKeydown = (event: KeyboardEvent) => {
     if (!flatOptions.value.length) {
         if (event.key === 'Escape') {
@@ -196,8 +259,11 @@ watch(
             return;
         }
         await nextTick();
-        const target = contentRef.value?.$el ?? contentRef.value;
-        target?.focus?.();
+        if (props.focusSearchOnOpen) {
+            focusSearchInput();
+            return;
+        }
+        focusListboxContent();
     },
 );
 </script>
@@ -212,7 +278,7 @@ watch(
         :match-trigger-width="props.matchTriggerWidth"
     >
         <template #trigger>
-            <slot name="trigger" />
+            <slot name="trigger" :on-keydown="handleTriggerKeydown" />
         </template>
         <div
             ref="contentRef"

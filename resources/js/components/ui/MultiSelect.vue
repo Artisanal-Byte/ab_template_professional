@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import Badge from '@/components/ui/Badge.vue';
+import Input from '@/components/ui/Input.vue';
 import ListboxDropdown from '@/components/ui/ListboxDropdown.vue';
 import SelectTrigger from '@/components/ui/SelectTrigger.vue';
 import { getOptionLabel, getOptionValue } from '@/composables/useSelectDisplay';
@@ -19,6 +20,10 @@ const props = defineProps({
     placeholder: {
         type: String,
         default: 'Select options',
+    },
+    searchPlaceholder: {
+        type: String,
+        default: 'Search...',
     },
     maxChips: {
         type: Number,
@@ -61,6 +66,7 @@ const model = defineModel({
 });
 
 const open = ref(false);
+const searchTerm = ref('');
 
 const widthClasses: Record<string, string> = {
     xs: 'w-32',
@@ -100,24 +106,35 @@ const handleSelect = (option: SelectOption) => {
     }
     model.value = [...model.value, value];
 };
+
+const handleOpenChange = (nextOpen: boolean) => {
+    open.value = nextOpen;
+
+    if (!nextOpen) {
+        searchTerm.value = '';
+    }
+};
 </script>
 
 <template>
     <div :class="wrapperClass">
         <ListboxDropdown
-            v-model:open="open"
+            :open="open"
             :options="props.options"
             :selected-values="model"
+            :filter-text="searchTerm"
             :width="props.width"
             :side="props.side"
             :side-offset="props.sideOffset"
             :loading="props.loading"
             :no-results-text="props.noResultsText"
             :close-on-select="false"
+            focus-search-on-open
+            @update:open="handleOpenChange"
             @select="handleSelect"
         >
-            <template #trigger>
-                <SelectTrigger :disabled="props.disabled">
+            <template #trigger="{ onKeydown }">
+                <SelectTrigger :disabled="props.disabled" @keydown="onKeydown">
                     <template #value>
                         <span v-if="selectedOptions.length === 0" class="text-foreground-faint">
                             {{ props.placeholder }}
@@ -141,6 +158,17 @@ const handleSelect = (option: SelectOption) => {
                         </span>
                     </template>
                 </SelectTrigger>
+            </template>
+
+            <template #header>
+                <Input
+                    v-model="searchTerm"
+                    type="search"
+                    :placeholder="props.searchPlaceholder"
+                    size="sm"
+                    class="h-9"
+                    autofocus
+                />
             </template>
         </ListboxDropdown>
         <template v-if="props.name && model.length">

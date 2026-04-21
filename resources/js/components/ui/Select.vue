@@ -72,6 +72,9 @@ const wrapperClass = computed(() => {
 });
 
 const options = computed(() => props.options as SelectOption[]);
+const enabledOptions = computed(() =>
+    options.value.filter((option) => !option?.disabled),
+);
 
 const selectedOption = computed(() =>
     options.value.find(
@@ -82,6 +85,32 @@ const selectedOption = computed(() =>
 
 const handleSelect = (option: SelectOption) => {
     model.value = getOptionValue(option);
+};
+
+const handleSingleSelectArrowKey = (event: KeyboardEvent) => {
+    if (props.disabled || open.value) {
+        return;
+    }
+
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
+        return;
+    }
+
+    if (!enabledOptions.value.length) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const currentIndex = enabledOptions.value.findIndex(
+        (option) => getOptionValue(option) === model.value,
+    );
+    const fallbackIndex = event.key === 'ArrowDown' ? -1 : 0;
+    const baseIndex = currentIndex === -1 ? fallbackIndex : currentIndex;
+    const delta = event.key === 'ArrowDown' ? 1 : -1;
+    const nextIndex = (baseIndex + delta + enabledOptions.value.length) % enabledOptions.value.length;
+
+    model.value = getOptionValue(enabledOptions.value[nextIndex]);
 };
 </script>
 
@@ -96,10 +125,11 @@ const handleSelect = (option: SelectOption) => {
             :side-offset="props.sideOffset"
             :loading="props.loading"
             :no-results-text="props.noResultsText"
+            :open-on-arrow-keys="false"
             @select="handleSelect"
         >
-            <template #trigger>
-                <SelectTrigger :disabled="props.disabled">
+            <template #trigger="{ onKeydown }">
+                <SelectTrigger :disabled="props.disabled" @keydown="onKeydown" @keydown.capture="handleSingleSelectArrowKey">
                     <template #value>
                         <span class="truncate">
                             {{
@@ -121,4 +151,3 @@ const handleSelect = (option: SelectOption) => {
         <FormError :error="props.error" />
     </div>
 </template>
-
