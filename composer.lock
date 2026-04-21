@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d21b1f199b7e3b079b763ece95982644",
+    "content-hash": "df43ce42ce22542bd511c96a34fee1d6",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1160,16 +1160,16 @@
         },
         {
             "name": "inertiajs/inertia-laravel",
-            "version": "v3.0.0-beta3",
+            "version": "v3.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/inertiajs/inertia-laravel.git",
-                "reference": "228e227747e2cb7b6825808e40add153342740c5"
+                "reference": "c255b1ea050cf563b240542a76f7f756ccdb2d67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/inertiajs/inertia-laravel/zipball/228e227747e2cb7b6825808e40add153342740c5",
-                "reference": "228e227747e2cb7b6825808e40add153342740c5",
+                "url": "https://api.github.com/repos/inertiajs/inertia-laravel/zipball/c255b1ea050cf563b240542a76f7f756ccdb2d67",
+                "reference": "c255b1ea050cf563b240542a76f7f756ccdb2d67",
                 "shasum": ""
             },
             "require": {
@@ -1227,9 +1227,9 @@
             ],
             "support": {
                 "issues": "https://github.com/inertiajs/inertia-laravel/issues",
-                "source": "https://github.com/inertiajs/inertia-laravel/tree/v3.0.0-beta3"
+                "source": "https://github.com/inertiajs/inertia-laravel/tree/v3.0.6"
             },
-            "time": "2026-03-11T15:44:47+00:00"
+            "time": "2026-04-10T14:29:45+00:00"
         },
         {
             "name": "laravel/fortify",
@@ -10045,9 +10045,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "inertiajs/inertia-laravel": 10
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
