@@ -24,6 +24,7 @@ import TooltipPlayground from '@/components/playgrounds/tooltips/Playground.vue'
 import DropdownPlayground from '@/components/playgrounds/dropdowns/Playground.vue';
 import ModalPlayground from '@/components/playgrounds/modals/Playground.vue';
 import RichTextEditorPlayground from '@/components/playgrounds/rich_text/Playground.vue';
+import TablesPlayground from '@/components/playgrounds/tables/Playground.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -54,6 +55,7 @@ const tabs = ref([
   { id: 'dropdowns', label: 'Dropdowns' },
   { id: 'modals', label: 'Modals' },
   { id: 'editors', label: 'Editors' },
+  { id: 'tables', label: 'Tables' },
 ]);
 const activeTab = ref(tabs.value[0].id);
 
@@ -239,6 +241,9 @@ const statusColors = ref([
 
         <div v-if="activeTab === 'editors'" class="grid gap-10 py-6">
           <RichTextEditorPlayground />
+        </div>
+        <div v-if="activeTab === 'tables'" class="grid gap-10 py-6">
+          <TablesPlayground />
         </div>
         <div v-if="activeTab === 'badges'" class="grid gap-10 py-6">
           <BadgePlayground />

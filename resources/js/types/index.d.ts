@@ -44,3 +44,19 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+export interface TableColumn<T = Record<string, unknown>> {
+    key: string;
+    label: string;
+    sortable?: boolean;
+    searchable?: boolean;
+    width?: string;
+    className?: string;
+    headerClassName?: string;
+    format?: (value: unknown, row: T) => string;
+}
+
+export interface SortState {
+    key: string | null;
+    direction: 'asc' | 'desc';
+}

@@ -43,11 +43,12 @@ export const buttonVariantClasses: Record<string, string> = {
 };
 
 export const buttonSizeClasses: Record<string, string> = {
+    xs: 'h-6 px-2 text-xs',
     sm: 'h-8 px-3',
-    md: 'h-9 px-4',
-    lg: 'h-10 px-6 text-base',
+    md: 'h-10 px-4',
+    lg: 'h-11 px-6 text-base',
     xl: 'h-12 px-7 text-base',
-    icon: 'h-9 w-9',
+    icon: 'h-10 w-10',
 };
 
 export const buttonBase = (
@@ -60,5 +61,41 @@ export const buttonBase = (
         buttonVariantClasses[variant] || buttonVariantClasses.primary,
         buttonSizeClasses[size] || buttonSizeClasses.md,
         extra,
+    );
+
+export const tableBaseClasses = (borders: 'horizontal' | 'full') =>
+    cn(
+        'w-full text-sm text-foreground',
+        borders === 'full' ? 'border-collapse' : 'border-collapse',
+    );
+
+export const tableHeaderRowClasses = (borders: 'horizontal' | 'full') =>
+    cn(
+        'bg-foreground text-primary-foreground',
+        borders === 'full' ? 'border border-border' : 'border-b border-border',
+    );
+
+export const tableHeaderCellClasses = (borders: 'horizontal' | 'full') =>
+    cn(
+        'h-12 px-4 text-left align-middle font-medium text-primary-foreground',
+        borders === 'full' && 'border border-border',
+    );
+
+export const tableRowClasses = (
+    borders: 'horizontal' | 'full',
+    striped: boolean,
+    hoverable: boolean,
+    index: number,
+) =>
+    cn(
+        borders === 'full' ? 'border border-border' : 'border-b border-border',
+        striped && index % 2 === 0 && 'bg-secondary/30',
+        hoverable && 'transition-colors hover:bg-secondary-soft',
+    );
+
+export const tableCellClasses = (borders: 'horizontal' | 'full') =>
+    cn(
+        'px-4 py-3 align-middle',
+        borders === 'full' ? 'border border-border' : 'border-b border-border',
     );
 
