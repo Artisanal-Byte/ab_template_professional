@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Playground\PlaygroundsTableController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -11,6 +12,12 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // INTENTIONAL: the playground table is a development-only surface.
+    if (! app()->isProduction()) {
+        Route::get('/playground/tables', [PlaygroundsTableController::class, 'index'])
+            ->name('playground.tables');
+    }
 });
 
 // INTENTIONAL: the design system playground is a development-only surface.

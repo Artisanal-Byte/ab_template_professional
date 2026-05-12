@@ -57,6 +57,17 @@ export interface TableColumn<T = Record<string, unknown>> {
 }
 
 export interface SortState {
-    key: string | null;
-    direction: 'asc' | 'desc';
+	key: string | null;
+	direction: 'asc' | 'desc';
+}
+
+export interface PaginationMeta {
+	currentPage: number;
+	lastPage: number;
+	perPage: number;
+	total: number;
+	from: number | null;
+	to: number | null;
+	previousPageUrl: string | null;
+	nextPageUrl: string | null;
 }

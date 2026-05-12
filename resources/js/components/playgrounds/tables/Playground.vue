@@ -118,6 +118,32 @@ const hasTopControls = computed(() => showTopControls.value === 'true');
 
 const previewBorders = computed(() => borders.value as 'horizontal' | 'full');
 
+// ── Client-side pagination state ──
+const currentPage = ref(1);
+const perPage = ref(10);
+
+const totalPages = computed(() => Math.max(1, Math.ceil(mockUsers.length / perPage.value)));
+
+const paginationMeta = computed(() => ({
+    currentPage: currentPage.value,
+    lastPage: totalPages.value,
+    perPage: perPage.value,
+    total: 0,
+    from: null,
+    to: null,
+    previousPageUrl: null,
+    nextPageUrl: null,
+}));
+
+function handlePageChange(page: number): void {
+    currentPage.value = page;
+}
+
+function handlePerPageChange(newPerPage: number): void {
+    perPage.value = newPerPage;
+    currentPage.value = 1;
+}
+
 // ── Meta panel state ──
 const detailsOpen = ref(false);
 
@@ -252,12 +278,15 @@ const usageLine = computed(() => {
             <PaginatedTable
                 :columns="columns"
                 :data="mockUsers"
+                :pagination-meta="paginationMeta"
                 :borders="previewBorders"
                 :striped="isStriped"
                 :hoverable="isHoverable"
                 :sortable="isSortable"
                 :show-top-controls="hasTopControls"
                 :default-per-page="10"
+                @page-change="handlePageChange"
+                @per-page-change="handlePerPageChange"
             >
                 <template #cell-status="{ value }">
                     <Badge
