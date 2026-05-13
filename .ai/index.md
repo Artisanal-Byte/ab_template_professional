@@ -15,7 +15,7 @@ Modular rules under `.ai/rules/*` are loaded only as needed based on task type. 
 | `01-operating-mode.md` | Work style, safety, context control |
 | `02-project-context.md` | Stack, source hierarchy, template-aware behavior |
 | `03-coding-standards.md` | Naming, style, PHP/JS/Vue conventions |
-| `04-laravel.md` | Laravel 12 conventions, PostgreSQL, Eloquent |
+| `04-laravel.md` | Laravel 13 conventions, PostgreSQL, Eloquent |
 | `05-inertia-vue-wayfinder.md` | Inertia, Vue SFC, Wayfinder patterns |
 | `06-tailwind-ui.md` | Tailwind v4, design system guardrails |
 | `07-testing-quality.md` | Pest, fast-mode testing, handoff quality |

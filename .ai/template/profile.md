@@ -10,7 +10,7 @@ Reusable Laravel/Inertia/Vue/Tailwind starter template for building full-stack w
 
 ## Supported project type
 
-Laravel 12+ Inertia SPA/SWR applications with Vue 3 frontend.
+Laravel 13+ Inertia SPA/SWR applications with Vue 3 frontend.
 
 ## Stack
 
@@ -18,7 +18,9 @@ Laravel 12+ Inertia SPA/SWR applications with Vue 3 frontend.
 |---|---|
 | PHP | 8.4+ |
 | Framework | Laravel 13+ (`^13.1`) |
-| SPA Bridge | Inertia.js for Laravel (`^3.1.1`) |
+| SPA Bridge | Inertia.js v3 |
+| Backend Inertia Adapter | `inertiajs/inertia-laravel 3.0.6` |
+| Frontend Inertia Adapter | `@inertiajs/vue3 3.1.1` |
 | Frontend Framework | Vue 3 (`^3.5.34`) |
 | CSS Framework | Tailwind CSS v4 (`^4.3.0`) |
 | Route Helpers | Wayfinder (`^0.1.14`) |

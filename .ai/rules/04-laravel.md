@@ -73,7 +73,7 @@
 
 - Use factories in tests.
 - Check existing factories for states before manually building records.
-- Use `casts()` method if that is the project/Laravel 12 convention.
+- Use the `casts()` method if that is the project convention.
 - Prefer enums/value objects for constrained domain values when they improve clarity.
 - When creating new models, create useful factories and seeders when relevant.
 
