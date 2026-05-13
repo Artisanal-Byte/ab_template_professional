@@ -8,7 +8,7 @@
 - Follow existing directory structure.
 - Do not create new base folders without approval.
 
-## Laravel 12 structure
+## Laravel 13 structure
 
 - Middleware/routing wiring belongs in `bootstrap/app.php`.
 - Providers are listed in `bootstrap/providers.php`.

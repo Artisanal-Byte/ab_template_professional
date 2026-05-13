@@ -43,7 +43,7 @@ This template ships with a portable, harness-neutral AI rule system so any codin
 | `.ai/rules/01-operating-mode.md` | Work style, safety, context control |
 | `.ai/rules/02-project-context.md` | Stack, source hierarchy, template-aware behavior |
 | `.ai/rules/03-coding-standards.md` | Naming, style, PHP/JS/Vue conventions |
-| `.ai/rules/04-laravel.md` | Laravel 12 conventions, PostgreSQL, Eloquent |
+| `.ai/rules/04-laravel.md` | Laravel 13 conventions, PostgreSQL, Eloquent |
 | `.ai/rules/05-inertia-vue-wayfinder.md` | Inertia, Vue SFC, Wayfinder patterns |
 | `.ai/rules/06-tailwind-ui.md` | Tailwind v4, design system guardrails |
 | `.ai/rules/07-testing-quality.md` | Pest, fast-mode testing, handoff quality |
@@ -70,6 +70,8 @@ Cloned app projects should treat these as canonical documentation.
 ### Template updates tracker
 
 Each cloned app project inherits `.ai/template_updates.md` for recording reusable improvements discovered during development. These are candidates for manual porting back to the template repo.
+
+**Note:** `.ai/template_updates.md` is for app projects only. Template-repo maintenance changes go in `.ai/template/change-log.md`.
 
 ## Getting started
 
@@ -132,55 +134,89 @@ Visit `http://localhost:8000` in your browser.
 
 ## Starting a new project with AI
 
-When you want an AI coding agent to build features in your cloned app project, follow these steps:
+This template uses a **spec-driven development (SDD)** workflow. Your AI agent reads `AGENTS.md` and selectively loads rule files, then works from structured specs under `.ai/`.
 
-### Step 1 — Set up the AI agent
+### Before you begin
 
-Open your project in an AI-capable IDE (VS Code with Roo Code, Cursor, Claude Desktop, etc.).
+- Clone the template and clean up (see [Getting started](#getting-started)).
+- Decide whether you have a `plan.md` (product plan) or not.
+- Open your project in an AI-capable IDE (VS Code with Roo Code, Cursor, Claude Desktop, etc.).
 
-### Step 2 — Give the initial prompt
+### Scenario A — You have a `plan.md`
 
-Copy and paste this prompt into your AI agent:
+Place `plan.md` at the repo root, then give the agent this prompt:
+
+```
+Read AGENTS.md first. Then read .ai/rules/00-project-init.md, .ai/rules/01-operating-mode.md, and .ai/rules/09-git-handoff.md.
+
+I have a plan.md. Initialize the project: extract specs from it, ask blocking questions, confirm assumptions, then create .ai/project/* and .ai/specs/* structure.
+
+Read .ai/template/* before generating specs so you reuse existing template components and layouts.
+```
+
+The agent will:
+1. Classify the project state.
+2. Read `.ai/template/*` to understand what the template already provides.
+3. Extract requirements from `plan.md`.
+4. Ask blocking questions (architecture, domain logic, permissions, template usage).
+5. List proceedable assumptions.
+6. After approval, create `.ai/project/*` and `.ai/specs/*` structure.
+
+### Scenario B — You do not have a `plan.md`
+
+If you do not have a product plan yet, start by helping the agent understand your vision:
+
+```
+Read AGENTS.md first. Then read .ai/rules/00-project-init.md and .ai/rules/01-operating-mode.md.
+
+I do not have a plan.md yet. Help me create one. Here is what I want to build: [describe your idea]
+
+Read .ai/template/* first so you understand the template's existing components and can suggest what is already available.
+```
+
+The agent will:
+1. Read `.ai/template/*` to understand existing template capabilities.
+2. Ask clarifying questions about your idea.
+3. Help you draft a `plan.md` with product purpose, core modules, workflows, constraints, and milestones.
+4. Once `plan.md` exists, follow the Scenario A flow to generate specs.
+
+### Executing an existing spec packet
+
+If specs already exist (e.g., from a previous session), tell the agent:
 
 ```
 Read AGENTS.md first. Then read .ai/rules/01-operating-mode.md, .ai/rules/02-project-context.md, .ai/rules/03-coding-standards.md, .ai/rules/07-testing-quality.md, and .ai/rules/09-git-handoff.md.
 
-I want to build: [describe your feature/requirement]
+Execute the spec at .ai/specs/NNN-feature-name/. Read the active spec files, then implement the tasks.
 
-Work in increments. Commit before starting each new slice. Run targeted tests only. Follow the design system — check .ai/template/component-inventory.md before creating any new UI components.
+Read .ai/template/* before creating any new UI components — prefer existing template components.
 ```
 
-### Step 3 — For UI/frontend work, add this:
+The agent will:
+1. Load the active spec packet.
+2. Read only the relevant source files.
+3. Implement tasks in increments.
+4. Run targeted tests.
+5. Commit before starting a new independent slice.
+6. Provide a handoff summary.
 
-```
-Read .ai/template/design-system.md and .ai/template/component-inventory.md before creating any UI. Prefer existing components. Do not duplicate primitives.
-```
+### Using .ai/template/* during spec creation
 
-### Step 4 — For Laravel/backend work, add this:
+When the agent generates specs or implements features:
+- It must read `.ai/template/profile.md` to understand the stack and conventions.
+- It must read `.ai/template/component-inventory.md` before creating any new UI component.
+- It must read `.ai/template/design-system.md` before changing layouts, form controls, or shared UI.
+- It must reference existing template components/layouts in generated specs instead of inventing new UI.
 
-```
-Read .ai/rules/04-laravel.md. Follow Laravel 12 conventions. Use Inertia for page responses. Write Pest tests for backend behavior.
-```
+### Recording reusable improvements
 
-### Example prompts
+When making changes that could benefit the template repo (shared layouts, design-system primitives, form controls, reusable utilities, testing conventions):
 
-**Adding a new page:**
+1. Record the change in `.ai/template_updates.md` (in the app project).
+2. Include: change type, files changed, reusable value, porting notes, checks run.
+3. These entries are candidates for manual porting back to the template repo.
 
-```
-Read AGENTS.md and the relevant rule files. Create a new Inertia page at resources/js/pages/Products.vue with a route in routes/web.php. Use the AppSidebarLayout. Wire it to a ProductsController@index that returns Inertia::render('Products', [...]). Write a Pest feature test.
-```
-
-**Adding a form:**
-
-```
-Read .ai/template/component-inventory.md first. Create a product edit form using the existing Input, Select, and Button components from ui/. Use Inertia <Form> with Wayfinder helpers. Add a FormRequest for validation. Write Pest tests for happy path, failure path, and edge cases.
-```
-
-**Adding a table:**
-
-```
-Read .ai/template/design-system.md. Create a products listing page using the existing PaginatedTable component. Wire it to a controller that returns paginated data with sort/search support. Write a feature test.
-```
+**Note:** `.ai/template_updates.md` is for app projects only. Template-repo maintenance changes go in `.ai/template/change-log.md`.
 
 ## Project structure
 
