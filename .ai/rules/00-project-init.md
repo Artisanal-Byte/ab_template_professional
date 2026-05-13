@@ -10,10 +10,12 @@ Use project init when any of these are true:
 
 - User says to initialize/bootstrap the project.
 - `plan.md` exists but `.ai/` project/spec context does not.
+- If no `plan.md` exists, do not create specs from vague requirements. Ask whether to help create `plan.md` first.
 - The repo has code but no clear `.ai/index.md`, `.ai/state_now.md`, or spec system.
 - User asks to convert a plan into executable specs.
 - User asks to make the repo ready for AI execution.
 - A template repo has been cloned and needs to be understood.
+- For cloned template apps, read `.ai/template/*` before generating project specs so specs reference existing template components instead of inventing new UI.
 
 ## Non-negotiable during init
 

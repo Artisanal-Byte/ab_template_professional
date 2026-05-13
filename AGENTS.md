@@ -17,9 +17,9 @@ These rules are harness-neutral and should be followed by Codex, Roo Code, Cline
 Assume this project type unless the repo proves otherwise:
 
 - PHP 8.4+
-- Laravel 12
-- Inertia v2
-- Vue 3
+- Laravel 13+
+- Inertia v3+
+- Vue 3.5+
 - Tailwind CSS v4
 - Wayfinder
 - Fortify where auth scaffolding exists

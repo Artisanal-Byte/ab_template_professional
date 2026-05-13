@@ -2,11 +2,11 @@
 
 ## Inertia
 
-- Inertia pages live in `resources/js/Pages` unless project config says otherwise.
+- Inertia pages live in `resources/js/pages` unless project config says otherwise.
 - Use `Inertia::render()` for server-side page responses.
 - Use `<Link>` or `router.visit()` for client-side navigation.
 - Do not use traditional anchors for internal Inertia navigation unless there is a deliberate reason.
-- Use Inertia v2 patterns where useful:
+- Use Inertia v3 patterns where useful:
   - deferred props
   - merge/infinite scroll
   - lazy loading on scroll
@@ -16,7 +16,7 @@
 
 ## Forms
 
-- Prefer Inertia v2 `<Form>` for forms by default.
+- Prefer Inertia v3 `<Form>` for forms by default.
 - Use Wayfinder form helpers with `<Form>` when appropriate.
 - Use `useForm` only when:
   - the existing page pattern uses it

@@ -5,9 +5,9 @@
 Unless the repo proves otherwise, assume:
 
 - PHP 8.4+
-- Laravel 12
-- Inertia v2
-- Vue 3
+- Laravel 13+
+- Inertia v3+
+- Vue 3.5+
 - Tailwind CSS v4
 - Wayfinder
 - Fortify when auth scaffolding exists

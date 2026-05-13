@@ -187,10 +187,11 @@ Before adding a new reusable primitive:
 1. Check the component inventory.
 2. Check existing usages.
 3. Confirm no existing primitive can be extended safely.
-4. Add the primitive.
-5. Add usage notes to `component-inventory.md`.
-6. Add design rules to `design-system.md` or `usage-rules.md`.
-7. Add a changelog entry.
+4. Ask for confirmation.
+5. Add the primitive only after approval.
+6. Add usage notes to `component-inventory.md`.
+7. Add design rules to `design-system.md` or `usage-rules.md`.
+8. Add a changelog entry.
 
 ## App-project compatibility
 

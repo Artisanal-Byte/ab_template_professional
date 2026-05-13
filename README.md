@@ -1,15 +1,15 @@
 # AB Template Professional
 
-Reusable Laravel 12 + Inertia v3 + Vue 3 + Tailwind CSS v4 starter template for building full-stack web applications with AI coding agents.
+Reusable Laravel 13 + Inertia v3 + Vue 3 + Tailwind CSS v4 starter template for building full-stack web applications with AI coding agents.
 
 ## Stack
 
 | Layer | Technology |
 |---|---|
 | PHP | 8.4+ |
-| Framework | Laravel 12+ |
+| Framework | Laravel 13+ |
 | SPA Bridge | Inertia.js for Laravel v3 |
-| Frontend Framework | Vue 3 (Composition API + `<script setup lang="ts">`) |
+| Frontend Framework | Vue 3.5+ (Composition API + `<script setup lang="ts">`) |
 | CSS Framework | Tailwind CSS v4 |
 | Route Helpers | Wayfinder |
 | Auth | Fortify |
