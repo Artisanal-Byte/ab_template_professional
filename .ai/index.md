@@ -26,7 +26,7 @@ Do not load all rule files by default. Load only the files relevant to the curre
 
 ## Template documentation
 
-The `.ai/template/*` directory documents the reusable AB Template. Cloned app projects should treat these as canonical documentation.
+The `.ai/template/*` directory documents the inherited template, design system, reusable components, layout conventions, and template usage rules. **This is not active project state.**
 
 | File | Purpose |
 |---|---|
@@ -35,6 +35,10 @@ The `.ai/template/*` directory documents the reusable AB Template. Cloned app pr
 | `template/component-inventory.md` | Full reusable component inventory |
 | `template/usage-rules.md` | Agent-facing rules for template usage |
 | `template/change-log.md` | Template-level changelog |
+
+Use `.ai/template/*` for UI/design-system/component/layout decisions. Do not use it as app requirements, active specs, project decisions, current task state, or domain memory.
+
+Active project memory lives in `.ai/project/*`, `.ai/specs/*`, `.ai/state_now.md`, `.ai/decision_log.md`, and `.ai/session_handoff.md`, unless `.ai/index.md` defines a repo-specific override.
 
 When working on a cloned app project:
 1. Read `.ai/template/*` before creating UI primitives.

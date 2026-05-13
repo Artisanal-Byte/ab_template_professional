@@ -57,7 +57,7 @@ Agents load `AGENTS.md` first, then selectively load only the rule files relevan
 
 ### Template documentation
 
-The `.ai/template/*` directory documents the reusable template:
+The `.ai/template/*` directory documents the inherited template, design system, reusable components, layout conventions, and usage rules. **This is not active project state.**
 
 - `.ai/template/profile.md` — Template identity, stack, structure, conventions
 - `.ai/template/design-system.md` — Visual language, tokens, form controls, patterns
@@ -65,7 +65,7 @@ The `.ai/template/*` directory documents the reusable template:
 - `.ai/template/usage-rules.md` — Agent-facing rules for template usage
 - `.ai/template/change-log.md` — Template-level changelog
 
-Cloned app projects should treat these as canonical documentation.
+Cloned app projects should treat these as canonical documentation for UI/design-system/component/layout decisions. Do not use as app requirements, active specs, project decisions, or domain memory.
 
 ### Template updates tracker
 

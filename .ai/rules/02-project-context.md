@@ -75,15 +75,68 @@ Expected structure:
 
 If the repo uses legacy `ai_files/`, do not migrate it unless asked or during project init.
 
+## Memory file formats
+
+### `.ai/state_now.md`
+
+```md
+# State Now
+
+**Last updated:** DD-MM-YYYY HH:mm
+**Active spec:** NNN-feature-name (or none)
+**Current slice:** brief description
+
+## In progress
+- ...
+
+## Blocked
+- ... (reason + what input is needed)
+
+## Next step
+- ...
+```
+
+### `.ai/decision_log.md`
+
+```md
+# Decision Log
+
+## DD-MM-YYYY — Decision title
+
+**Context:** why this decision was needed
+**Decision:** what was decided
+**Rationale:** why this option was chosen
+**Alternatives considered:** brief list
+**Impact:** what this affects
+```
+
+### `.ai/session_handoff.md`
+
+```md
+# Session Handoff
+
+**Session:** DD-MM-YYYY
+**Status:** in-progress | blocked | completed
+**Current slice:** brief description
+**Changed files:** list
+**Checks:** results
+**Known issues:** list
+**Next step:** what the next session should do
+```
+
 ## Template-aware behavior
 
 If `.ai/template/*` exists:
 
-- Treat it as canonical template documentation.
+- Treat it as canonical template documentation — the inherited template, design system, reusable components, layout conventions, and template usage rules.
+- **This is not active project state.** Use it for UI/design-system/component/layout decisions only.
+- Do not use it as app requirements, active specs, project decisions, current task state, or domain memory.
 - Read it before changing layouts, primitives, form controls, navigation, tables, dialogs, or shared UI.
 - Do not regenerate template profile per project.
 - Verify template docs lightly if they appear stale.
 - Ask before updating template docs.
+
+Active project memory lives in `.ai/project/*`, `.ai/specs/*`, `.ai/state_now.md`, `.ai/decision_log.md`, and `.ai/session_handoff.md`.
 
 If `.ai/template/*` does not exist but the repo appears template-based, mention that a template profile may be useful.
 

@@ -63,13 +63,15 @@ Do not run the full Pest suite by default.
 
 ## Type/static/build checks
 
-Run checks based on files changed and risk:
+Run relevant checks before committing when files changed:
 
-- PHP formatting: `vendor/bin/pint --dirty`
-- PHP static analysis: Larastan/PHPStan if configured and relevant
-- JS/TS typecheck: `vue-tsc` if configured and frontend TypeScript changed
-- Lint: if configured and relevant
-- Production build: if frontend/build-impacting changes were made and handoff/finalization requires it
+- PHP formatting: `vendor/bin/pint --dirty` (when PHP files changed)
+- PHP static analysis: Larastan/PHPStan if configured and backend files changed
+- JS/TS typecheck: `npx vue-tsc --noEmit` if `.ts` or `.vue` files changed
+- Lint: `bun run lint` if configured and JS/Vue files changed
+- Production build: `bun run build` on handoff/finalization when frontend files changed
+
+Run the smallest relevant check. Do not run full suites by default.
 
 ## Pint
 

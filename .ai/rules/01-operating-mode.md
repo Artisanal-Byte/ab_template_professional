@@ -55,3 +55,5 @@
 - Never modify `.env` secrets destructively.
 - Never expose credentials, tokens, or private keys.
 - Do not install packages globally unless explicitly approved.
+- Do not modify `.env`, `config/*.php`, or build config (vite.config.ts, tailwind.config.ts) without explicit approval and explaining the impact.
+- If an assumption is proven wrong during implementation, acknowledge it explicitly, revert any changes based on the wrong assumption, and proceed with correct information.

@@ -10,6 +10,7 @@ Use this file only when Laravel Boost is available.
 - Use broad simple queries first, then refine.
 - Do not add package names to search queries; Boost already knows installed packages.
 - Use multiple simple queries when useful.
+- If Boost is not available, fall back to framework memory or generic documentation.
 
 ## Artisan
 

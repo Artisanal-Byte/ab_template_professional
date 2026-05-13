@@ -7,10 +7,10 @@ These rules are harness-neutral and should be followed by Codex, Roo Code, Cline
 ## Source of truth
 
 - `AGENTS.md` is the root source of truth.
+- If `.ai/index.md` exists, read it immediately after `AGENTS.md`; it defines repo-local context, memory mapping, legacy bridges, and project-specific loading rules.
 - `.ai/rules/*.md` contains modular rules. Load only the files relevant to the current task.
 - Legacy files such as `rules.md`, `Agents(old).md`, or older generated Boost files are historical only unless the user explicitly says otherwise.
 - Project-specific specs and state live under `.ai/`.
-- If a project has legacy `ai_files/`, migrate or map it into `.ai/` only when asked or during project init.
 
 ## Default stack context
 
@@ -31,7 +31,7 @@ Assume this project type unless the repo proves otherwise:
 
 ## Rule loading map
 
-Always read this file first.
+Always read this file first. If `.ai/index.md` exists, read it second before loading modular rule files.
 
 Load modular rules only as needed:
 
