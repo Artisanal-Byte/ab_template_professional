@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import Dialog from '@/components/ui/Dialog.vue';
+import Drawer from '@/components/ui/Drawer.vue';
 import { cn } from '@/lib/utils';
 
 // Slots:
@@ -64,15 +64,16 @@ const mobileContentClasses = computed(() =>
     </aside>
 
     <div class="md:hidden">
-        <Dialog
+        <Drawer
             v-model:open="mobileOpen"
+            direction="left"
+            size="full"
             :show-close="false"
-            transition="slide-left"
             :content-class="mobileContentClasses"
         >
             <div class="flex h-full flex-col">
                 <slot :collapsed="false" />
             </div>
-        </Dialog>
+        </Drawer>
     </div>
 </template>
