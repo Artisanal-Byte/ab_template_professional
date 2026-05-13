@@ -39,6 +39,7 @@
         // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
         // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
         "types": [
+            "vue",
             "vite/client",
             "unplugin-icons/types/vue",
             "./resources/js/types"
@@ -121,7 +122,7 @@
     "include": [
         "resources/js/**/*.ts",
         "resources/js/**/*.d.ts",
-        "resources/js/**/*.tsx", 
+        "resources/js/**/*.tsx",
         "resources/js/**/*.vue"
     ]
 }

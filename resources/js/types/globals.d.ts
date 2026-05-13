@@ -1,3 +1,5 @@
+import { Router, createHeadManager } from '@inertiajs/core';
+import type { Page, InertiaPageProps } from '@inertiajs/core';
 import { AppPageProps } from '@/types/index';
 
 // Extend ImportMeta interface for Vite...
