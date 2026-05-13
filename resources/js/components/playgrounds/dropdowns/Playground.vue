@@ -107,16 +107,16 @@ const previewPopoverProps = computed(() => ({
   sideOffset: Number(sideOffset.value),
   width: width.value,
   menuWidth: menuWidth.value === 'auto' ? '' : menuWidth.value,
-  triggerVariant: triggerVariant.value,
-  triggerSize: triggerSize.value,
+  triggerVariant: triggerVariant.value as 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'info' | 'warning' | 'destructive' | 'link',
+  triggerSize: triggerSize.value as 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'icon',
   triggerLabel: triggerLabel.value || 'Open menu',
   triggerDisabled: isDisabled.value,
 }));
 
 const previewInlineProps = computed(() => ({
   width: width.value,
-  triggerVariant: triggerVariant.value,
-  triggerSize: triggerSize.value,
+  triggerVariant: triggerVariant.value as 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'info' | 'warning' | 'destructive' | 'link',
+  triggerSize: triggerSize.value as 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'icon',
   triggerLabel: triggerLabel.value || 'Open menu',
   triggerDisabled: isDisabled.value,
 }));

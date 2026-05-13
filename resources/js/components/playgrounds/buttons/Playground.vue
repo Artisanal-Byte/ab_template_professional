@@ -132,8 +132,8 @@ const iconValue = computed(() => `lucide:${resolvedIconName.value}`);
 const resolvedAs = computed(() => (as.value === 'Link' ? Link : as.value));
 
 const previewProps = computed(() => ({
-  variant: variant.value,
-  size: size.value,
+  variant: variant.value as 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'info' | 'warning' | 'destructive' | 'link',
+  size: size.value as 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'icon',
   as: resolvedAs.value,
   type: type.value,
   disabled: isButtonAs.value ? isDisabled.value : false,

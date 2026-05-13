@@ -43,11 +43,11 @@ const props = defineProps({
         default: '',
     },
     triggerVariant: {
-        type: String,
+        type: String as () => 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'info' | 'warning' | 'destructive' | 'link',
         default: 'secondary',
     },
     triggerSize: {
-        type: String,
+        type: String as () => 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'icon',
         default: 'md',
     },
     triggerClass: {
